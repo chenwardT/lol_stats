@@ -21,9 +21,9 @@ sys.path.append(os.path.join(PROJECT_ROOT, 'riotwatcher'))
 #for i in sys.path:
 #    print i
 
-from riotwatcher import riotwatcher
+from lol_stats.local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
+from lol_stats.riotwatcher import riotwatcher
 
-from local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
 # my Riot API key
 riot_api = riotwatcher.RiotWatcher(RIOT_API_KEY)
 

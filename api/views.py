@@ -6,9 +6,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from lol_stats.riotwatcher import riotwatcher
 from lol_stats.lol_stats.settings import riot_api
-from lol_stats.api.models import *
+import lol_stats.api.models
 
 ##Constants
 

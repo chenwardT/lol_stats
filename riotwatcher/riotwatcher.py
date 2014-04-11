@@ -2,6 +2,8 @@ from collections import deque
 import time
 import requests
 
+# This file has been edited since fetching to reflect changes to the Riot API
+
 # Constants
 NORTH_AMERICA = 'na'
 EUROPE_WEST = 'euw'
