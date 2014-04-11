@@ -1,13 +1,12 @@
 import json
-import pytz
 from datetime import datetime, timedelta
 
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 
-from lol_stats.lol_stats.settings import riot_api
-import lol_stats.api.models
+from web.settings import riot_api
+from api.models import *
 
 ##Constants
 

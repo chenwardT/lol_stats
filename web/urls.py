@@ -5,7 +5,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'lol_stats.views.home', name='home'),
+    # url(r'^$', 'web.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^about/', 'api.views.about', name='about'),
 

@@ -13,16 +13,11 @@ import os, sys
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-sys.path.append(os.path.join(PROJECT_ROOT, 'riotwatcher'))
-
+#sys.path.append(os.path.join(PROJECT_ROOT, 'riotwatcher'))
 #print 'PROJECT_ROOT =', PROJECT_ROOT
 
-#print 'sys.path =',
-#for i in sys.path:
-#    print i
-
-from lol_stats.local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
-from lol_stats.riotwatcher import riotwatcher
+from web.local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
+from riotwatcher import riotwatcher
 
 # my Riot API key
 riot_api = riotwatcher.RiotWatcher(RIOT_API_KEY)
@@ -62,9 +57,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'lol_stats.urls'
+ROOT_URLCONF = 'web.urls'
 
-WSGI_APPLICATION = 'lol_stats.wsgi.application'
+WSGI_APPLICATION = 'web.wsgi.application'
 
 
 # Database
