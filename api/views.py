@@ -194,6 +194,7 @@ def update_summoner_spells():
         sum_spell.save()
 
 # get match history of last 10 games, given a summoner ID
+# TODO: use regex to convert JSON attributes (camelCase) to model field names (camel_case)
 #def get_recent_matches(summoner_id):
 #    recent = riot_api.get_recent_games(summoner_id)
 #
@@ -202,3 +203,19 @@ def update_summoner_spells():
 #        game = Game(champion_id=match['championId'],
 #                    create_date=match['createDate'],
 #                    )
+
+def recent_games(request, summoner_name, region):
+    sum_id = summoner_name_to_id(summoner_name, region)
+
+    summoner = Summoner.objects.filter(name__iexact=summoner_name).get(region__iexact=region)
+    games = summoner.game_set.all()
+
+    matches = ()
+    stats = {}  # RawStats (ex. penta_kills, damage dealt, etc)
+    meta_stats = ()  # Game stats (ex. game mode, ip_earned, etc)
+
+    # create a list (matches) of dicts (stats)
+    for g in games:
+        # first fill the dict with a match's stats
+        stats = g.stats.__dict__.copy()
+        meta_stats = g.__dict__.copy()
