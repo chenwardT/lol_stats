@@ -193,7 +193,7 @@ def update_summoner_spells():
                                   description=spells['data'][k]['description'])
         sum_spell.save()
 
-#get match history of last 10 games, given a summoner ID
+# get match history of last 10 games, given a summoner ID
 #def get_recent_matches(summoner_id):
 #    recent = riot_api.get_recent_games(summoner_id)
 #

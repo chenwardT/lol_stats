@@ -63,7 +63,7 @@ class Player(models.Model):
     champion_id = models.ForeignKey(Champion)
     summoner_id = models.ForeignKey(Summoner)
     team_id = models.IntegerField()  # 100, 200
-    participant = models.ForeignKey(Game)
+    participant = models.ForeignKey('Game')
 
 class RawStat(models.Model):
     assists = models.IntegerField()
