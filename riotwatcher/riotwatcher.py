@@ -192,7 +192,7 @@ class RiotWatcher:
 
     def static_get_mastery_list(self, region=None, locale=None, version=None, mastery_list_data=None):
         return self.base_request(
-            'v1/mastery',
+            'v1.2/mastery',
             region,
             static=True,
             locale=locale,

@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^about/', 'api.views.about', name='about'),
 
+    # all api.* routes are purely for testing, in production only web.* routes will probably exist
     # TODO: these regexs are NOT robust
     # this requires a string after summoner_info/ (consider pointing to blank search page when no arg)
     url(r'^summoner_info/(?P<search_str>\w+( \w+)*$)', 'api.views.summoner_info', name='summoner_info'),

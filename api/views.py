@@ -22,8 +22,8 @@ KOREA = 'kr'
 # Cache Duration
 CACHE_SUMMONER = timedelta(seconds=10)
 
+# testing stuff
 def about(request):
-
     me = riot_api.get_summoner(name='ronfar')
 
     my_ranked_stats = riot_api.get_ranked_stats(me['id'])
@@ -31,8 +31,9 @@ def about(request):
     #return HttpResponse("%s" % json.dumps(my_ranked_stats, indent=5, sort_keys=True))
     #return HttpResponse("%s" % my_ranked_stats)
     champs = riot_api.static_get_champion_list()
-    return HttpResponse("%s" % json.dumps(champs, indent=3))
+    return HttpResponse("%s" % json.dumps(my_ranked_stats, indent=3))
 
+# get summoner info from summoner name
 def summoner_info(request, search_str, render_page=True):
     # placeholders for user input
     if not search_str:
@@ -120,6 +121,23 @@ def summoner_name_to_id(summoner_name, region):
 
     return summoner.summoner_id
 
+## convert 1 or more summoner IDs to their summoner name(s)
+## summoner_ids is expected to be a list of 1 or more summoner IDs
+#  ON HOLD FOR NOW
+#  TODO: add cache lookup, and maybe roll into other summoner lookup(s)
+#def summoner_ids_to_name(summoner_ids, search_region):
+#    summoners = riot_api.get_summoners(ids=summoner_ids, region=search_region)
+#
+#    for summoner_dto in summoners:
+#        sum = Summoner(summoner_id=summoner_dto['id'],
+#                            name=summoner_dto['name'],
+#                            profile_icon_id=summoner_dto['profileIconId'],
+#                            revision_date=summoner_dto['revisionDate'],
+#                            summoner_level=summoner_dto['summonerLevel'],
+#                            region=search_region,
+#                            last_update=datetime.now())
+#        sum.save()
+
 # update the cache's list of champions and associated IDs from API
 # TODO: handle versions
 def update_champions():
@@ -129,7 +147,7 @@ def update_champions():
     # delete all champ data in cache
     Champion.objects.all().delete()
 
-    # can this be cleaner/more pythonic?
+    # can this be more pythonic?
     for k in champs['data']:
         champ = Champion(champion_id=champs['data'][k]['id'],
                          title=champs['data'][k]['title'],
@@ -138,7 +156,7 @@ def update_champions():
         champ.save()
     return
 
-# TODO: handle versions (and other weird fields?)
+# TODO: handle version and optional fields
 def update_items():
     items = riot_api.static_get_item_list()
     Item.objects.all().delete()
@@ -161,3 +179,26 @@ def update_items():
                     plain_text=plain_text,
                     group=group)
         item.save()
+
+# TODO: handle version and optional fields
+def update_summoner_spells():
+    spells = riot_api.static_get_summoner_spell_list()
+    SummonerSpell.objects.all().delete()
+
+    for k in spells['data']:
+        sum_spell = SummonerSpell(spell_id=spells['data'][k]['id'],
+                                  summoner_level=spells['data'][k]['summonerLevel'],
+                                  name=spells['data'][k]['name'],
+                                  key=spells['data'][k]['key'],
+                                  description=spells['data'][k]['description'])
+        sum_spell.save()
+
+#get match history of last 10 games, given a summoner ID
+#def get_recent_matches(summoner_id):
+#    recent = riot_api.get_recent_games(summoner_id)
+#
+#    for match in recent['games']:
+#        players
+#        game = Game(champion_id=match['championId'],
+#                    create_date=match['createDate'],
+#                    )
