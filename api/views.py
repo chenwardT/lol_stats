@@ -194,28 +194,77 @@ def update_summoner_spells():
         sum_spell.save()
 
 # get match history of last 10 games, given a summoner ID
-# TODO: use regex to convert JSON attributes (camelCase) to model field names (camel_case)
-#def get_recent_matches(summoner_id):
-#    recent = riot_api.get_recent_games(summoner_id)
-#
-#    for match in recent['games']:
-#        players
-#        game = Game(champion_id=match['championId'],
-#                    create_date=match['createDate'],
-#                    )
+def get_recent_matches(summoner_id, region=NORTH_AMERICA):
+    recent = riot_api.get_recent_games(summoner_id, region)
 
-def recent_games(request, summoner_name, region):
-    sum_id = summoner_name_to_id(summoner_name, region)
+    # requires summoners (as well as all related field values) to be cached before-hand
+    for match in recent['games']:
+        # first fill in the simple stuff
+        game = Game(summoner_id=Summoner.objects.get(summoner_id=summoner_id),
+                    champion_id=Champion.objects.get(champion_id=match['championId']),
+                    create_date=match['createDate'],
+                    game_id=match['gameId'],
+                    game_mode=match['gameMode'],
+                    invalid=match['invalid'],
+                    ip_earned=match['ipEarned'],
+                    level=match['level'],
+                    map_id=match['mapId'],
+                    spell_1=SummonerSpell.objects.get(spell_id=match['spell1']),
+                    spell_2=SummonerSpell.objects.get(spell_id=match['spell2']),
+                    sub_type=match['subType'],
+                    team_id=match['teamId'])
+
+        # Here we check if a stat exists (e.g. won't exist if 0), if so, add to RawStat object
+        # TODO: use regex to convert JSON attributes (camelCase) to model field names (camel_case)
+        # for now, we just get some guaranteed stats
+        stats = RawStat(gold=match['stats']['gold'],
+                        level=match['stats']['level'],
+                        time_played=match['stats']['timePlayed'],
+                        win=match['stats']['win'])
+        stats.save()
+
+        # if there were any other plays in this match
+        if 'fellowPlayers' in match:
+            for p in match['fellowPlayers']:
+
+                # get fellow players into cache first, b/c we relate their Summoner objects here
+                summoner_info(search_str=p[])
+                player = Player(champion=Champion.objects.get(champion_id=p['championId']),
+                                summoner=Summoner.objects.get)
+
+# TODO: RESUME FROM HERE
+# retrieve summoner info from API
+def summoner_info_by_id(summoner_id, region=NORTH_AMERICA):
+    sum = riot_api.get_summoner(id=summoner_id, region=region)
+
+
+def recent_games(request, summoner_name, region=NORTH_AMERICA):
+    #sum_id = summoner_name_to_id(summoner_name, region)
 
     summoner = Summoner.objects.filter(name__iexact=summoner_name).get(region__iexact=region)
     games = summoner.game_set.all()
 
-    matches = ()
-    stats = {}  # RawStats (ex. penta_kills, damage dealt, etc)
-    meta_stats = ()  # Game stats (ex. game mode, ip_earned, etc)
+    matches = []
 
     # create a list (matches) of dicts (stats)
     for g in games:
-        # first fill the dict with a match's stats
+        stats = {}  # RawStats (ex. penta_kills, damage dealt, etc)
+        meta_stats = {}  # Game stats (ex. game mode, ip_earned, etc)
+        players = []  # Participating players
+
+        # fill the dicts with the match info
         stats = g.stats.__dict__.copy()
         meta_stats = g.__dict__.copy()
+
+        for i in g.player_set.all():
+            players.append(i)
+
+        # insert a dict of the stats into the match list
+        #matches.append({'stats': stats, 'meta_stats': meta_stats, 'players': players})
+        #matches.append({'stats': g.stats
+
+    print 'Recent matches found for {}: {}'.format(summoner_name, len(matches))
+
+    print 'matches: {}\nsummoner:{}'.format(matches, summoner)
+
+    return render(request, 'match_history.html', {'matches': matches, 'summoner': summoner, 'games': games})

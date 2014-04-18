@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     # TODO: these regexs are NOT robust
     # this requires a string after summoner_info/ (consider pointing to blank search page when no arg)
     url(r'^summoner_info/(?P<search_str>\w+( \w+)*$)', 'api.views.summoner_info', name='summoner_info'),
-
+    url(r'^recent/(?P<summoner_name>\w+( \w+)*$)', 'api.views.recent_games', name='recent_games'),
     url(r'^admin/', include(admin.site.urls)),
 
 )

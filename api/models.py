@@ -60,13 +60,13 @@ class SummonerSpell(models.Model):
 #
 
 class Player(models.Model):
-    champion_id = models.ForeignKey(Champion)
-    summoner_id = models.ForeignKey(Summoner)
+    champion = models.ForeignKey(Champion)
+    summoner = models.ForeignKey(Summoner)
     team_id = models.IntegerField()  # 100, 200
     participant = models.ForeignKey('Game')
 
     def __str__(self):
-        return '{str.summoner_id} on {str.champion_id} (Team {str.team_id})'.format(str=self)
+        return '{str.summoner} on {str.champion} (Team {str.team_id})'.format(str=self)
 
 class RawStat(models.Model):
     assists = models.IntegerField(blank=True, null=True)
@@ -123,7 +123,7 @@ class RawStat(models.Model):
     summon_spell_1_cast = models.IntegerField(blank=True, null=True)
     summon_spell_2_cast = models.IntegerField(blank=True, null=True)
     super_monster_killed = models.IntegerField(blank=True, null=True)
-    team = models.IntegerField(blank=True, null=True)
+    team = models.IntegerField(blank=True, null=True)  # redundant due to Game.team_id
     team_objective = models.IntegerField(blank=True, null=True)
     time_played = models.IntegerField(blank=True, null=True)
     total_damage_dealt = models.IntegerField(blank=True, null=True)
@@ -172,4 +172,4 @@ class Game(models.Model):
     team_id = models.IntegerField()
 
     def __str__(self):
-        return '{str.summoner_id} on {str.champion_id} ({str.game_id})'.format(str=self)
+        return '{str.summoner_id} on {str.champion_id} (Team {str.team_id})'.format(str=self)
