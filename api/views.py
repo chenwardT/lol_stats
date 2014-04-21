@@ -98,6 +98,30 @@ def summoner_info(request, search_str, render_page=True):
     else:
         return
 
+# get 1 or more summoner DTOs from API, put into cache
+# max summoners per request is 40
+def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
+    summoners = riot_api.get_summoners(names=None,ids=summoner_ids, region=region)
+
+    num_sums = 0
+
+    for i, e in enumerate(summoners):
+        summoner = Summoner()
+        summoner.summoner_id=summoners[e]['id']
+        summoner.name=summoners[e]['name']
+        summoner.profile_icon_id=summoners[e]['profileIconId']
+        summoner.revision_date=summoners[e]['revisionDate']
+        summoner.summoner_level=summoners[e]['summonerLevel']
+        summoner.region=region
+        summoner.last_update=datetime.now()
+        summoner.save()
+
+        num_sums = i
+
+    print 'Cached {} summoner DTOs'.format(num_sums + 1)  # add 1 b/c 0 indexing
+
+    return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
+
 def champion_list(request):
     champs = riot_api.static_get_champion_list()
 
@@ -147,7 +171,7 @@ def update_champions():
     # delete all champ data in cache
     Champion.objects.all().delete()
 
-    # can this be more pythonic?
+    # can this be more pythonic? why doesn't ex. k['id'] work?
     for k in champs['data']:
         champ = Champion(champion_id=champs['data'][k]['id'],
                          title=champs['data'][k]['title'],
@@ -223,16 +247,15 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                         win=match['stats']['win'])
         stats.save()
 
-        # if there were any other plays in this match
-        if 'fellowPlayers' in match:
-            for p in match['fellowPlayers']:
+        ## if there were any other plays in this match
+        #if 'fellowPlayers' in match:
+        #    for p in match['fellowPlayers']:
+        #
+        #        # get fellow players into cache first, b/c we relate their Summoner objects here
+        #        summoner_info(search_str=p[])
+        #        player = Player(champion=Champion.objects.get(champion_id=p['championId']),
+        #                        summoner=Summoner.objects.get)
 
-                # get fellow players into cache first, b/c we relate their Summoner objects here
-                summoner_info(search_str=p[])
-                player = Player(champion=Champion.objects.get(champion_id=p['championId']),
-                                summoner=Summoner.objects.get)
-
-# TODO: RESUME FROM HERE
 # retrieve summoner info from API
 def summoner_info_by_id(summoner_id, region=NORTH_AMERICA):
     sum = riot_api.get_summoner(id=summoner_id, region=region)

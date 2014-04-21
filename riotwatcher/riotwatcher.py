@@ -137,15 +137,16 @@ class RiotWatcher:
         ),
                          params=args
         )
+        #print 'RIOTWATCHER URL: {}'.format(r.url)
         if not static:
             for lim in self.limits:
                 lim.add_request()
         raise_status(r)
         return r.json()
 
-    # champion-v1.1
+    # champion-v1.2
     def get_all_champions(self, region=None, free_to_play=False):
-        return self.base_request('v1.1/champion', region, freeToPlay=free_to_play)
+        return self.base_request('v1.2/champion', region, freeToPlay=free_to_play)
 
     # game-v1.3
     def get_recent_games(self, summoner_id, region=None):
@@ -161,7 +162,7 @@ class RiotWatcher:
     def get_challenger(self, region=None, queue=solo_queue):
         return self.base_request('v2.3/league/challenger', region, type=queue)
 
-    # lol-static-data-v1.2 UPDATED
+    # lol-static-data-v1.2
     def static_get_champion_list(self, region=None, locale=None, version=None, champ_data=None):
         return self.base_request('v1.2/champion', region, static=True, locale=locale, version=version,
                                  champData=champ_data)
@@ -261,24 +262,24 @@ class RiotWatcher:
             season='SEASON{}'.format(season) if season is not None else None
         )
 
-    # summoner-v1.3
+    # summoner-v1.4
     def get_mastery_pages(self, summoner_ids, region=None):
         return self.base_request(
-            'v1.3/summoner/{summoner_ids}/masteries'.format(summoner_ids=','.join([str(s) for s in summoner_ids])),
+            'v1.4/summoner/{summoner_ids}/masteries'.format(summoner_ids=','.join([str(s) for s in summoner_ids])),
             region
         )
 
     def get_rune_pages(self, summoner_ids, region=None):
         return self.base_request(
-            'v1.3/summoner/{summoner_ids}/runes'.format(summoner_ids=','.join([str(s) for s in summoner_ids])),
+            'v1.4/summoner/{summoner_ids}/runes'.format(summoner_ids=','.join([str(s) for s in summoner_ids])),
             region
         )
 
     def get_summoners(self, names=None, ids=None, region=None):
         if (names is None) != (ids is None):
             return self.base_request(
-                'v1.3/summoner/by-name/{summoner_names}'.format(summoner_names=','.join(names)) if names is not None
-                else 'v1.3/summoner/{summoner_ids}'.format(summoner_ids=','.join([str(i) for i in ids])),
+                'v1.4/summoner/by-name/{summoner_names}'.format(summoner_names=','.join(names)) if names is not None
+                else 'v1.4/summoner/{summoner_ids}'.format(summoner_ids=','.join([str(i) for i in ids])),
                 region
             )
         else:
@@ -294,7 +295,7 @@ class RiotWatcher:
 
     def get_summoner_name(self, summoner_ids, region=None):
         return self.base_request(
-            'v1.3/summoner/{summoner_ids}/name'.format(summoner_ids=','.join([str(s) for s in summoner_ids])),
+            'v1.4/summoner/{summoner_ids}/name'.format(summoner_ids=','.join([str(s) for s in summoner_ids])),
             region
         )
 

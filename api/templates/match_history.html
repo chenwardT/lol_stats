@@ -8,8 +8,9 @@
 
 Data for Summoner: {{summoner}}<br><br>
 
-<h3>Participants</h3>
 {% for g in games %}
+    <h2>Game {{forloop.counter0}}</h2>
+    <h3>Participants</h3>
     {{g}}<br>
     {% for p in g.player_set.all %}
         {{p}}<br>
