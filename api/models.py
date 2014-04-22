@@ -102,7 +102,7 @@ class RawStat(models.Model):
     neutral_minions_killed = models.IntegerField(blank=True, null=True)
     neutral_minions_killed_enemy_jungle = models.IntegerField(blank=True, null=True)
     neutral_minions_killed_your_jungle = models.IntegerField(blank=True, null=True)
-    nexus_killed = models.BooleanField()  # Flag specifying if the summoner got the killing blow on the nexus.
+    nexus_killed = models.NullBooleanField(blank=True, null=True)  # Flag specifying if the summoner got the killing blow on the nexus.
     node_capture = models.IntegerField(blank=True, null=True)
     node_capture_assist = models.IntegerField(blank=True, null=True)
     node_neutralize = models.IntegerField(blank=True, null=True)
@@ -144,10 +144,10 @@ class RawStat(models.Model):
     vision_wards_bought = models.IntegerField(blank=True, null=True)
     ward_killed = models.IntegerField(blank=True, null=True)
     ward_placed = models.IntegerField(blank=True, null=True)
-    win = models.BooleanField()  # Flag specifying whether or not this game was won.
+    win = models.NullBooleanField(blank=True, null=True)  # Flag specifying whether or not this game was won.
 
-    #def __str__(self):
-    #    return 'Stats for ({self.'
+    def __str__(self):
+        return 'Stats for {}'.format(Game.objects.get(stats=self))
 
     def __iter__(self):
         for i in self._meta.get_all_field_names():

@@ -22,6 +22,12 @@ KOREA = 'kr'
 # Cache Duration
 CACHE_SUMMONER = timedelta(seconds=10)
 
+# yield successive n-sized chunks from l
+# l must be a list
+def chunks(l, n):
+    for i in xrange(0, len(l), n):
+        yield l[i:i+n]
+
 # testing stuff
 def about(request):
     me = riot_api.get_summoner(name='ronfar')
@@ -219,12 +225,47 @@ def update_summoner_spells():
 
 # get match history of last 10 games, given a summoner ID
 def get_recent_matches(summoner_id, region=NORTH_AMERICA):
+    MAX_IDS = 40  # number of summoner IDs that can be fed to get_summoners()
     recent = riot_api.get_recent_games(summoner_id, region)
 
-    # requires summoners (as well as all related field values) to be cached before-hand
+    # first make a set of summonerIds to get into cache
+    unique_players = set()
+
+    for g in recent['games']:
+        for p in g['fellowPlayers']:
+            unique_players.add(p['summonerId'])  # this ensures we do not have duplicates
+
+    player_list = list(unique_players)  # make a list of the set, so we can call chunks() on it
+    player_list.append(summoner_id)  # add the summoner who's history we're looking for
+
+    # remove summonerIDs that we already have in the cache
+    for i in player_list:
+        if len(Summoner.objects.filter(region=region).filter(summoner_id=i)):
+            player_list.remove(i)
+
+    query_list = list(chunks(player_list, MAX_IDS))  # query_list now holds a list of at most MAX_ID elements, to feed API
+
+    # now ask the API for info on summoners, at most 40 at a time
+    summoner_dto = []
+    for i in query_list:
+        summoner_dto.append(riot_api.get_summoners(ids=i))
+
+    # now put those summoner DTOs in the cache
+    for chunk in summoner_dto:
+        for player in chunk:
+            summoner = Summoner(summoner_id=chunk[player]['id'],
+                                name=chunk[player]['name'],
+                                profile_icon_id=chunk[player]['profileIconId'],
+                                revision_date=chunk[player]['revisionDate'],
+                                summoner_level=chunk[player]['summonerLevel'],
+                                region=region,
+                                last_update=datetime.now())
+            summoner.save()
+
+    # requires summoners (as well as all related field values) to be cached before-hand (summoner caching done above)
     for match in recent['games']:
         # first fill in the simple stuff
-        game = Game(summoner_id=Summoner.objects.get(summoner_id=summoner_id),
+        game = Game(summoner_id=Summoner.objects.filter(region=region).get(summoner_id=summoner_id),
                     champion_id=Champion.objects.get(champion_id=match['championId']),
                     create_date=match['createDate'],
                     game_id=match['gameId'],
@@ -239,22 +280,25 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                     team_id=match['teamId'])
 
         # Here we check if a stat exists (e.g. won't exist if 0), if so, add to RawStat object
+        # for now, we just get some guaranteed to exist fields
         # TODO: use regex to convert JSON attributes (camelCase) to model field names (camel_case)
-        # for now, we just get some guaranteed stats
-        stats = RawStat(gold=match['stats']['gold'],
+        stats = RawStat(gold_earned=match['stats']['goldEarned'],
                         level=match['stats']['level'],
                         time_played=match['stats']['timePlayed'],
                         win=match['stats']['win'])
         stats.save()
 
-        ## if there were any other plays in this match
-        #if 'fellowPlayers' in match:
-        #    for p in match['fellowPlayers']:
-        #
-        #        # get fellow players into cache first, b/c we relate their Summoner objects here
-        #        summoner_info(search_str=p[])
-        #        player = Player(champion=Champion.objects.get(champion_id=p['championId']),
-        #                        summoner=Summoner.objects.get)
+        game.stats = stats
+        game.save()
+
+        if 'fellowPlayers' in match:
+            for p in match['fellowPlayers']:
+                player = Player(champion=Champion.objects.get(champion_id=p['championId']),
+                                summoner=Summoner.objects.filter(region=region).get(summoner_id=p['summonerId']),
+                                team_id=p['teamId'],
+                                participant=game)
+                player.save()
+
 
 # retrieve summoner info from API
 def summoner_info_by_id(summoner_id, region=NORTH_AMERICA):
@@ -264,6 +308,7 @@ def summoner_info_by_id(summoner_id, region=NORTH_AMERICA):
 def recent_games(request, summoner_name, region=NORTH_AMERICA):
     #sum_id = summoner_name_to_id(summoner_name, region)
 
+    get_recent_matches(summoner_name_to_id(summoner_name, region),region)
     summoner = Summoner.objects.filter(name__iexact=summoner_name).get(region__iexact=region)
     games = summoner.game_set.all()
 

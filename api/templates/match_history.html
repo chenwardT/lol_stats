@@ -9,7 +9,7 @@
 Data for Summoner: {{summoner}}<br><br>
 
 {% for g in games %}
-    <h2>Game {{forloop.counter0}}</h2>
+    <h2>Game {{forloop.counter0|add:"1"}}</h2>
     <h3>Participants</h3>
     {{g}}<br>
     {% for p in g.player_set.all %}
