@@ -28,6 +28,13 @@ def chunks(l, n):
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
 
+# debug: clear all DB objects related to recent match history
+def reset_recent():
+    Summoner.objects.all().delete()
+    Player.objects.all().delete()
+    RawStat.objects.all().delete()
+    Game.objects.all().delete()
+
 # testing stuff
 def about(request):
     me = riot_api.get_summoner(name='ronfar')
@@ -50,27 +57,27 @@ def summoner_info(request, search_str, render_page=True):
     try:
         summoner = Summoner.objects.filter(region=search_region).get(name__iexact=search_str)
         summoner_known = True
-        print 'cache HIT for summoner search: {str}'.format(str=search_str)
+        print u'cache HIT for summoner search: {str}'.format(str=search_str)
     except ObjectDoesNotExist:  # no matching summoner found in DB
         summoner_known = False
-        print 'cache MISS for summoner search: {str}'.format(str=search_str)
+        print u'cache MISS for summoner search: {str}'.format(str=search_str)
 
     # if we already know about this summoner
     if summoner_known:
-        print 'cache entry age: {age}'.format(age=str(datetime.now() - summoner.last_update))
+        print u'cache entry age: {age}'.format(age=str(datetime.now() - summoner.last_update))
 
         # and it's cache time hasn't expired
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
             # give the cached info
-            print 'cache FRESH for summoner: {str}'.format(str=summoner.name)
+            print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
             #return HttpResponse("%s" % summoner.name)
 
         # cached summoner exists, but needs updating
         else:
             # TODO: Need to do API error checking here
-            print 'cache STALE for summoner: {str}'.format(str=summoner.name)
+            print u'cache STALE for summoner: {str}'.format(str=summoner.name)
             summoner_dto = riot_api.get_summoner(name=search_str.replace(' ',''), region=search_region)
-            print 'received summoner dto:', summoner_dto
+            print u'received summoner dto:', summoner_dto
 
             summoner.summoner_id=summoner_dto['id']
             summoner.name=summoner_dto['name']
@@ -80,14 +87,14 @@ def summoner_info(request, search_str, render_page=True):
             summoner.region=search_region
             summoner.last_update=datetime.now()
 
-            print 'cache UPDATING entry for: {str}'.format(str=summoner.name)
+            print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
             summoner.save()
 
     # we don't have this summoner in the cache, so grab it from API and create new entry
     else:
-        print 'querying API for new summoner: {str}'.format(str=search_str)
+        print u'querying API for new summoner: {str}'.format(str=search_str)
         summoner_dto = riot_api.get_summoner(name=search_str.replace(' ',''), region=search_region)
-        print 'API result:', summoner_dto
+        print u'API result:', summoner_dto
 
         # TODO: Need to do API error checking here
         summoner = Summoner(summoner_id=summoner_dto['id'],
@@ -224,16 +231,29 @@ def update_summoner_spells():
         sum_spell.save()
 
 # get match history of last 10 games, given a summoner ID
+# TODO: check DB for
 def get_recent_matches(summoner_id, region=NORTH_AMERICA):
     MAX_IDS = 40  # number of summoner IDs that can be fed to get_summoners()
     recent = riot_api.get_recent_games(summoner_id, region)
 
-    # first make a set of summonerIds to get into cache
+    # first make a set of summonerIds to get into cache (a set cannot have duplicate entries)
     unique_players = set()
-
     for g in recent['games']:
         for p in g['fellowPlayers']:
-            unique_players.add(p['summonerId'])  # this ensures we do not have duplicates
+            unique_players.add(p['summonerId'])
+
+    # now we take note of any summoner IDs we already have cached
+    to_remove = set()
+    for p in unique_players:
+        try:
+            Summoner.objects.get(summoner_id=p)
+            to_remove.add(p)
+        except:
+            print 'Will retrieve new summoner info ({})'.format(p)
+
+    # remove the summoner IDs from the working set
+    for p in to_remove:
+        unique_players.remove(p)
 
     player_list = list(unique_players)  # make a list of the set, so we can call chunks() on it
     player_list.append(summoner_id)  # add the summoner who's history we're looking for

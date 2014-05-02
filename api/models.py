@@ -12,7 +12,7 @@ class Summoner(models.Model):
     last_update = models.DateTimeField()
 
     def __str__(self):
-        return '{str.name}'.format(str=self)
+        return u'{}'.format(self.name)
 
 class Champion(models.Model):
     champion_id = models.IntegerField()
@@ -21,7 +21,7 @@ class Champion(models.Model):
     key = models.CharField(max_length=32)
 
     def __str__(self):
-        return '{str.name}'.format(str=self)
+        return u'{str.name}'.format(str=self)
 
 class Item(models.Model):
     item_id = models.IntegerField()
@@ -31,7 +31,7 @@ class Item(models.Model):
     group = models.CharField(max_length=32, blank=True, null=True)
 
     def __str__(self):
-        return '{str.name}'.format(str=self)
+        return u'{str.name}'.format(str=self)
 
 class SummonerSpell(models.Model):
     spell_id = models.IntegerField()
@@ -41,7 +41,7 @@ class SummonerSpell(models.Model):
     description = models.CharField(max_length=256)
 
     def __str__(self):
-        return '{str.name}'.format(str=self)
+        return u'{str.name}'.format(str=self)
 
 ## placeholder
 #class Mastery(models.Model):
@@ -66,7 +66,7 @@ class Player(models.Model):
     participant = models.ForeignKey('Game')
 
     def __str__(self):
-        return '{str.summoner} on {str.champion} (Team {str.team_id})'.format(str=self)
+        return u'{str.summoner} on {str.champion} (Team {str.team_id})'.format(str=self)
 
 class RawStat(models.Model):
     assists = models.IntegerField(blank=True, null=True)
@@ -147,7 +147,7 @@ class RawStat(models.Model):
     win = models.NullBooleanField(blank=True, null=True)  # Flag specifying whether or not this game was won.
 
     def __str__(self):
-        return 'Stats for {}'.format(Game.objects.get(stats=self))
+        return u'Stats for {}'.format(Game.objects.get(stats=self))
 
     def __iter__(self):
         for i in self._meta.get_all_field_names():
@@ -172,4 +172,4 @@ class Game(models.Model):
     team_id = models.IntegerField()
 
     def __str__(self):
-        return '{str.summoner_id} on {str.champion_id} (Team {str.team_id})'.format(str=self)
+        return u'{str.summoner_id.name} on {str.champion_id} (Team {str.team_id}) [GID: {str.game_id}]'.format(str=self)
