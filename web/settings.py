@@ -94,3 +94,7 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    "D:/django_projects/lol_proj/lol_stats/static",
+)

@@ -13,7 +13,7 @@ Data for Summoner: {{summoner}}<br><br>
     <h3>Participants</h3>
     {{g}}<br>
     {% for p in g.player_set.all %}
-        {{p.summoner.name}}<br>
+        {{ p.summoner.name }} on {{ p.champion }} (Team {{ p.team_id }})<br>
     {% endfor %}
 
     <h3>Meta Stats</h3>

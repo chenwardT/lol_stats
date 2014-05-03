@@ -356,3 +356,19 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
     print 'matches: {}\nsummoner:{}'.format(matches, summoner)
 
     return render(request, 'match_history.html', {'matches': matches, 'summoner': summoner, 'games': games})
+
+def ajax_summoner_info(request, summoner_id):
+    try:
+        summoner = Summoner.objects.get(summoner_id=summoner_id)
+    except:
+        print 'Summoner ID {} not cached!'.format(summoner_id)
+
+    context = {'summoner_id': summoner.summoner_id,
+               'name': summoner.name,
+               'profile_icon_id': summoner.name,
+               'revision_data': summoner.revision_date,
+               'summoner_level': summoner.summoner_level,
+               'region': summoner.revision_date,
+               'last_update': summoner.last_update}
+
+    return render(request, 'ajax_summoner_info.html', context)

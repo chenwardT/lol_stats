@@ -12,7 +12,7 @@ class Summoner(models.Model):
     last_update = models.DateTimeField()
 
     def __str__(self):
-        return u'{}'.format(self.name)
+        return u'{str.name}'.format(str=self)
 
 class Champion(models.Model):
     champion_id = models.IntegerField()
