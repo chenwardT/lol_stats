@@ -13,11 +13,13 @@ Currently, this is a educational project whose immediate benefit is familiarizin
 
         * `RiotWatcher` makes use of the `requests` library
 
-- asynchronous tasks -- waiting on the API response takes time, so async website design is necessary
+- asynchronous tasks
 
-    + backend work to be achieved via Celery distributed task queue
+    + waiting on the API response takes time, so async website design is necessary
 
-    + frontend async will be implemented as AJAX calls via jQuery
+        * backend work to be achieved via Celery distributed task queue
+
+        * frontend async will be implemented as AJAX calls via jQuery
 
 - caching to prevent unnecessary API requests
 
