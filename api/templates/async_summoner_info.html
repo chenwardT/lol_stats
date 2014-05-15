@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+    <head>
+        <title>AJAX Summoner Info</title>
+    </head>
+    <body>
+        {% csrf_token %}
+        <a href="#" id="go">Go!</a>
+
+        <span id="summoner_id" data-to-query="299878"></span>
+
+        <div id="summoner">
+            <ul id="summoner_properties">
+                <li id="summoner_id">Test ID</li>
+                <li id="name">Test Name</li>
+                <li id="profile_icon_id"></li>
+                <li id="revision_date"></li>
+                <li id="summoner_level"></li>
+                <li id="last_update"></li>
+            </ul>
+        </div>
+
+        <script src="{% static "js/jquery-2.1.0.js" %}"></script>
+        <script>
+            $(function() {
+                console.log( "ready!" );
+
+                // using jQuery to get CSRF token via cookie
+                function getCookie(name) {
+                    var cookieValue = null;
+                    if (document.cookie && document.cookie != '') {
+                        var cookies = document.cookie.split(';');
+                        for (var i = 0; i < cookies.length; i++) {
+                            var cookie = jQuery.trim(cookies[i]);
+                            // Does this cookie string begin with the name we want?
+                            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                var csrftoken = getCookie('csrftoken');
+
+                function csrfSafeMethod(method) {
+                    // these HTTP methods do not require CSRF protection
+                    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                }
+                $.ajaxSetup({
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        if (!csrfSafeMethod(settings.type)) {
+                            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+
+                $("#summoner_properties").hide();
+
+                $("#go").click(function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    var sum_id = $("#summoner_id").data("to-query");
+
+                    //console.log(sum_id);
+
+                    $.ajax({
+                       type: "POST",
+                       url: "{% url 'api.views.ajax_summoner_info' %}",
+                       data: { summoner_id: sum_id,
+                               csrfmiddlewaretoken: csrftoken }
+                    }).done(function( data ) {
+                                var sum_info = data[0].fields;
+                                console.log(sum_info);
+                                $("li#summoner_id").text(sum_id);
+                                $("li#name").text(sum_info.name);
+                                $("li#profile_icon_id").text(sum_info.profile_icon_id);
+                                $("li#revision_date").text(sum_info.revision_date);
+                                $("li#summoner_level").text(sum_info.summoner_level);
+                                $("li#last_update").text(sum_info.last_update);
+                                $("#summoner_properties").show('fast');
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

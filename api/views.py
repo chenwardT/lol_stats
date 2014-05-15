@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.core import serializers
 
 from web.settings import riot_api
 from api.models import *
@@ -135,6 +136,7 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
 
     return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
 
+# testing
 def champion_list(request):
     champs = riot_api.static_get_champion_list()
 
@@ -357,18 +359,21 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
 
     return render(request, 'match_history.html', {'matches': matches, 'summoner': summoner, 'games': games})
 
-def ajax_summoner_info(request, summoner_id):
+def async_summoner_info(request):
+
+    return render(request, 'async_summoner_info.html')
+
+def ajax_summoner_info(request):
+
+    #print 'AJAX summoner id: {}'.format(summoner_id)
+    #print request
+
+    print 'AJAX summoner id: {}'.format(request.POST.get('summoner_id'))
+
+    #if request.is_ajax():
     try:
-        summoner = Summoner.objects.get(summoner_id=summoner_id)
+        response_data = serializers.serialize('json', Summoner.objects.filter(summoner_id=request.POST.get('summoner_id')))
     except:
-        print 'Summoner ID {} not cached!'.format(summoner_id)
+        print 'Summoner ID {} not cached!'.format(request.POST.get('summoner_id'))
 
-    context = {'summoner_id': summoner.summoner_id,
-               'name': summoner.name,
-               'profile_icon_id': summoner.name,
-               'revision_data': summoner.revision_date,
-               'summoner_level': summoner.summoner_level,
-               'region': summoner.revision_date,
-               'last_update': summoner.last_update}
-
-    return render(request, 'ajax_summoner_info.html', context)
+    return HttpResponse(response_data, content_type='application/json')
