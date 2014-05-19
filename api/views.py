@@ -293,6 +293,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                     create_date=match['createDate'],
                     game_id=match['gameId'],
                     game_mode=match['gameMode'],
+                    game_type=match['gameType'],
                     invalid=match['invalid'],
                     ip_earned=match['ipEarned'],
                     level=match['level'],
@@ -305,7 +306,6 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
         stats = RawStat()
 
         # Here we add stats that were returned (only stats that aren't None or 0 will be returned by API)
-        # and add them to the stat obj
         for i in match['stats']:
             setattr(stats, inflection.underscore(i), match['stats'][i])
 
