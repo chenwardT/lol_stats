@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timedelta
 
+import inflection
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -44,7 +45,7 @@ def about(request):
 
     #return HttpResponse("%s" % json.dumps(my_ranked_stats, indent=5, sort_keys=True))
     #return HttpResponse("%s" % my_ranked_stats)
-    champs = riot_api.static_get_champion_list()
+    #champs = riot_api.static_get_champion_list()
     return HttpResponse("%s" % json.dumps(my_ranked_stats, indent=3))
 
 # get summoner info from summoner name
@@ -143,7 +144,7 @@ def champion_list(request):
     return HttpResponse("%s" % json.dumps(champs, indent=3))
 
 # convert summoner name to summoner ID via cache lookup, otherwise API call
-def summoner_name_to_id(summoner_name, region):
+def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
         print 'cache match FOUND for {str}'.format(str=summoner_name)
@@ -301,18 +302,20 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                     sub_type=match['subType'],
                     team_id=match['teamId'])
 
-        # Here we check if a stat exists (e.g. won't exist if 0), if so, add to RawStat object
-        # for now, we just get some guaranteed to exist fields
-        # TODO: use regex to convert JSON attributes (camelCase) to model field names (camel_case)
-        stats = RawStat(gold_earned=match['stats']['goldEarned'],
-                        level=match['stats']['level'],
-                        time_played=match['stats']['timePlayed'],
-                        win=match['stats']['win'])
+        stats = RawStat()
+
+        # Here we add stats that were returned (only stats that aren't None or 0 will be returned by API)
+        # and add them to the stat obj
+        for i in match['stats']:
+            setattr(stats, inflection.underscore(i), match['stats'][i])
+
         stats.save()
 
+        # associate the RawStat object with this game
         game.stats = stats
         game.save()
 
+        # associate each Player object with this game
         if 'fellowPlayers' in match:
             for p in match['fellowPlayers']:
                 player = Player(champion=Champion.objects.get(champion_id=p['championId']),

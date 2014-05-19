@@ -149,9 +149,11 @@ class RawStat(models.Model):
     def __str__(self):
         return u'Stats for {}'.format(Game.objects.get(stats=self))
 
+    # generator that returns tuple of field and val is val is not None
     def __iter__(self):
         for i in self._meta.get_all_field_names():
-            yield (i, getattr(self, i))
+            if getattr(self, i) is not None:
+                yield (i, getattr(self, i))
 
 # FellowPlayer instances point to this to allow reverse-querying of participants
 class Game(models.Model):
