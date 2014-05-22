@@ -247,7 +247,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
 
     player_list = list(unique_players)  # make a list of the set, so we can call chunks() on it
 
-    pprint.pprint(sorted(player_list))
+    #pprint.pprint(sorted(player_list))
 
     # don't forget, we have to check for the summoner ID whose history we're examining as well!
     try:
@@ -309,7 +309,8 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                     spell_1=SummonerSpell.objects.get(spell_id=match['spell1']),
                     spell_2=SummonerSpell.objects.get(spell_id=match['spell2']),
                     sub_type=match['subType'],
-                    team_id=match['teamId'])
+                    team_id=match['teamId'],
+                    region=region)
 
         stats = RawStat()
 
@@ -321,16 +322,28 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
 
         # associate the RawStat object with this game
         game.stats = stats
-        game.save()
 
-        # associate each Player object with this game
-        if 'fellowPlayers' in match:
-            for p in match['fellowPlayers']:
-                player = Player(champion=Champion.objects.get(champion_id=p['championId']),
-                                summoner=Summoner.objects.filter(region=region).get(summoner_id=p['summonerId']),
-                                team_id=p['teamId'],
-                                participant=game)
-                player.save()
+        game_saved = False
+
+        # Ensures no dupes of Game (or any related objects).
+        try:
+            game.save()
+            game_saved = True
+        except IntegrityError:
+            pass
+
+        # if game saved, we're good and just need to add the participating players
+        if game_saved:
+            # associate each Player object with this game
+            if 'fellowPlayers' in match:
+                for p in match['fellowPlayers']:
+                    player = Player(champion=Champion.objects.get(champion_id=p['championId']),
+                                    summoner=Summoner.objects.filter(region=region).get(summoner_id=p['summonerId']),
+                                    team_id=p['teamId'],
+                                    participant=game)
+                    player.save()
+        else:  # if it didn't save, we can get rid of the stats object too.
+            stats.delete()
 
 def recent_games(request, summoner_name, region=NORTH_AMERICA):
     #sum_id = summoner_name_to_id(summoner_name, region)
@@ -338,8 +351,6 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
     get_recent_matches(summoner_name_to_id(summoner_name, region), region)
     summoner = Summoner.objects.filter(name__iexact=summoner_name).get(region__iexact=region)
     games = summoner.game_set.all()
-
-    matches = []
 
     # create a list (matches) of dicts (stats)
     for g in games:
@@ -361,7 +372,7 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
     print 'Recent matches found for {}: {}'.format(summoner_name, len(games))
     #print 'matches: {}\nsummoner:{}'.format(matches, summoner)
 
-    return render(request, 'match_history.html', {'matches': matches, 'summoner': summoner, 'games': games})
+    return render(request, 'match_history.html', {'summoner': summoner, 'games': games})
 
 def async_summoner_info(request):
 

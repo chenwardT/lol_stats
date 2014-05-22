@@ -177,6 +177,10 @@ class Game(models.Model):
     stats = models.OneToOneField(RawStat)
     sub_type = models.CharField(max_length=24)
     team_id = models.IntegerField()
+    region = models.CharField(max_length=4)
 
     def __str__(self):
         return u'{str.summoner_id.name} on {str.champion_id} (Team {str.team_id}) [GID: {str.game_id}]'.format(str=self)
+
+    class Meta:
+        unique_together = ('region', 'game_id', 'summoner_id')
