@@ -16,6 +16,9 @@ class Summoner(models.Model):
     def __str__(self):
         return u'{str.name}'.format(str=self)
 
+    class Meta:
+        unique_together = ('summoner_id', 'region')
+
 class Champion(models.Model):
     champion_id = models.IntegerField()
     title = models.CharField(max_length=32)

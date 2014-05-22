@@ -5,6 +5,7 @@ import inflection
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
 from django.core import serializers
 
 from web.settings import riot_api
@@ -282,7 +283,15 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                                 summoner_level=chunk[player]['summonerLevel'],
                                 region=region,
                                 last_update=datetime.now())
-            summoner.save()
+
+            # Sometimes requests will go out synchronously for the same summoner.
+            # This means the cache is not hit and a double query for a single summoner occurs.
+            # Duplicate summoners are prevented via the unique_together constraint on summoner_id and region,
+            # which will throw IntegrityError and prevent the dupe from being made.
+            try:
+                summoner.save()
+            except IntegrityError:
+                pass
 
     # requires summoners (as well as all related field values) to be cached before-hand (summoner caching done above)
     for match in recent['games']:
