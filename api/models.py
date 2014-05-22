@@ -1,4 +1,4 @@
-import inflection
+import inflection, time
 
 from django.db import models
 
@@ -181,6 +181,9 @@ class Game(models.Model):
 
     def __str__(self):
         return u'{str.summoner_id.name} on {str.champion_id} (Team {str.team_id}) [GID: {str.game_id}]'.format(str=self)
+
+    def create_date_str(self):
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.create_date/1000))
 
     class Meta:
         unique_together = ('region', 'game_id', 'summoner_id')
