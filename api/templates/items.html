@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+{% for i in items %}
+    {{ i.item_id }}<br>
+    {{ i.name }} [{{ i.group }}]<br>
+    {{ i.description }}<br>
+    {{ i.plain_text }}<br>
+    <br>
+{% endfor %}
+</body>
+</html>

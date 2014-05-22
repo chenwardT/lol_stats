@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^async_summoner_info/', 'api.views.async_summoner_info', name='async_summoner_info'),
     url(r'^ajax_summoner_info/', 'api.views.ajax_summoner_info', name='ajax_summoner_info'),
     url(r'^recent/(?P<summoner_name>\w+( \w+)*$)', 'api.views.recent_games', name='recent_games'),
+    url(r'^items/', 'api.views.view_items', name='view_items'),
     url(r'^admin/', include(admin.site.urls)),
 
 )

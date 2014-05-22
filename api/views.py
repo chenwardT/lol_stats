@@ -101,7 +101,7 @@ def summoner_info(request, summoner_name, region=NORTH_AMERICA):
 
     return render(request, 'summoner_info.html', {'summoner': summoner})
 
-# get 1 or more summoner DTOs from API, put into cache
+# get 1 or more summoner DTOs by ID from API, put into cache
 # max summoners per request is 40
 def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
     summoners = riot_api.get_summoners(names=None, ids=summoner_ids, region=region)
@@ -370,9 +370,13 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
         #matches.append({'stats': g.stats
 
     print 'Recent matches found for {}: {}'.format(summoner_name, len(games))
-    #print 'matches: {}\nsummoner:{}'.format(matches, summoner)
 
     return render(request, 'match_history.html', {'summoner': summoner, 'games': games})
+
+def view_items(request):
+    items = Item.objects.all().order_by('item_id')
+
+    return render(request, 'items.html', {'items': items})
 
 def async_summoner_info(request):
 
