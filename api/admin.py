@@ -1,7 +1,7 @@
 from django.contrib import admin
 from api.models import *
 
-# Register your models here.
+
 
 class SummonerAdmin(admin.ModelAdmin):
     list_display = ('summoner_id', 'name', 'region')

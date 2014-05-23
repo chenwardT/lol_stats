@@ -2,9 +2,11 @@ import inflection, time
 
 from django.db import models
 
-# Create your models here.
-
 class Summoner(models.Model):
+    """Maps to Riot API summoner DTO.
+
+    Also contains timestamp for when object was last updated.
+    """
     summoner_id = models.BigIntegerField()
     name = models.CharField(max_length=16)
     profile_icon_id = models.IntegerField()
@@ -17,9 +19,11 @@ class Summoner(models.Model):
         return u'{str.name}'.format(str=self)
 
     class Meta:
+        """These fields, taken together, ensure no duplicates are created."""
         unique_together = ('summoner_id', 'region')
 
 class Champion(models.Model):
+    """Maps to Riot API champion DTO."""
     champion_id = models.IntegerField()
     title = models.CharField(max_length=32)
     name = models.CharField(max_length=32)
@@ -29,6 +33,7 @@ class Champion(models.Model):
         return u'{str.name}'.format(str=self)
 
 class Item(models.Model):
+    """Maps to Riot API item DTO."""
     item_id = models.IntegerField()
     description = models.CharField(max_length=1024)
     name = models.CharField(max_length=32)
@@ -39,6 +44,7 @@ class Item(models.Model):
         return u'{str.name}'.format(str=self)
 
 class SummonerSpell(models.Model):
+    """Maps to Riot API summonerSpell DTO."""
     spell_id = models.IntegerField()
     summoner_level = models.IntegerField()
     name = models.CharField(max_length=16)
@@ -65,6 +71,10 @@ class SummonerSpell(models.Model):
 #
 
 class Player(models.Model):
+    """Maps to Riot API fellowPlayer DTO.
+
+    fellowPlayer is related to match history query.
+    """
     champion = models.ForeignKey(Champion)
     summoner = models.ForeignKey(Summoner)
     team_id = models.IntegerField()  # 100, 200
@@ -74,6 +84,10 @@ class Player(models.Model):
         return u'{str.summoner} on {str.champion} (Team {str.team_id})'.format(str=self)
 
 class RawStat(models.Model):
+    """Maps to Riot API RawStats DTO.
+
+    RawStats is related to match history query.
+    """
     assists = models.IntegerField(blank=True, null=True)
     barracks_killed = models.IntegerField(blank=True, null=True)
     champions_killed = models.IntegerField(blank=True, null=True)
@@ -154,14 +168,19 @@ class RawStat(models.Model):
     def __str__(self):
         return u'Stats for {}'.format(Game.objects.get(stats=self))
 
-    # generator that returns fields and vals if val is not None
     def __iter__(self):
+        """Generator that returns field names and values for each value that is not None."""
         for i in self._meta.get_all_field_names():
             if getattr(self, i) is not None:
                 yield u'{}: {}'.format(inflection.humanize(i), getattr(self, i))
 
-# FellowPlayer instances point to this to allow reverse-querying of participants
 class Game(models.Model):
+    """Maps to Riot API game DTO.
+
+    Instead of summonerId and championId, foreign keys to those objects are used.
+    RawStat object is related to by these objects via 1-to-1.
+    Player objects point to this to allow reverse-querying of match participants.
+    """
     summoner_id = models.ForeignKey(Summoner)
     champion_id = models.ForeignKey(Champion)
     create_date = models.BigIntegerField()
@@ -183,7 +202,9 @@ class Game(models.Model):
         return u'{str.summoner_id.name} on {str.champion_id} (Team {str.team_id}) [GID: {str.game_id}]'.format(str=self)
 
     def create_date_str(self):
+        """Convert create_date epoch milliseconds timestamp to human-readable date string."""
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.create_date/1000))
 
     class Meta:
+        """These fields, taken together, ensure no duplicates are created."""
         unique_together = ('region', 'game_id', 'summoner_id')

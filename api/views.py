@@ -11,7 +11,7 @@ from django.core import serializers
 from web.settings import riot_api
 from api.models import *
 
-##Constants
+## Constants
 
 # Regions
 NORTH_AMERICA = 'na'
@@ -22,24 +22,33 @@ LATIN_AMERICA_NORTH = 'lan'
 LATIN_AMERICA_SOUTH = 'las'
 KOREA = 'kr'
 
-# Cache Duration
+# Cache Durations
 CACHE_SUMMONER = timedelta(seconds=10)  # will be longer in production
 
-# yield successive n-sized chunks from l
-# l must be a list
 def chunks(l, n):
+    """Yield successive n-sized chunks from l.
+
+    l must be a list.
+    """
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
 
-# debug: clear all DB objects related to recent match history
 def reset_recent():
+    """Clear all DB objects related to recent match history.
+
+    Debugging function.
+    """
     Summoner.objects.all().delete()
     Player.objects.all().delete()
     RawStat.objects.all().delete()
     Game.objects.all().delete()
 
-# get summoner info, by name, from Riot API, into cache
+
 def get_summoner_by_name(summoner_name, region):
+    """Get summoner info, by name from Riot API, into cache.
+
+    Returns a Summoner object.
+    """
     # first we query cache for extant summoner object
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
@@ -95,15 +104,18 @@ def get_summoner_by_name(summoner_name, region):
 
     return summoner
 
-# view to display summoner info given name, region
 def summoner_info(request, summoner_name, region=NORTH_AMERICA):
+    """View to display summoner info given name and region.
+    """
     summoner = get_summoner_by_name(summoner_name, region)
 
     return render(request, 'summoner_info.html', {'summoner': summoner})
 
-# get 1 or more summoner DTOs by ID from API, put into cache
-# max summoners per request is 40
 def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
+    """Get one or more summoner info objects by ID from Riot API and insert them into DB.
+
+    Max summoners per request is 40 (MAX_ID).
+    """
     summoners = riot_api.get_summoners(names=None, ids=summoner_ids, region=region)
 
     num_sums = 0
@@ -125,9 +137,10 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
 
     return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
 
-# convert summoner name to summoner ID via cache lookup, otherwise API call
 # TODO: should we ensure this is only called on cached summoners?
 def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
+    """Convert summoner name to summoner ID via DB lookup, otherwise query from Riot API.
+    """
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
         print 'cache match FOUND for {str}'.format(str=summoner_name)
@@ -163,9 +176,10 @@ def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
 #                            last_update=datetime.now())
 #        sum.save()
 
-# update the cache's list of champions and associated IDs from API
 # TODO: handle versions
 def update_champions():
+    """Update the DB table containing champion info from Riot API.
+    """
     # get fresh champ list from API
     champs = riot_api.static_get_champion_list()
 
@@ -183,6 +197,8 @@ def update_champions():
 
 # TODO: handle version and optional fields
 def update_items():
+    """Update the DB table containing item info from Riot API.
+    """
     items = riot_api.static_get_item_list()
     Item.objects.all().delete()
 
@@ -207,6 +223,8 @@ def update_items():
 
 # TODO: handle version and optional fields
 def update_summoner_spells():
+    """Update the DB table containing summoner spell info from Riot API.
+    """
     spells = riot_api.static_get_summoner_spell_list()
     SummonerSpell.objects.all().delete()
 
@@ -221,6 +239,8 @@ def update_summoner_spells():
 # get match history of last 10 games, given a summoner ID
 # TODO: check DB for
 def get_recent_matches(summoner_id, region=NORTH_AMERICA):
+    """Retrieves game data for last 10 games played by a summoner, given a summoner ID and region.
+    """
     MAX_IDS = 40  # number of summoner IDs that can be fed to get_summoners()
     recent = riot_api.get_recent_games(summoner_id, region)
 
@@ -346,6 +366,8 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
             stats.delete()
 
 def recent_games(request, summoner_name, region=NORTH_AMERICA):
+    """View to display match history for last 10 games played, given a summoner name and region.
+    """
     #sum_id = summoner_name_to_id(summoner_name, region)
 
     get_recent_matches(summoner_name_to_id(summoner_name, region), region)
@@ -353,36 +375,42 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
     games = summoner.game_set.all()
 
     # create a list (matches) of dicts (stats)
-    for g in games:
-        stats = {}  # RawStats (ex. penta_kills, damage dealt, etc)
-        meta_stats = {}  # Game stats (ex. game mode, ip_earned, etc)
-        players = []  # Participating players
-
-        # fill the dicts with the match info
-        stats = g.stats.__dict__.copy()
-        meta_stats = g.__dict__.copy()
-
-        for i in g.player_set.all():
-            players.append(i)
-
-        # insert a dict of the stats into the match list
-        #matches.append({'stats': stats, 'meta_stats': meta_stats, 'players': players})
-        #matches.append({'stats': g.stats
+    #for g in games:
+    #    stats = {}  # RawStats (ex. penta_kills, damage dealt, etc)
+    #    meta_stats = {}  # Game stats (ex. game mode, ip_earned, etc)
+    #    players = []  # Participating players
+    #
+    #    # fill the dicts with the match info
+    #    stats = g.stats.__dict__.copy()
+    #    meta_stats = g.__dict__.copy()
+    #
+    #    for i in g.player_set.all():
+    #        players.append(i)
+    #
+    #    # insert a dict of the stats into the match list
+    #    #matches.append({'stats': stats, 'meta_stats': meta_stats, 'players': players})
+    #    #matches.append({'stats': g.stats
 
     print 'Recent matches found for {}: {}'.format(summoner_name, len(games))
 
     return render(request, 'match_history.html', {'summoner': summoner, 'games': games})
 
 def view_items(request):
+    """View to display all items.
+    """
     items = Item.objects.all().order_by('item_id')
 
     return render(request, 'items.html', {'items': items})
 
 def async_summoner_info(request):
+    """Test view for an async summoner info page.
+    """
 
     return render(request, 'async_summoner_info.html')
 
 def ajax_summoner_info(request):
+    """AJAX call for async_summoner_info().
+    """
 
     #print 'AJAX summoner id: {}'.format(summoner_id)
     #print request
