@@ -1,6 +1,8 @@
-import inflection, time
+import inflection
+import time
 
 from django.db import models
+
 
 class Summoner(models.Model):
     """Maps to Riot API summoner DTO.
@@ -22,6 +24,7 @@ class Summoner(models.Model):
         """These fields, taken together, ensure no duplicates are created."""
         unique_together = ('summoner_id', 'region')
 
+
 class Champion(models.Model):
     """Maps to Riot API champion DTO."""
     champion_id = models.IntegerField()
@@ -31,6 +34,7 @@ class Champion(models.Model):
 
     def __str__(self):
         return u'{str.name}'.format(str=self)
+
 
 class Item(models.Model):
     """Maps to Riot API item DTO."""
@@ -42,6 +46,7 @@ class Item(models.Model):
 
     def __str__(self):
         return u'{str.name}'.format(str=self)
+
 
 class SummonerSpell(models.Model):
     """Maps to Riot API summonerSpell DTO."""
@@ -70,6 +75,7 @@ class SummonerSpell(models.Model):
 # Following 3 hold recent matches data (see RecentGamesDto on API ref)
 #
 
+
 class Player(models.Model):
     """Maps to Riot API fellowPlayer DTO.
 
@@ -82,6 +88,7 @@ class Player(models.Model):
 
     def __str__(self):
         return u'{str.summoner} on {str.champion} (Team {str.team_id})'.format(str=self)
+
 
 class RawStat(models.Model):
     """Maps to Riot API RawStats DTO.
@@ -173,6 +180,7 @@ class RawStat(models.Model):
         for i in self._meta.get_all_field_names():
             if getattr(self, i) is not None:
                 yield u'{}: {}'.format(inflection.humanize(i), getattr(self, i))
+
 
 class Game(models.Model):
     """Maps to Riot API game DTO.
