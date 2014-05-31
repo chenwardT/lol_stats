@@ -28,20 +28,32 @@ CACHE_SUMMONER = timedelta(seconds=10)  # will be longer in production
 
 class SummonerList(generics.ListAPIView):
     """
-    API endpoint that allows summoners to be viewed.
+    API endpoint that allows collections of summoners to be viewed.
     """
-    #queryset = Summoner.objects.all()
     serializer_class = SummonerSerializer
 
     def get_queryset(self):
         """
-        This view will return a list of all summoners for a region
+        This will return a list of all summoners for a region
         as determined by the region portion of the URL.
         """
         region = self.kwargs['region']
         return Summoner.objects.filter(region=region)
 
 
+class SummonerDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a summoner to be viewed.
+    """
+    serializer_class = SummonerSerializer
+
+    def get_object(self):
+        """
+        This will return a single summoner based on region and summoner ID.
+        """
+        region = self.kwargs['region']
+        summoner_id = self.kwargs['summoner_id']
+        return Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
 
 class ChampionViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -176,6 +188,8 @@ def summoner_info(request, summoner_name, region=NORTH_AMERICA):
     """View to display summoner info given name and region.
     """
     summoner = get_summoner_by_name(summoner_name, region)
+
+    print("IP Address for debug-toolbar: " + request.META['REMOTE_ADDR'])
 
     return render(request, 'summoner_info.html', {'summoner': summoner})
 

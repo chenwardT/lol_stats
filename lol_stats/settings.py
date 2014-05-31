@@ -96,10 +96,13 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (
-    "D:/django_projects/lol_proj/lol_stats/static",
-)
+#STATICFILES_DIRS = (
+#    "D:/django_projects/lol_proj/lol_stats/static",
+#)
 
 REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
+
+# Set to IPs you will be viewing the site from that you want debug_toolbar to appear for.
+INTERNAL_IPS = ('10.0.2.2',)
