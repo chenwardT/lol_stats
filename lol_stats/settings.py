@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'debug_toolbar',
     'django_extensions',
+    'rest_framework',
     'api',
 )
 
@@ -98,3 +99,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     "D:/django_projects/lol_proj/lol_stats/static",
 )
+
+REST_FRAMEWORK = {
+    'PAGINATE_BY': 10,
+}

@@ -1,15 +1,15 @@
-import pprint
 from datetime import datetime, timedelta
 
-import inflection
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.core import serializers
+from rest_framework import viewsets, generics
 
 from lol_stats.settings import riot_api
 from api.models import *
+from api.serializers import *
 
 ## Constants
 
@@ -25,6 +25,72 @@ KOREA = 'kr'
 # Cache Durations
 CACHE_SUMMONER = timedelta(seconds=10)  # will be longer in production
 
+
+class SummonerList(generics.ListAPIView):
+    """
+    API endpoint that allows summoners to be viewed.
+    """
+    #queryset = Summoner.objects.all()
+    serializer_class = SummonerSerializer
+
+    def get_queryset(self):
+        """
+        This view will return a list of all summoners for a region
+        as determined by the region portion of the URL.
+        """
+        region = self.kwargs['region']
+        return Summoner.objects.filter(region=region)
+
+
+
+class ChampionViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows champions to be viewed.
+    """
+    queryset = Champion.objects.all()
+    serializer_class = ChampionSerializer
+
+
+class ItemViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows items to be viewed.
+    """
+    queryset = Item.objects.all()
+    serializer_class = ItemSerializer
+
+
+class SummonerSpellViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows summoner spells to be viewed.
+    """
+    queryset = SummonerSpell.objects.all()
+    serializer_class = SummonerSpellSerializer
+
+
+class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows players from specific games to be viewed.
+    """
+    queryset = Player.objects.all()
+    serializer_class = PlayerSerializer
+
+
+class RawStatViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows statistics from specific games to be viewed.
+    """
+    queryset = RawStat.objects.all()
+    serializer_class = RawStatSerializer
+
+
+class GameViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows games to be viewed.
+    """
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
+
+
 def chunks(l, n):
     """Yield successive n-sized chunks from l.
 
@@ -32,6 +98,7 @@ def chunks(l, n):
     """
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
+
 
 def reset_recent():
     """Clear all DB objects related to recent match history.
@@ -104,12 +171,14 @@ def get_summoner_by_name(summoner_name, region):
 
     return summoner
 
+
 def summoner_info(request, summoner_name, region=NORTH_AMERICA):
     """View to display summoner info given name and region.
     """
     summoner = get_summoner_by_name(summoner_name, region)
 
     return render(request, 'summoner_info.html', {'summoner': summoner})
+
 
 def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
     """Get one or more summoner info objects by ID from Riot API and insert them into DB.
@@ -137,6 +206,7 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
 
     return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
 
+
 # TODO: should we ensure this is only called on cached summoners?
 def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
     """Convert summoner name to summoner ID via DB lookup, otherwise query from Riot API.
@@ -159,6 +229,7 @@ def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
 
     return summoner.summoner_id
 
+
 ## convert 1 or more summoner IDs to their summoner name(s)
 ## summoner_ids is expected to be a list of 1 or more summoner IDs
 #  ON HOLD FOR NOW
@@ -175,6 +246,7 @@ def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
 #                            region=search_region,
 #                            last_update=datetime.now())
 #        sum.save()
+
 
 # TODO: handle versions
 def update_champions():
@@ -194,6 +266,7 @@ def update_champions():
                          key=champs['data'][k]['key'])
         champ.save()
     return
+
 
 # TODO: handle version and optional fields
 def update_items():
@@ -221,6 +294,7 @@ def update_items():
                     group=group)
         item.save()
 
+
 # TODO: handle version and optional fields
 def update_summoner_spells():
     """Update the DB table containing summoner spell info from Riot API.
@@ -235,6 +309,7 @@ def update_summoner_spells():
                                   key=spells['data'][k]['key'],
                                   description=spells['data'][k]['description'])
         sum_spell.save()
+
 
 # get match history of last 10 games, given a summoner ID
 # TODO: check DB for
@@ -365,6 +440,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
         else:  # if it didn't save, we can get rid of the stats object too.
             stats.delete()
 
+
 def recent_games(request, summoner_name, region=NORTH_AMERICA):
     """View to display match history for last 10 games played, given a summoner name and region.
     """
@@ -395,6 +471,7 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
 
     return render(request, 'match_history.html', {'summoner': summoner, 'games': games})
 
+
 def view_items(request):
     """View to display all items.
     """
@@ -402,11 +479,13 @@ def view_items(request):
 
     return render(request, 'items.html', {'items': items})
 
+
 def async_summoner_info(request):
     """Test view for an async summoner info page.
     """
 
     return render(request, 'async_summoner_info.html')
+
 
 def ajax_summoner_info(request):
     """AJAX call for async_summoner_info().
