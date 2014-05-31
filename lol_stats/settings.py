@@ -17,7 +17,7 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 #print 'PROJECT_ROOT =', PROJECT_ROOT
 
 # we do this so we can add local_settings file to .gitignore and not expose keys
-from web.local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
+from lol_stats.local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
 from riotwatcher import riotwatcher
 
 # my Riot API key
@@ -60,9 +60,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'web.urls'
+ROOT_URLCONF = 'lol_stats.urls'
 
-WSGI_APPLICATION = 'web.wsgi.application'
+WSGI_APPLICATION = 'lol_stats.wsgi.application'
 
 
 # Database

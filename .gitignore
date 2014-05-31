@@ -1,2 +1,4 @@
 web/local_settings.py
 db.sqlite3
+.idea/
+lol_stats/local_settings.py

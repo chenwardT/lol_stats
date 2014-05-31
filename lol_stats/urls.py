@@ -4,11 +4,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'web.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
-    # all api.* routes are purely for testing, in production only web.* routes will probably exist
+    # all api.* routes are purely for testing, in production, views should come from a different app
     # TODO: these regexs are NOT robust
     # this requires a string after summoner_info/ (consider pointing to blank search page when no arg)
     url(r'^summoner_info/(?P<summoner_name>\w+( \w+)*$)', 'api.views.summoner_info', name='summoner_info'),

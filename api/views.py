@@ -8,7 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.core import serializers
 
-from web.settings import riot_api
+from lol_stats.settings import riot_api
 from api.models import *
 
 ## Constants
