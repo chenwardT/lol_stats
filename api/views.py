@@ -30,43 +30,52 @@ KOREA = 'kr'
 CACHE_SUMMONER = timedelta(seconds=10)  # will be longer in production
 
 
-class SummonerList(generics.ListAPIView):
-    """
-    API endpoint that allows collections of summoners to be viewed.
-    """
-    serializer_class = SummonerSerializer
+#class SummonerList(generics.ListAPIView):
+#    """
+#    API endpoint that allows collections of summoners to be viewed.
+#    """
+#    serializer_class = SummonerSerializer
+#
+#    def get_queryset(self):
+#        """
+#        This will return a list of all summoners for a region
+#        as determined by the region portion of the URL.
+#        """
+#        region = self.kwargs['region']
+#        return Summoner.objects.filter(region=region)
+#
+#
+#class SummonerDetail(generics.RetrieveAPIView):
+#    """
+#    API endpoint that allows a summoner to be viewed.
+#    """
+#    queryset = Summoner.objects.all()
+#    serializer_class = SummonerSerializer
+#
+#    # Consider defining a Mixin for this functionality.
+#    multiple_lookup_fields = ['region', 'summoner_id']
+#
+#    def get_object(self):
+#        """
+#        This will return a single summoner based on region and summoner ID.
+#        """
+#        queryset = self.get_queryset()
+#
+#        filter = {}
+#        for field in self.multiple_lookup_fields:
+#            filter[field] = self.kwargs[field]
+#
+#        obj = get_object_or_404(queryset, **filter)
+#        return obj
 
-    def get_queryset(self):
-        """
-        This will return a list of all summoners for a region
-        as determined by the region portion of the URL.
-        """
-        region = self.kwargs['region']
-        return Summoner.objects.filter(region=region)
 
-
-class SummonerDetail(generics.RetrieveAPIView):
+class SummonerViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows a summoner to be viewed.
+    API endpoint that allows summoners to be viewed.
     """
     queryset = Summoner.objects.all()
     serializer_class = SummonerSerializer
-    multiple_lookup_fields = ['region', 'summoner_id']
 
-    def get_object(self):
-        """
-        This will return a single summoner based on region and summoner ID.
-        """
-        queryset = self.get_queryset()
-
-        filter = {}
-        for field in self.multiple_lookup_fields:
-            filter[field] = self.kwargs[field]
-
-        obj = get_object_or_404(queryset, **filter)
-        return obj
-
-        #return Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
 
 class ChampionViewSet(viewsets.ReadOnlyModelViewSet):
     """

@@ -6,37 +6,37 @@ class SummonerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Summoner
         # All fields except pk
-        exclude = ('id',)
+        #exclude = ('id',)
 
 
 class ChampionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Champion
-        exclude = ('id',)
+        #exclude = ('id',)
 
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        exclude = ('id',)
+        #exclude = ('id',)
 
 
 class SummonerSpellSerializer(serializers.ModelSerializer):
     class Meta:
         model = SummonerSpell
-        exclude = ('id',)
+        #exclude = ('id',)
 
 
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        exclude = ('id',)
+        #exclude = ('id',)
 
 
 class RawStatSerializer(serializers.ModelSerializer):
     class Meta:
         model = RawStat
-        exclude = ('id',)
+        #exclude = ('id',)
 
 
 # Since Game relates to Summoner, and that requires multiple lookup fields (region + summoner ID)
@@ -49,4 +49,4 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        exclude = ('id',)
+        #exclude = ('id',)
