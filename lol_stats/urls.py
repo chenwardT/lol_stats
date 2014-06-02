@@ -2,19 +2,18 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from rest_framework import routers
 
-from api.views import (ChampionViewSet,
+from api.views import (SummonerViewSet,
+                       ChampionViewSet,
                        ItemViewSet,
                        SummonerSpellViewSet,
                        PlayerViewSet,
                        RawStatViewSet,
-                       GameViewSet,
-                       SummonerList,
-                       SummonerDetail)
+                       GameViewSet,)
 
 admin.autodiscover()
 
 router = routers.DefaultRouter()
-#router.register(r'summoners', SummonerViewSet)
+router.register(r'summoners', SummonerViewSet)
 router.register(r'champions', ChampionViewSet)
 router.register(r'items', ItemViewSet)
 router.register(r'spells', SummonerSpellViewSet)
@@ -44,6 +43,6 @@ urlpatterns = patterns('',
 
     # Do we even care about listing all summoners across regions?
     #url(r'^summoners/', SummonerList.as_view()),
-    url(r'^summoners/(?P<region>.+)/$', SummonerList.as_view()),
-    url(r'^summoners/(?P<region>.+)/(?P<summoner_id>.+$)', SummonerDetail.as_view()),
+    #url(r'^summoners/(?P<region>.+)/$', SummonerList.as_view()),
+    #url(r'^summoners/(?P<region>.+)/(?P<summoner_id>.+$)', SummonerDetail.as_view()),
 )
