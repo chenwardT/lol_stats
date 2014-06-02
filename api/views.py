@@ -4,8 +4,12 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.core import serializers
+from django.shortcuts import get_object_or_404
+
 from rest_framework import viewsets, generics
+from rest_framework.reverse import reverse
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from lol_stats.settings import riot_api
 from api.models import *
@@ -45,15 +49,24 @@ class SummonerDetail(generics.RetrieveAPIView):
     """
     API endpoint that allows a summoner to be viewed.
     """
+    queryset = Summoner.objects.all()
     serializer_class = SummonerSerializer
+    multiple_lookup_fields = ['region', 'summoner_id']
 
     def get_object(self):
         """
         This will return a single summoner based on region and summoner ID.
         """
-        region = self.kwargs['region']
-        summoner_id = self.kwargs['summoner_id']
-        return Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
+        queryset = self.get_queryset()
+
+        filter = {}
+        for field in self.multiple_lookup_fields:
+            filter[field] = self.kwargs[field]
+
+        obj = get_object_or_404(queryset, **filter)
+        return obj
+
+        #return Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
 
 class ChampionViewSet(viewsets.ReadOnlyModelViewSet):
     """
