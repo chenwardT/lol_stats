@@ -1,6 +1,6 @@
-import inflection
 import time
 
+import inflection
 from django.db import models
 
 

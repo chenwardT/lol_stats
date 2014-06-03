@@ -1,52 +1,47 @@
-from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game
 from rest_framework import serializers
 
-
-class SummonerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Summoner
-        # All fields except pk
-        #exclude = ('id',)
-
-
-class ChampionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Champion
-        #exclude = ('id',)
-
-
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        #exclude = ('id',)
-
-
-class SummonerSpellSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SummonerSpell
-        #exclude = ('id',)
-
-
-class PlayerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Player
-        #exclude = ('id',)
+from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game
 
 
 class RawStatSerializer(serializers.ModelSerializer):
     class Meta:
         model = RawStat
-        #exclude = ('id',)
 
 
-# Since Game relates to Summoner, and that requires multiple lookup fields (region + summoner ID)
-# it may be wise to abandon trying to get hyperlinking and everything else to work with multiple lookup_fields
-# and instead just get the API to the point where it can be used by jQuery effectively, instead of being
-# completely RESTful in every sense of the word.
 class GameSerializer(serializers.ModelSerializer):
-
-    #summoner_id = serializers.RelatedField()
+    stats = RawStatSerializer(many=False)
 
     class Meta:
         model = Game
-        #exclude = ('id',)
+        fields = ('id', 'summoner_id', 'champion_id', 'create_date', 'game_id', 'game_mode', 'game_type',
+                  'invalid', 'ip_earned', 'level', 'map_id', 'spell_1', 'spell_2', 'stats', 'sub_type',
+                  'team_id', 'region')
+
+
+class SummonerSerializer(serializers.ModelSerializer):
+    game_set = GameSerializer(many=True)
+
+    class Meta:
+        model = Summoner
+        fields = ('id', 'summoner_id', 'name', 'profile_icon_id', 'revision_date', 'summoner_level', 'region',
+                  'last_update', 'game_set')
+
+
+class ChampionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Champion
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+
+
+class SummonerSpellSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SummonerSpell
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
