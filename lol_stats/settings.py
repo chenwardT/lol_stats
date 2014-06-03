@@ -95,7 +95,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
-    '/var/www/static/'
+    #'/usr/share/nginx/www/static/'
 )
 
 REST_FRAMEWORK = {
