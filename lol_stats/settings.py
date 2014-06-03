@@ -93,9 +93,10 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-#STATICFILES_DIRS = (
-#    "D:/django_projects/lol_proj/lol_stats/static",
-#)
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    '/var/www/static/'
+)
 
 REST_FRAMEWORK = {
     'PAGINATE_BY': 10,

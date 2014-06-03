@@ -54,13 +54,13 @@ def get_summoner_by_name(summoner_name, region):
             summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ',''), region=region)
             print u'received summoner dto:', summoner_dto
 
-            summoner.summoner_id=summoner_dto['id']
-            summoner.name=summoner_dto['name']
-            summoner.profile_icon_id=summoner_dto['profileIconId']
-            summoner.revision_date=summoner_dto['revisionDate']
-            summoner.summoner_level=summoner_dto['summonerLevel']
-            summoner.region=region
-            summoner.last_update=datetime.now()
+            summoner.summoner_id = summoner_dto['id']
+            summoner.name = summoner_dto['name']
+            summoner.profile_icon_id = summoner_dto['profileIconId']
+            summoner.revision_date = summoner_dto['revisionDate']
+            summoner.summoner_level = summoner_dto['summonerLevel']
+            summoner.region = region
+            summoner.last_update = datetime.now()
 
             print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
             summoner.save()
@@ -96,13 +96,13 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
 
     for i, e in enumerate(summoners):
         summoner = Summoner()
-        summoner.summoner_id=summoners[e]['id']
-        summoner.name=summoners[e]['name']
-        summoner.profile_icon_id=summoners[e]['profileIconId']
-        summoner.revision_date=summoners[e]['revisionDate']
-        summoner.summoner_level=summoners[e]['summonerLevel']
-        summoner.region=region
-        summoner.last_update=datetime.now()
+        summoner.summoner_id = summoners[e]['id']
+        summoner.name = summoners[e]['name']
+        summoner.profile_icon_id = summoners[e]['profileIconId']
+        summoner.revision_date = summoners[e]['revisionDate']
+        summoner.summoner_level = summoners[e]['summonerLevel']
+        summoner.region = region
+        summoner.last_update = datetime.now()
         summoner.save()
 
         num_sums = i
@@ -217,6 +217,15 @@ def update_summoner_spells():
                                   key=spells['data'][k]['key'],
                                   description=spells['data'][k]['description'])
         sum_spell.save()
+
+
+def update_static_data():
+    """
+    Update the DB with all static data from Riot API.
+    """
+    update_champions()
+    update_items()
+    update_summoner_spells()
 
 
 def get_recent_matches(summoner_id, region=NORTH_AMERICA):
