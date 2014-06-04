@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Welcome! This is the documentation for lol_stats. &mdash; lol_stats 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="lol_stats 0.1 documentation" href="#" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="#">lol_stats 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="welcome-this-is-the-documentation-for-lol-stats">
+<h1>Welcome! This is the documentation for lol_stats.<a class="headerlink" href="#welcome-this-is-the-documentation-for-lol-stats" title="Permalink to this headline">¶</a></h1>
+<p>lol_stats is a website that aims to provide unique insight into the competitive multiplayer game [League of Legends](<a class="reference external" href="http://leagueoflegends.com">http://leagueoflegends.com</a>), developed by Riot Games.
+Through querying the official <a class="reference external" href="http://developer.riotgames.com/">League of Legends API</a> it accesses historical match data which can be used to find patterns and make distinctions that may not be apparent to players/spectators of the game.</p>
+<div class="section" id="background">
+<h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>Currently, this is a educational project whose immediate benefit is familiarizing myself with or furthering knowledge in several topics:</p>
+<ul>
+<li><p class="first">the website is built on <tt class="docutils literal"><span class="pre">Django</span></tt>, a Python web framework</p>
+</li>
+<li><p class="first">programmatic interaction with a rate-limited REST API (devs start with a 10req/10s key, to be upgraded upon application acceptance)</p>
+<blockquote>
+<div><ul>
+<li><p class="first">I employ and have been updating a clone of <a class="reference external" href="https://github.com/pseudonym117/Riot-Watcher">RiotWatcher</a>, a thin wrapper for the game&#8217;s API</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">RiotWatcher</span></tt> makes use of the <tt class="docutils literal"><span class="pre">requests</span></tt> library</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">asynchronous tasks</p>
+<blockquote>
+<div><ul>
+<li><p class="first">waiting on the API response takes time, so async website design is necessary</p>
+<blockquote>
+<div><ul class="simple">
+<li>backend work to be achieved via <tt class="docutils literal"><span class="pre">Celery</span></tt>, a distributed task queue</li>
+<li>frontend async will be implemented as AJAX calls via <tt class="docutils literal"><span class="pre">jQuery</span></tt></li>
+<li>HTTP PUSH to be performed via <a class="reference external" href="https://pushmodule.slact.net/">Nginx HTTP Push Module</a></li>
+<li>Django model data store is exposed via a RESTful API using <tt class="docutils literal"><span class="pre">Django</span> <span class="pre">REST</span> <span class="pre">Framework</span></tt></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">caching to prevent unnecessary API requests</p>
+<blockquote>
+<div><ul class="simple">
+<li>currently employing a SQL DB, with an eye towards moving some things to in-memory caches e.g. <tt class="docutils literal"><span class="pre">memcached</span></tt></li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<p>Analytical techniques will follow once core site functionality regarding retrieval and storage of data from Riot&#8217;s official API is solidified.</p>
+</div>
+<div class="section" id="source-code">
+<h2>Source Code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Bitbucket: <a class="reference external" href="https://bitbucket.org/kreychek/lol_stats">https://bitbucket.org/kreychek/lol_stats</a></li>
+</ul>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul class="simple">
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><em>Index</em></a></li>
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+<li><a class="reference internal" href="search.html"><em>Search Page</em></a></li>
+</ul>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><p>lol_stats is a website that provides data aggregation and analysis
+functionality for Riot Games&#8217; League of Legends.
+This project and its author are not affiliated with Riot Games.
+Copyright (C) 2014 Edward Chen</p>
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.</p>
+<p>You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see &lt;<a class="reference external" href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>&gt;.</p>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome! This is the documentation for lol_stats.</a><ul>
+<li><a class="reference internal" href="#background">Background</a></li>
+<li><a class="reference internal" href="#source-code">Source Code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a><ul>
+<li><a class="reference internal" href="#license">License</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="#">lol_stats 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Edward Chen.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
