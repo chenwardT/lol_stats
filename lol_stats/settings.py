@@ -16,13 +16,19 @@ from riotwatcher import riotwatcher
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-# Following keys are stored as environment vars:
+# Following keys are stored as environment vars and in try blocks so RTD doesn't scream.
 
 # my Riot API key (keep secret!)
-riot_api = riotwatcher.RiotWatcher(os.environ['RIOT_API_KEY'])
+try:
+    riot_api = riotwatcher.RiotWatcher(os.environ['RIOT_API_KEY'])
+except KeyError:
+    pass
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+try:
+    SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
+except KeyError:
+    pass
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
