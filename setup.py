@@ -17,7 +17,7 @@ setup(name='lol_stats',
           'Django',
           'requests',
           'inflection',
-          'rest_framework',
+          'djangorestframework',
       ],
       classifiers=[
           'Environment :: Web Environment',
