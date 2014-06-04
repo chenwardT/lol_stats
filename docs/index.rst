@@ -47,11 +47,11 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   lol_stats/modules
-   api/modules
-   champion/modules
-   item/modules
-   summoner/modules
+   lol_stats/lol_stats
+   api/api
+   champion/champion
+   item/item
+   summoner/summoner
 
 
 Indices and tables
