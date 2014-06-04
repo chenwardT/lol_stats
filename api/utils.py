@@ -22,6 +22,9 @@ KOREA = 'kr'
 # Cache Durations
 CACHE_SUMMONER = timedelta(seconds=10)  # will be longer in production
 
+# Riot API
+MAX_IDS = 40  # number of summoner IDs that can be queried at once
+
 
 def get_summoner_by_name(summoner_name, region):
     """Get summoner info, by name from Riot API, into cache.
@@ -232,7 +235,6 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
     """
     Retrieves game data for last 10 games played by a summoner, given a summoner ID and region.
     """
-    MAX_IDS = 40  # number of summoner IDs that can be fed to get_summoners()
     recent = riot_api.get_recent_games(summoner_id, region)
 
     # first make a set of the associated summoner IDs (a set cannot have duplicate entries)

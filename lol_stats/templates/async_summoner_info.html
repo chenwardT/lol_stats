@@ -26,7 +26,7 @@
             $(function() {
                 console.log( "ready!" );
 
-                // using jQuery to get CSRF token via cookie
+                // using jQuery
                 function getCookie(name) {
                     var cookieValue = null;
                     if (document.cookie && document.cookie != '') {
@@ -68,20 +68,13 @@
                     //console.log(sum_id);
 
                     $.ajax({
-                       type: "POST",
-                       url: "{% url 'api.views.ajax_summoner_info' %}",
+                       type: "GET",
+                       url: "/summoners/1/?format=json",
                        data: { summoner_id: sum_id,
                                csrfmiddlewaretoken: csrftoken }
                     }).done(function( data ) {
-                                var sum_info = data[0].fields;
-                                console.log(sum_info);
-                                $("li#summoner_id").text(sum_id);
-                                $("li#name").text(sum_info.name);
-                                $("li#profile_icon_id").text(sum_info.profile_icon_id);
-                                $("li#revision_date").text(sum_info.revision_date);
-                                $("li#summoner_level").text(sum_info.summoner_level);
-                                $("li#last_update").text(sum_info.last_update);
-                                $("#summoner_properties").show('fast');
+                                console.log(data);
+
                     });
                 });
             });

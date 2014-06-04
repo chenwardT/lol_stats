@@ -1,10 +1,6 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import viewsets
 
 from api.serializers import *
-from api.utils import get_summoner_by_name, summoner_name_to_id, get_recent_matches, NORTH_AMERICA
 
 
 class SummonerViewSet(viewsets.ReadOnlyModelViewSet):
@@ -61,62 +57,3 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
-
-
-def summoner_info(request, summoner_name, region=NORTH_AMERICA):
-    """
-    View to display summoner info given name and region.
-    """
-    summoner = get_summoner_by_name(summoner_name, region)
-
-    return render(request, 'summoner_info.html', {'summoner': summoner})
-
-
-def recent_games(request, summoner_name, region=NORTH_AMERICA):
-    """
-    View to display match history for last 10 games played, given a summoner name and region.
-    """
-    get_recent_matches(summoner_name_to_id(summoner_name, region), region)
-    summoner = Summoner.objects.filter(name__iexact=summoner_name).get(region__iexact=region)
-    games = summoner.game_set.all()
-
-
-    print 'Recent matches found for {}: {}'.format(summoner_name, len(games))
-
-    return render(request, 'match_history.html', {'summoner': summoner, 'games': games})
-
-
-def view_items(request):
-    """
-    View to display all items.
-    """
-    items = Item.objects.all().order_by('item_id')
-
-    return render(request, 'items.html', {'items': items})
-
-
-def async_summoner_info(request):
-    """
-    Test view for an async summoner info page.
-    """
-
-    return render(request, 'async_summoner_info.html')
-
-
-def ajax_summoner_info(request):
-    """
-    AJAX call for async_summoner_info().
-    """
-
-    #print 'AJAX summoner id: {}'.format(summoner_id)
-    #print request
-
-    print 'AJAX summoner id: {}'.format(request.POST.get('summoner_id'))
-
-    #if request.is_ajax():
-    try:
-        response_data = serializers.serialize('json', Summoner.objects.filter(summoner_id=request.POST.get('summoner_id')))
-    except ObjectDoesNotExist:
-        print 'Summoner ID {} not cached!'.format(request.POST.get('summoner_id'))
-
-    return HttpResponse(response_data, content_type='application/json')

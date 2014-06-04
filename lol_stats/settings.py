@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os, sys
+import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -47,6 +47,9 @@ INSTALLED_APPS = (
     'django_extensions',
     'rest_framework',
     'api',
+    'summoner',
+    'champion',
+    'item',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -73,6 +76,7 @@ DATABASES = {
     }
 }
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -98,9 +102,13 @@ STATICFILES_DIRS = (
     #'/usr/share/nginx/www/static/'
 )
 
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'lol_stats/templates'),
+)
+
 REST_FRAMEWORK = {
     'PAGINATE_BY': 10,
 }
 
 # Set to IPs you will be viewing the site from that you want debug_toolbar to appear for.
-INTERNAL_IPS = ('10.0.2.2',)
+#INTERNAL_IPS = ('10.0.2.2',)
