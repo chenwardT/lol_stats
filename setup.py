@@ -15,6 +15,9 @@ setup(name='lol_stats',
       author_email='chenward.t@gmail.com',
       install_requires=[
           'Django',
+          'requests',
+          'inflection',
+          'rest_framework',
       ],
       classifiers=[
           'Environment :: Web Environment',
