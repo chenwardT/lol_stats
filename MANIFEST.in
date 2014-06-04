@@ -1,0 +1,5 @@
+include LICENSE
+include README.md
+recursive-include lol_stats/templates *
+recursive-include static *
+recursive-include docs *
