@@ -18,6 +18,8 @@ setup(name='lol_stats',
           'requests',
           'inflection',
           'djangorestframework',
+          'django-debug-toolbar',
+          'django-extensions',
       ],
       classifiers=[
           'Environment :: Web Environment',
