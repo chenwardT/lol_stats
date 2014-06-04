@@ -10,21 +10,23 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+
+from riotwatcher import riotwatcher
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
-# we do this so we can add local_settings file to .gitignore and not expose keys
-from lol_stats.local_settings import RIOT_API_KEY, DJANGO_SECRET_KEY
-from riotwatcher import riotwatcher
+# Following keys are stored as environment vars:
 
-# my Riot API key
-riot_api = riotwatcher.RiotWatcher(RIOT_API_KEY)
+# my Riot API key (keep secret!)
+riot_api = riotwatcher.RiotWatcher(os.environ['RIOT_API_KEY'])
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
