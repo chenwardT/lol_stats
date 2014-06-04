@@ -2,3 +2,6 @@ web/local_settings.py
 db.sqlite3
 .idea/
 lol_stats/local_settings.py
+docs/_templates
+docs/_build
+docs/_static
