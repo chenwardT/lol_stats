@@ -14,7 +14,7 @@ def summoner_info(request, summoner_name, region=NORTH_AMERICA):
     """
     summoner = get_summoner_by_name(summoner_name, region)
 
-    return render(request, 'summoner_info.html', {'summoner': summoner})
+    return render(request, 'summoner/summoner_info.html', {'summoner': summoner})
 
 
 def recent_games(request, summoner_name, region=NORTH_AMERICA):
@@ -27,14 +27,14 @@ def recent_games(request, summoner_name, region=NORTH_AMERICA):
 
     print 'Recent matches found for {}: {}'.format(summoner_name, len(games))
 
-    return render(request, 'match_history.html', {'summoner': summoner, 'games': games})
+    return render(request, 'summoner/match_history.html', {'summoner': summoner, 'games': games})
 
 
 def async_summoner_info(request):
     """
     Test view for an async summoner info page.
     """
-    return render(request, 'async_summoner_info.html')
+    return render(request, 'summoner/async_summoner_info.html')
 
 
 def ajax_summoner_info(request):

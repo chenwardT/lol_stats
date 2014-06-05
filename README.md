@@ -32,3 +32,6 @@ Currently, this is a educational project whose immediate benefit is familiarizin
 Analytical techniques will follow once core site functionality regarding retrieval and storage of data from Riot's official API is solidified.
 
 This project and its author are not affiliated with Riot Games.
+
+## Documentation
+Sphinx-generated docs written to [lol-stats.readthedocs.org](lol-stats.readthedocs.org) on pushes.

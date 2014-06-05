@@ -23,7 +23,7 @@ def get_env_variable(var_name):
     try:
         return os.environ[var_name]
     except KeyError:
-        error_msg = u'Set the {} environment variable'.format(var_name)
+        error_msg = 'Set the {} environment variable'.format(var_name)
         raise ImproperlyConfigured(error_msg)
 
 
@@ -92,7 +92,6 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
-    #'/usr/share/nginx/www/static/'
 )
 
 TEMPLATE_DIRS = (

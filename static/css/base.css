@@ -1,0 +1,112 @@
+body {
+    margin: 0;
+    padding: 0 0 1em 0;
+    font-size: 1em;
+    line-height: 1.5em;
+    color: #414142;
+    font-family: Arial;
+    background-color: #ffffff;
+}
+
+div {
+    display: block;
+}
+
+img {
+  max-width: 100%;
+}
+
+p {
+  margin: 1em 0;
+}
+
+table {
+    border-collapse: collapse;
+    border-width: 1px solid black;
+}
+
+a:link {
+  color: #D64078;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #D64078;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:active {
+  background-color: black;
+  color: white;
+}
+
+div#alpha {
+    position: absolute;
+    top: -16px;
+    left: -20px;
+    width: 250px;
+    text-align: center;
+    display: inline-block;
+    padding: .5em 1em;
+    text-shadow: 0 1px 0 #EDEDED;
+    text-decoration: none;
+    background: orange;
+    -webkit-transform-origin: 0 0;
+    -moz-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    -o-transform-origin: 0 0;
+    transform-origin: 0 0;
+    -webkit-transform: rotate(-35deg) translate(-112px, 42px);
+    -moz-transform: rotate(-35deg) translate(-92px, 52px);
+    -ms-transform: rotate(-35deg) translate(-92px, 52px);
+    -o-transform: rotate(-35deg) translate(-92px, 52px);
+    transform: rotate(-35deg) translate(-92px, 52px);
+}
+
+div#alpha span {
+    display: block;
+    font-size: 1.2em;
+    padding: .2em 0;
+    margin-right: 1em;
+    color: yellow;
+}
+
+#content {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+#logo {
+  text-align: center;
+  background-color: #ededed;
+  padding: 1em 0;
+}
+
+#logo a {
+  text-decoration: none;
+  color: #414142;
+  position: relative;
+}
+
+#logo a:active {
+  background: none;
+}
+
+#logo img {
+  vertical-align: middle;
+}
+
+#logo span {
+  vertical-align: middle;
+  font-size: 2em;
+  font-family: 'Bree Serif', serif;
+  margin-left: .2em;
+}
+
+footer {
+  text-align: center;
+}

@@ -1,0 +1,8 @@
+{# templates/item/_item_search.html #}
+{% comment %}
+    Usage: {% include "item/_item_search.html" %}
+{% endcomment %}
+<form action="{% url "item_list" %}" method="GET">
+    <input type="text" name="q" />
+    <button type="submit">search</button>
+</form>

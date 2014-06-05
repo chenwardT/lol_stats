@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+{% load staticfiles %}
+<head>
+    <title>{% block title %}lol_stats{% endblock title %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static "css/base.css" %}">
+</head>
+<body>
+
+    <div id="logo">
+        <a href="/">
+            <img src="{% static "images/logo.png" %}">
+            <span>LoL Statistics Arrrggregator</span>
+        </a>
+    </div>
+
+    <div id="alpha">
+        <span>ALPHA</span>
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock content %}
+    </div>
+
+</body>
+</html>

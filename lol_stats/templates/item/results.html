@@ -1,0 +1,16 @@
+{% block results %}
+    {% if item_list %}
+        <table border="1em">
+            <tr>
+                <th>Name</th><th>Description</th>
+            </tr>
+        {% for item in item_list %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description|safe}}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+
+{% endblock results %}

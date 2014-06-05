@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Items{% endblock title %}
+
+{% block content %}
+    Search for an item:
+    {% include "item/_item_search.html" %}
+
+    {% include "item/results.html" %}
+
+{% endblock content %}
