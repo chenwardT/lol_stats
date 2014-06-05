@@ -4,6 +4,14 @@ lol_stats package
 Submodules
 ----------
 
+lol_stats.base module
+---------------------
+
+.. automodule:: lol_stats.base
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lol_stats.settings module
 -------------------------
 
