@@ -34,4 +34,4 @@ Analytical techniques will follow once core site functionality regarding retriev
 This project and its author are not affiliated with Riot Games.
 
 ## Documentation
-Sphinx-generated docs written to [lol-stats.readthedocs.org](lol-stats.readthedocs.org) on pushes.
+Sphinx-generated docs written to [lol-stats.readthedocs.org](http://lol-stats.readthedocs.org) on pushes.
