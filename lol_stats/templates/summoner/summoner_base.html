@@ -28,19 +28,6 @@
     <script src="{% static "js/jquery-2.1.1.js" %}"></script>
     <script type="text/javascript">
         $("div#summoner-info").hide();
-
-        var PollState = function(task_id) {
-            $.ajax({
-                url: "../../api/task_state/",
-                type: "POST",
-                data: { task_id: task_id },
-            }).done(function(task) {
-                        console.log("task:" + task);
-                        $("#status").html(task);
-                        return task;
-            });
-        }
-
         var task_id = 'test';
 
         $('#do-task').click( function() {
@@ -52,19 +39,19 @@
                 success: function(data) {
                     task_id = data;
                     console.log(task_id);
-                    for ( var status = "ongoing"; status == "ongoing"; ) {
-                        setTimeout(PollState(task_id), 500);
 
-                    }
-{#                    $.ajax({#}
-{#                        url: "",#}
-{#                        context: document.body,#}
-{#                        success: function(s, x) {#}
-{#                            $(this).html(s);#}
-{#                        }#}
-{#                    });#}
+                    setInterval( function() {
+                        $.ajax({
+                            url: "../../api/task_state/",
+                            type: "POST",
+                            data: { task_id: task_id },
+                            success: function(data){
+                                $("#status").html(data);
+                            }
+                        })
+                    }, 100);
                 }
-            });
+            })
         });
     </script>
 
