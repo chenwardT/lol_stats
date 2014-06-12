@@ -27,7 +27,8 @@ MAX_IDS = 40  # number of summoner IDs that can be queried at once
 
 
 def get_summoner_by_name(summoner_name, region):
-    """Get summoner info, by name from Riot API, into cache.
+    """
+    Get summoner info, by name from Riot API, into cache.
 
     Returns a Summoner object.
     """
@@ -89,7 +90,8 @@ def get_summoner_by_name(summoner_name, region):
 
 # TODO: should we ensure this is only called on cached summoners?
 def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
-    """Get one or more summoner info objects by ID from Riot API and insert them into DB.
+    """
+    Get one or more summoner info objects by ID from Riot API and insert them into DB.
 
     Max summoners per request is 40 (MAX_ID).
     """
@@ -116,7 +118,8 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
 
 
 def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
-    """Convert summoner name to summoner ID via DB lookup, otherwise query from Riot API.
+    """
+    Convert summoner name to summoner ID via DB lookup, otherwise query from Riot API.
     """
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)

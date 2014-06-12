@@ -1,20 +1,26 @@
+import json
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
-
-# Create your views here.
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import serializers
+from celery.result import AsyncResult
+
 from api.models import Summoner
 from api.utils import NORTH_AMERICA, get_recent_matches, summoner_name_to_id, get_summoner_by_name
+from api.tasks import async_get_summoner_by_name
 
 
-def summoner_info(request, summoner_name, region=NORTH_AMERICA):
+def summoner_info(request):
     """
     View to display summoner info given name and region.
     """
-    summoner = get_summoner_by_name(summoner_name, region)
+    #summoner = get_summoner_by_name(summoner_name, region)
 
-    return render(request, 'summoner/summoner_info.html', {'summoner': summoner})
+    #return render(request, 'summoner/summoner_base.html', {'summoner': summoner})
+
+    return render(request, 'summoner/summoner_base.html')
 
 
 def recent_games(request, summoner_name, region=NORTH_AMERICA):
@@ -48,8 +54,27 @@ def ajax_summoner_info(request):
         response_ok = True
     except ObjectDoesNotExist:
         print 'Summoner ID {} not cached!'.format(request.POST.get('summoner_id'))
+        response_ok = False
 
     if response_ok:
         return HttpResponse(response_data, content_type='application/json')
     else:
-        return HttpResponseNotFound('Page not found.')
+        return HttpResponseNotFound('Summoner not found.')
+
+
+@csrf_exempt
+def ajax_query_start(request):
+    """
+    AJAX call to initiate async task of querying Riot API for summoner info.
+
+    Returns the ID of the initiated task as JSON.
+    """
+    if request.is_ajax():
+        region = request.POST.get('region')
+        summoner_name = request.POST.get('name')
+        task = async_get_summoner_by_name.delay(summoner_name, region)
+        request.session['task_id'] = task.id
+
+        return HttpResponse(json.dumps(task.id), content_type='application/json')
+    else:
+        return HttpResponse('Invalid request type.')

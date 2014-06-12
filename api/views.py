@@ -1,6 +1,12 @@
+import json
+
 from rest_framework import viewsets
+from celery.result import AsyncResult
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from api.serializers import *
+
 
 
 class SummonerViewSet(viewsets.ReadOnlyModelViewSet):
@@ -57,3 +63,23 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
+
+@csrf_exempt
+def get_task_state(request):
+    """
+    A view to report task state to an AJAX call.
+
+    Returns the state or an error message as JSON.
+    When "SUCCESS" is returned, page scripts know they can query and display the related results.
+    """
+    if request.is_ajax():
+        if 'task_id' in request.POST.keys() and request.POST['task_id']:
+            task_id = request.POST['task_id']
+            task = AsyncResult(task_id)
+            data = task.state
+        else:
+            data = 'No task_id in the request.'
+    else:
+        data = 'Invalid request type.'
+
+    return HttpResponse(json.dumps(data), content_type='application/json')
