@@ -28,6 +28,14 @@ api.serializers module
     :undoc-members:
     :show-inheritance:
 
+api.tasks module
+----------------
+
+.. automodule:: api.tasks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 api.tests module
 ----------------
 

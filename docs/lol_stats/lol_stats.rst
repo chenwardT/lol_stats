@@ -12,6 +12,14 @@ lol_stats.base module
     :undoc-members:
     :show-inheritance:
 
+lol_stats.celery module
+-----------------------
+
+.. automodule:: lol_stats.celery
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 lol_stats.settings module
 -------------------------
 
