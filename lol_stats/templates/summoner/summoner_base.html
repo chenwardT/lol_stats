@@ -27,6 +27,15 @@
 
     <script src="{% static "js/jquery-2.1.1.js" %}"></script>
     <script type="text/javascript">
+        function showInfo() {
+            var sumData = 0;
+
+            $.ajax({
+                url: "{% url 'summoners-detail' %}/" + $(""),
+                type: "GET",
+            })
+        }
+
         $("div#summoner-info").hide();
         var task_id = 'test';
 
@@ -40,14 +49,21 @@
                     task_id = data;
                     console.log(task_id);
 
-{#                    var keep_checking = true;#}
-                    setInterval( function() {
+                    if (timerID) {
+                        clearInterval(timerID);
+                    }
+
+                    var timerID = setInterval( function() {
                         $.ajax({
                             url: "{% url 'task_state' %}",
                             type: "POST",
                             data: { task_id: task_id },
                             success: function(data){
                                 $("#status").html(data);
+
+                                if (data == "SUCCESS") {
+                                    clearInterval(timerID);
+                                }
                             }
                         })
                     }, 100);

@@ -10,10 +10,6 @@ from api.models import Summoner
 from api.utils import riot_api, CACHE_SUMMONER
 
 @shared_task
-def add(x, y):
-    return x + y
-
-@shared_task
 def async_get_summoner_by_name(summoner_name, region):
     """
     Get summoner info, by name from Riot API, into cache.
@@ -73,4 +69,4 @@ def async_get_summoner_by_name(summoner_name, region):
                             last_update=datetime.now())
         summoner.save()
 
-    sleep(5)
+    #sleep(5)
