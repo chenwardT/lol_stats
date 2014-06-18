@@ -32,7 +32,7 @@
 
         $('#do-task').click( function() {
             $.ajax({
-                url: "../ajax_query_start/",
+                url: "{% url 'ajax_query_start' %}",
                 type: "POST",
                 data: { region: $("#region").val(),
                         name: $("#name").val() },
@@ -40,9 +40,10 @@
                     task_id = data;
                     console.log(task_id);
 
+{#                    var keep_checking = true;#}
                     setInterval( function() {
                         $.ajax({
-                            url: "../../api/task_state/",
+                            url: "{% url 'task_state' %}",
                             type: "POST",
                             data: { task_id: task_id },
                             success: function(data){

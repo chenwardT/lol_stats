@@ -2,16 +2,17 @@ from collections import deque
 import time
 import requests
 
-# This file has been edited since fetching to reflect changes to the Riot API
-
 # Constants
-NORTH_AMERICA = 'na'
-EUROPE_WEST = 'euw'
-EUROPE_NORDIC_EAST = 'eune'
 BRAZIL = 'br'
+EUROPE_NORDIC_EAST = 'eune'
+EUROPE_WEST = 'euw'
+KOREA = 'kr'
 LATIN_AMERICA_NORTH = 'lan'
 LATIN_AMERICA_SOUTH = 'las'
-KOREA = 'kr'
+NORTH_AMERICA = 'na'
+OCEANIa = 'oce'
+RUSSIA = 'ru'
+TURKEY = 'tr'
 
 game_maps = [
     {'map_id': 1, 'name': "Summoner's Rift", 'notes': "Summer Variant"},
@@ -24,35 +25,57 @@ game_maps = [
 ]
 
 game_modes = [
-    'CLASSIC', # Classic Summoner's Rift and Twisted Treeline games
-    'ODIN', # Dominion/Crystal Scar games
-    'ARAM', # ARAM games
-    'TUTORIAL', # Tutorial games
-    'ONEFORALL', # One for All games
-    'FIRSTBLOOD', # Snowdown Showdown games
+    'CLASSIC',  # Classic Summoner's Rift and Twisted Treeline games
+    'ODIN',  # Dominion/Crystal Scar games
+    'ARAM',  # ARAM games
+    'TUTORIAL',  # Tutorial games
+    'ONEFORALL',  # One for All games
+    'FIRSTBLOOD',  # Snowdown Showdown games
 ]
 
 game_types = [
-    'CUSTOM_GAME', # Custom games
-    'TUTORIAL_GAME', # Tutorial games
-    'MATCHED_GAME', # All other games
+    'CUSTOM_GAME',  # Custom games
+    'TUTORIAL_GAME',  # Tutorial games
+    'MATCHED_GAME',  # All other games
 ]
 
 sub_types = [
-    'NONE', # Custom games
-    'NORMAL', # Summoner's Rift unranked games
-    'NORMAL_3x3', # Twisted Treeline unranked games
-    'ODIN_UNRANKED', # Dominion/Crystal Scar games
-    'ARAM_UNRANKED_5v5', # ARAM / Howling Abyss games
-    'BOT', # Summoner's Rift and Crystal Scar games played against AI
-    'BOT_3x3', # Twisted Treeline games played against AI
-    'RANKED_SOLO_5x5', # Summoner's Rift ranked solo queue games
-    'RANKED_TEAM_3x3', # Twisted Treeline ranked team games
-    'RANKED_TEAM_5x5', # Summoner's Rift ranked team games
-    'ONEFORALL_5x5', # One for All games
-    'FIRSTBLOOD_1x1', # Snowdown Showdown 1x1 games
-    'FIRSTBLOOD_2x2', # Snowdown Showdown 2x2 games
-    'SR_6x6', # Hexakill games
+    'NONE',  # Custom games
+    'NORMAL',  # Summoner's Rift unranked games
+    'NORMAL_3x3',  # Twisted Treeline unranked games
+    'ODIN_UNRANKED',  # Dominion/Crystal Scar games
+    'ARAM_UNRANKED_5v5',  # ARAM / Howling Abyss games
+    'BOT',  # Summoner's Rift and Crystal Scar games played against AI
+    'BOT_3x3',  # Twisted Treeline games played against AI
+    'RANKED_SOLO_5x5',  # Summoner's Rift ranked solo queue games
+    'RANKED_TEAM_3x3',  # Twisted Treeline ranked team games
+    'RANKED_TEAM_5x5',  # Summoner's Rift ranked team games
+    'ONEFORALL_5x5',  # One for All games
+    'FIRSTBLOOD_1x1',  # Snowdown Showdown 1x1 games
+    'FIRSTBLOOD_2x2',  # Snowdown Showdown 2x2 games
+    'SR_6x6',  # Hexakill games
+    'CAP_5x5',  # Team Builder games
+    'URF',  # Ultra Rapid Fire games
+    'URF_BOT',  # Ultra Rapid Fire games against AI
+]
+
+player_stat_summary_types = [
+    'Unranked',  # Summoner's Rift unranked games
+    'Unranked3x3',  # Twisted Treeline unranked games
+    'OdinUnranked',  # Dominion/Crystal Scar games
+    'AramUnranked5x5',  # ARAM / Howling Abyss games
+    'CoopVsAI',  # Summoner's Rift and Crystal Scar games played against AI
+    'CoopVsAI3x3',  # Twisted Treeline games played against AI
+    'RankedSolo5x5',  # Summoner's Rift ranked solo queue games
+    'RankedTeams3x3',  # Twisted Treeline ranked team games
+    'RankedTeams5x5',  # Summoner's Rift ranked team games
+    'OneForAll5x5',  # One for All games
+    'FirstBlood1x1',  # Snowdown Showdown 1x1 games
+    'FirstBlood2x2',  # Snowdown Showdown 2x2 games
+    'SummonersRift6x6',  # Hexakill games
+    'CAP5x5',  # Team Builder games
+    'URF',  # Ultra Rapid Fire games
+    'URFBots',  # Ultra Rapid Fire games played against AI
 ]
 
 solo_queue, ranked_5s, ranked_3s = 'RANKED_SOLO_5x5', 'RANKED_TEAM_5x5', 'RANKED_TEAM_3x3'
@@ -137,7 +160,6 @@ class RiotWatcher:
         ),
                          params=args
         )
-        #print 'RIOTWATCHER URL: {}'.format(r.url)
         if not static:
             for lim in self.limits:
                 lim.add_request()
@@ -148,24 +170,58 @@ class RiotWatcher:
     def get_all_champions(self, region=None, free_to_play=False):
         return self.base_request('v1.2/champion', region, freeToPlay=free_to_play)
 
+    def get_champion(self, champion_id, region=None):
+        return self.base_request('v1.2/champion/{id}'.format(id=champion_id), region)
+
     # game-v1.3
     def get_recent_games(self, summoner_id, region=None):
         return self.base_request('v1.3/game/by-summoner/{summoner_id}/recent'.format(summoner_id=summoner_id), region)
 
-    # league-v2.3, update 1
-    def get_league(self, summoner_id, region=None):
-        return self.base_request('v2.3/league/by-summoner/{summoner_id}'.format(summoner_id=summoner_id), region)
+    # league-v2.4
+    def get_league(self, summoner_ids=None, team_ids=None, region=None):
+        """summoner_ids and team_ids arguments must be iterable, only one should be specified, not both"""
+        if (summoner_ids is None) != (team_ids is None):
+            if summoner_ids is not None:
+                return self.base_request(
+                    'v2.4/league/by-summoner/{summoner_ids}'.format(
+                        summoner_ids=','.join([str(s) for s in summoner_ids])),
+                    region
+                )
+            else:
+                return self.base_request(
+                    'v2.4/league/by-team/{team_ids}'.format(team_ids=','.join([str(t) for t in team_ids])),
+                    region
+                )
 
-    def get_league_for_summoner(self, summoner_id, region=None):
-        return self.base_request('v2.3/league/by-summoner/{summoner_id}/entry'.format(summoner_id=summoner_id), region)
+    def get_league_entry(self, summoner_ids=None, team_ids=None, region=None):
+        """summoner_ids and team_ids arguments must be iterable, only one should be specified, not both"""
+        if (summoner_ids is None) != (team_ids is None):
+            if summoner_ids is not None:
+                return self.base_request(
+                    'v2.4/league/by-summoner/{summoner_ids}/entry'.format(
+                        summoner_ids=','.join([str(s) for s in summoner_ids])),
+                    region
+                )
+            else:
+                return self.base_request(
+                    'v2.4/league/by-team/{team_ids}/entry'.format(team_ids=','.join([str(t) for t in team_ids])),
+                    region
+                )
 
     def get_challenger(self, region=None, queue=solo_queue):
-        return self.base_request('v2.3/league/challenger', region, type=queue)
+        return self.base_request('v2.4/league/challenger', region, type=queue)
 
-    # lol-static-data-v1.2
-    def static_get_champion_list(self, region=None, locale=None, version=None, champ_data=None):
-        return self.base_request('v1.2/champion', region, static=True, locale=locale, version=version,
-                                 champData=champ_data)
+    # lol-static-data-v1
+    def static_get_champion_list(self, region=None, locale=None, version=None, data_by_id=None, champ_data=None):
+        return self.base_request(
+            'v1.2/champion',
+            region,
+            static=True,
+            locale=locale,
+            version=version,
+            dataById=data_by_id,
+            champData=champ_data
+        )
 
     def static_get_champion(self, champ_id, region=None, locale=None, version=None, champ_data=None):
         return self.base_request(
@@ -228,13 +284,14 @@ class RiotWatcher:
             runeData=rune_data
         )
 
-    def static_get_summoner_spell_list(self, region=None, locale=None, version=None, spell_data=None):
+    def static_get_summoner_spell_list(self, region=None, locale=None, version=None, data_by_id=None, spell_data=None):
         return self.base_request(
             'v1.2/summoner-spell',
             region,
             static=True,
             locale=locale,
             version=version,
+            dataById=data_by_id,
             spellData=spell_data
         )
 
@@ -248,16 +305,19 @@ class RiotWatcher:
             spellData=spell_data
         )
 
-    # stats-v1.2
+    def static_get_versions(self, region=None):
+        return self.base_request('v1.2/versions', region, static=True)
+
+    # stats-v1.3
     def get_stat_summary(self, summoner_id, region=None, season=None):
         return self.base_request(
-            'v1.2/stats/by-summoner/{summoner_id}/summary'.format(summoner_id=summoner_id),
+            'v1.3/stats/by-summoner/{summoner_id}/summary'.format(summoner_id=summoner_id),
             region,
             season='SEASON{}'.format(season) if season is not None else None)
 
     def get_ranked_stats(self, summoner_id, region=None, season=None):
         return self.base_request(
-            'v1.2/stats/by-summoner/{summoner_id}/ranked'.format(summoner_id=summoner_id),
+            'v1.3/stats/by-summoner/{summoner_id}/ranked'.format(summoner_id=summoner_id),
             region,
             season='SEASON{}'.format(season) if season is not None else None
         )
@@ -301,10 +361,16 @@ class RiotWatcher:
 
     # team-v2.2, update 1
     def get_teams_for_summoner(self, summoner_id, region=None):
-        return self.base_request('v2.2/team/by-summoner/{summoner_id}'.format(summoner_id=summoner_id), region)
+        return self.get_teams_for_summoners([summoner_id, ], region=region)[str(summoner_id)]
+
+    def get_teams_for_summoners(self, summoner_ids, region=None):
+        return self.base_request(
+            'v2.2/team/by-summoner/{summoner_id}'.format(summoner_id=','.join([str(s) for s in summoner_ids])),
+            region
+        )
 
     def get_team(self, team_id, region=None):
-        return self.get_teams([team_id, ], region=region)
+        return self.get_teams([team_id, ], region=region)[str(team_id)]
 
     def get_teams(self, team_ids, region=None):
-        return self.base_request('v2.2/team/{team_ids}'.format(team_ids=','.join(str(t) for t in team_ids)), region)
+        return self.base_request('v2.3/team/{team_ids}'.format(team_ids=','.join(str(t) for t in team_ids)), region)

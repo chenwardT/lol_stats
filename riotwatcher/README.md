@@ -1,5 +1,5 @@
-# RiotWatcher v1.0.2
-RiotWatcher is a thin wrapper on top of the [Riot Games API for League of Legends][1]. All public methods as of the update on 2/4/2014 are supported in full. All game constants are also included in variable declarations.
+# RiotWatcher v1.1.1
+RiotWatcher is a thin wrapper on top of the [Riot Games API for League of Legends][1]. All public methods as of 4/30/2014 are supported in full. All game constants are also included in variable declarations.
 Requests are kept track of so that you can stay below your rate limit. The default rate limits are set to 10 requests every 10 seconds and 500 requests every 6 minutes (the limit for development keys).
 The rate limiter does not prevent you from making requests that will be blocked and cause an exception, it simply allows you to check if you request will go through.
 
@@ -65,6 +65,32 @@ I might get around to fully documenting this at some point, but I am working on 
 
 ## Changelog
 
+### v1.1.5 - 5/9/2014
+Cause what do version numbers really mean anyways?
+
+Actually add endpoints to league API that I just forgot to add. Change is NOT backwards compatible, any use of the old league api calls will need to be changed, in addition to the riot changes.
+
+Newly supported API's:
+- league-v2.4
+- team-v2.3
+
+### v1.1.1 - 5/3/2014
+Fix issue with static calls, namely that they didn't do anything right before. Now they work.
+
+### v1.1 - 4/29/2014
+Updated to latest API versions, now supported API's are:
+
+- champion-v1.2
+- game-v1.3
+- league-v2.3
+- lol-static-data-v1.2
+- stats-v1.3
+- summoner-v1.4
+- team-v2.2
+
+Changes are NOT backwards compatible, you will need to update any code that used an old API version.
+Check [Riots documentation][2] for more information on what changes were made
+
 ### v1.0.2 - 2/25/2014
 Added Riots new methods to get teams by id. In methods 'get_teams(team_ids, region)' and 'get_team(team_id, region)'.
 
@@ -79,3 +105,4 @@ I don't own any part of Riot or League of Legends or any of their stuff. Don't c
 Also if anything is trademarked, I don't own that trademark. Riot probably does.
 
 [1]: https://developer.riotgames.com/
+[2]: https://developer.riotgames.com/change-history
