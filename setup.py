@@ -20,7 +20,7 @@ setup(name='lol_stats',
           'djangorestframework',
           'django-debug-toolbar',
           'django-extensions',
-	  'celery',
+          'Celery',
       ],
       classifiers=[
           'Environment :: Web Environment',
