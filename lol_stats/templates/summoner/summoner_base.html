@@ -49,6 +49,7 @@
                     task_id = data;
                     console.log(task_id);
 
+                    // clear before using, in case of browser weirdness
                     if (timerID) {
                         clearInterval(timerID);
                     }
@@ -61,6 +62,7 @@
                             success: function(data){
                                 $("#status").html(data);
 
+                                // the task completed
                                 if (data == "SUCCESS") {
                                     clearInterval(timerID);
                                 }

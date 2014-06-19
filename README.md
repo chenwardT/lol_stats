@@ -35,3 +35,6 @@ This project and its author are not affiliated with Riot Games.
 
 ## Documentation
 Sphinx-generated docs written to [lol-stats.readthedocs.org](http://lol-stats.readthedocs.org) on pushes. Sometimes changes to code cause the autogen to fail; don't expect much yet.
+
+## Notes
+Python setup files (e.g., requirements.txt, MANIFEST.in, etc) should not be relied upon and are only included for readthedoc's virtualenv.

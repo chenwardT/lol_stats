@@ -19,23 +19,41 @@ from api.serializers import *
 
 class SummonerList(generics.ListAPIView):
     """
-    API endpoint that allows summoners to be viewed.
+    API endpoint that allows summoners to be listed.
     """
     serializer_class = SummonerSerializer
 
     def get_queryset(self):
         """
-        Optionally restricts the returned summoners to a given region or name,
-        by filtering against a `region` and/or `name` query parameter in the URL.
+        This view returns a list of all summoners for a region
+        as determined by the `region` portion of the URL.
         """
         queryset = Summoner.objects.all()
-        region = self.request.QUERY_PARAMS.get('region', None)
-        name = self.request.QUERY_PARAMS.get('name', None)
+        region = self.kwargs['region']
+        # name = self.request.QUERY_PARAMS.get('name', None)
 
-        if region is not None:
+        if region:
             queryset = queryset.filter(region__iexact=region)
-        if name is not None:
-            queryset = queryset.filter(name__iexact=name)
+        # if name is not None:
+        #     queryset = queryset.filter(name__iexact=name)
+
+        return queryset
+
+
+# TODO: Fix this so DB queries aren't tripped up by whitespace in names, a la Riot API behavior
+class SummonerDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a single summoner to be retrieved.
+    """
+    serializer_class = SummonerSerializer
+    lookup_url_kwarg = 'name'
+
+    def get_object(self, queryset=None):
+        queryset = Summoner.objects.all()
+        region = self.kwargs['region']
+        name = self.kwargs['name']
+
+        queryset = queryset.filter(region__iexact=region).get(name__iexact=name)
 
         return queryset
 
