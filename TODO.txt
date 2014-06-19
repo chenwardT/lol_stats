@@ -1,0 +1,4 @@
+- Determine when to update data from Riot API
+    - When our API is called, check `last_update` and do so automatically before returning data?
+    - As above, but when page is visited, via AJAX call to a view that updates such?
+    - Only manually, via "Refresh Data" button on page?

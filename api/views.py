@@ -1,6 +1,7 @@
 import json
 
 from rest_framework import viewsets
+from rest_framework import generics
 from celery.result import AsyncResult
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -8,13 +9,35 @@ from django.views.decorators.csrf import csrf_exempt
 from api.serializers import *
 
 
+# class SummonerViewSet(viewsets.ReadOnlyModelViewSet):
+#     """
+#     API endpoint that allows summoners to be viewed.
+#     """
+#     queryset = Summoner.objects.all()
+#     serializer_class = SummonerSerializer
 
-class SummonerViewSet(viewsets.ReadOnlyModelViewSet):
+
+class SummonerList(generics.ListAPIView):
     """
     API endpoint that allows summoners to be viewed.
     """
-    queryset = Summoner.objects.all()
     serializer_class = SummonerSerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned summoners to a given region,
+        by filtering against a `region` query parameter in the URL.
+        """
+        queryset = Summoner.objects.all()
+        region = self.request.QUERY_PARAMS.get('region', None)
+        name = self.request.QUERY_PARAMS.get('name', None)
+
+        if region is not None:
+            queryset = queryset.filter(region__iexact=region)
+        if name is not None:
+            queryset = queryset.filter(name__iexact=name)
+
+        return queryset
 
 
 class ChampionViewSet(viewsets.ReadOnlyModelViewSet):
