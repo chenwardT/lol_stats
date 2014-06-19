@@ -25,8 +25,8 @@ class SummonerList(generics.ListAPIView):
 
     def get_queryset(self):
         """
-        Optionally restricts the returned summoners to a given region,
-        by filtering against a `region` query parameter in the URL.
+        Optionally restricts the returned summoners to a given region or name,
+        by filtering against a `region` and/or `name` query parameter in the URL.
         """
         queryset = Summoner.objects.all()
         region = self.request.QUERY_PARAMS.get('region', None)
@@ -87,10 +87,11 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
+
 @csrf_exempt
 def get_task_state(request):
     """
-    A view to report task state to an AJAX call.
+    A view to report task state, given a task ID (UUID), to an AJAX call.
 
     Returns the state or an error message as JSON.
     When "SUCCESS" is returned, page scripts know they can query and display the related results.

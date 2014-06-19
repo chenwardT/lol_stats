@@ -4,11 +4,18 @@ from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat,
 
 
 class RawStatSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns match statistics.
+    """
     class Meta:
         model = RawStat
 
 
 class GameSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns a single match's data as well as all
+    associated statistics.
+    """
     stats = RawStatSerializer(many=False)
 
     class Meta:
@@ -19,6 +26,10 @@ class GameSerializer(serializers.ModelSerializer):
 
 
 class SummonerSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns basic summoner data as well as all related
+    historical match data from their point of view.
+    """
     game_set = GameSerializer(many=True)
 
     class Meta:
@@ -28,20 +39,32 @@ class SummonerSerializer(serializers.ModelSerializer):
 
 
 class ChampionSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns champion data.
+    """
     class Meta:
         model = Champion
 
 
 class ItemSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns item data.
+    """
     class Meta:
         model = Item
 
 
 class SummonerSpellSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns summoner spell data.
+    """
     class Meta:
         model = SummonerSpell
 
 
 class PlayerSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns match participant data.
+    """
     class Meta:
         model = Player
