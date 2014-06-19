@@ -7,8 +7,8 @@
     Get info on a summoner...<br>
 
 
-    Region: <input type="text" id="region" name="region" />
-    Name: <input type="text" id="name" name="name" />
+    Region: <input type="text" id="query-region" name="region" />
+    Name: <input type="text" id="query-name" name="name" />
     <button id="do-task" type="button">query</button>
 
     <div id="current-task">
@@ -27,12 +27,24 @@
 
     <script src="{% static "js/jquery-2.1.1.js" %}"></script>
     <script type="text/javascript">
+        var sumData = 0;
         function showInfo() {
-            var sumData = 0;
 
             $.ajax({
-                url: "{% url 'summoners-detail' %}/" + $(""),
+                // TODO: Get Django url tag to work with this, instead of constructing by hand.
+                url: "/api/summoners/" + $("#query-region").val() + "/" + $("#query-name").val(),
                 type: "GET",
+                success: function(data) {
+                    sumData = data;
+                    console.log(sumData);
+
+                    $("#id").text(sumData.summoner_id);
+                    $("#name").text(sumData.name);
+                    $("#level").text(sumData.summoner_level);
+                    $("#region").text(sumData.region);
+                    $("#last-updated").text(sumData.last_update);
+                    $("#summoner-info").show();
+                }
             })
         }
 
@@ -65,6 +77,7 @@
                                 // the task completed
                                 if (data == "SUCCESS") {
                                     clearInterval(timerID);
+                                    showInfo();
                                 }
                             }
                         })

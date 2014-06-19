@@ -40,7 +40,8 @@ class SummonerList(generics.ListAPIView):
         return queryset
 
 
-# TODO: Fix this so DB queries aren't tripped up by whitespace in names, a la Riot API behavior
+# TODO: Fix this so DB queries aren't tripped up by "erroneous" whitespace in names,
+#  a la Riot API behavior
 class SummonerDetail(generics.RetrieveAPIView):
     """
     API endpoint that allows a single summoner to be retrieved.
