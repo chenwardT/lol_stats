@@ -55,8 +55,8 @@
             $.ajax({
                 url: "{% url 'ajax_query_start' %}",
                 type: "POST",
-                data: { region: $("#region").val(),
-                        name: $("#name").val() },
+                data: { region: $("#query-region").val(),
+                        name: $("#query-name").val() },
                 success: function(data) {
                     task_id = data;
                     console.log(task_id);

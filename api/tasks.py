@@ -39,7 +39,7 @@ def async_get_summoner_by_name(summoner_name, region):
         else:
             # TODO: Need to do API error checking here
             print u'cache STALE for summoner: {str}'.format(str=summoner.name)
-            summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ',''), region=region)
+            summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
             print u'received summoner dto:', summoner_dto
 
             summoner.summoner_id = summoner_dto['id']

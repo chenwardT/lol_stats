@@ -163,6 +163,7 @@ class RiotWatcher:
         if not static:
             for lim in self.limits:
                 lim.add_request()
+        print 'URL:', r.url
         raise_status(r)
         return r.json()
 
