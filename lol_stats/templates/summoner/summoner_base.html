@@ -11,10 +11,7 @@
     Name: <input type="text" id="query-name" name="name" />
     <button id="do-task" type="button">query</button>
 
-    <div id="current-task">
-        <h4>Task ID: {{ task_id }}</h4>
-    </div>
-    <div id="status"></div>
+    <p>Status: <span id="status"></span></p>
 
     <div id="summoner-info">
         <h3>Summoner Info</h3>
@@ -78,6 +75,9 @@
                                 if (data == "SUCCESS") {
                                     clearInterval(timerID);
                                     showInfo();
+                                }
+                                else if (data == "FAILURE") {
+                                    clearInterval(timerID);
                                 }
                             }
                         })
