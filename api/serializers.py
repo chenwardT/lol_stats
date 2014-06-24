@@ -3,10 +3,33 @@ from rest_framework import serializers
 from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game
 
 
+class SparseSummonerSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns sparse summoner data.
+
+    Used by PlayerSerializer.
+    """
+    class Meta:
+        model = Summoner
+        fields = ('summoner_id', 'name')
+
+
+class ChampionSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns champion data.
+    """
+    class Meta:
+        model = Champion
+        fields = ('champion_id', 'name',)
+
+
 class PlayerSerializer(serializers.ModelSerializer):
     """
     A serializer that returns match participant data.
     """
+    champion = ChampionSerializer()
+    summoner = SparseSummonerSerializer()
+
     class Meta:
         model = Player
         fields = ('summoner', 'champion', 'team_id')
@@ -47,14 +70,6 @@ class SummonerSerializer(serializers.ModelSerializer):
         fields = ('id', 'summoner_id', 'name', 'profile_icon_id', 'revision_date', 'summoner_level', 'region',
                   'last_update', 'game_set')
 
-
-class ChampionSerializer(serializers.ModelSerializer):
-    """
-    A serializer that returns champion data.
-    """
-    class Meta:
-        model = Champion
-        fields = ('champion_id', 'name',)
 
 
 class ItemSerializer(serializers.ModelSerializer):

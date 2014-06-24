@@ -3,6 +3,8 @@ import time
 import inflection
 from django.db import models
 
+# TODO: Set PKs to extant fields, if possible.
+
 
 class Summoner(models.Model):
     """Maps to Riot API summoner DTO.
