@@ -28,7 +28,7 @@ MAX_IDS = 40  # number of summoner IDs that can be queried at once
 
 def get_summoner_by_name(summoner_name, region):
     """
-    Get summoner info, by name from Riot API, into cache.
+    Get summoner info, by name, from Riot API, into cache.
 
     Returns a Summoner object.
     """
@@ -43,19 +43,19 @@ def get_summoner_by_name(summoner_name, region):
 
     # if we already know about this summoner
     if summoner_known:
-        print u'cache entry age: {age}'.format(age=str(datetime.now() - summoner.last_update))
+        #print u'cache entry age: {age}'.format(age=str(datetime.now() - summoner.last_update))
 
-        # and it's cache time hasn't expired
+        # if its cache time hasn't expired
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
             # give the cached info
             print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
             #return HttpResponse("%s" % summoner.name)
 
-        # cached summoner object exists, but needs updating
+        # else the cached summoner object exists, but needs updating
         else:
             # TODO: Need to do API error checking here
             print u'cache STALE for summoner: {str}'.format(str=summoner.name)
-            summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ',''), region=region)
+            summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
             print u'received summoner dto:', summoner_dto
 
             summoner.summoner_id = summoner_dto['id']
@@ -72,7 +72,7 @@ def get_summoner_by_name(summoner_name, region):
     # we don't have this summoner in the cache, so grab it from API and create new entry
     else:
         print u'querying API for new summoner: {str}'.format(str=summoner_name)
-        summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ',''), region=region)
+        summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
         print u'API result:', summoner_dto
 
         # TODO: Need to do API error checking here
@@ -85,10 +85,9 @@ def get_summoner_by_name(summoner_name, region):
                             last_update=datetime.now())
         summoner.save()
 
-    return summoner
-
 
 # TODO: should we ensure this is only called on cached summoners?
+# Unused
 def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
     """
     Get one or more summoner info objects by ID from Riot API and insert them into DB.
@@ -136,6 +135,7 @@ def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
             print 'retried cache match FOUND for {str}'.format(str=summoner_name)
         except ObjectDoesNotExist:
             print 'no summoner found, even after querying API!'
+            return 0
 
     return summoner.summoner_id
 
@@ -261,7 +261,6 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
 
     player_list = list(unique_players)  # make a list of the set, so we can call chunks() on it
 
-
     # don't forget, we have to check for the summoner ID whose history we're examining as well!
     try:
         Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
@@ -269,20 +268,12 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
         if summoner_id not in player_list:
             player_list.append(summoner_id)
 
-    # WE ALREADY DID THIS WTF
-    # remove summonerIDs that we already have in the cache
-    #for i in player_list:
-    #    if len(Summoner.objects.filter(region=region).filter(summoner_id=i)):
-    #        player_list.remove(i)
-
     query_list = list(chunks(player_list, MAX_IDS))  # query_list now holds a list of lists of at most MAX_ID elements
 
     # now ask the API for info on summoners, at most MAX_ID at a time
     summoner_dto = []
     for i in query_list:
         summoner_dto.append(riot_api.get_summoners(ids=i))
-
-    #pprint.pprint(summoner_dto)
 
     # TODO: This part is sometimes getting duplicate summoners!
     # now put those summoner DTOs in the cache

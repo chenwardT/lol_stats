@@ -7,12 +7,12 @@ from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
 from api.models import Summoner
-from api.utils import riot_api, CACHE_SUMMONER
+from api.utils import riot_api, CACHE_SUMMONER, get_recent_matches
 
 @shared_task
 def async_get_summoner_by_name(summoner_name, region):
     """
-    Get summoner info, by name from Riot API, into cache.
+    Get summoner info, by name, from Riot API, into cache.
 
     Returns a Summoner object.
     """
@@ -29,13 +29,13 @@ def async_get_summoner_by_name(summoner_name, region):
     if summoner_known:
         #print u'cache entry age: {age}'.format(age=str(datetime.now() - summoner.last_update))
 
-        # and it's cache time hasn't expired
+        # if its cache time hasn't expired
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
             # give the cached info
             print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
             #return HttpResponse("%s" % summoner.name)
 
-        # cached summoner object exists, but needs updating
+        # else the cached summoner object exists, but needs updating
         else:
             # TODO: Need to do API error checking here
             print u'cache STALE for summoner: {str}'.format(str=summoner.name)
@@ -68,5 +68,7 @@ def async_get_summoner_by_name(summoner_name, region):
                             region=region,
                             last_update=datetime.now())
         summoner.save()
+
+    get_recent_matches(summoner_id=summoner.summoner_id, region=region)
 
     #sleep(5)
