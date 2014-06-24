@@ -36,6 +36,8 @@ api.tasks module
     :undoc-members:
     :show-inheritance:
 
+    .. autofunction:: async_get_summoner_by_name(summoner_name, region)
+
 api.tests module
 ----------------
 
