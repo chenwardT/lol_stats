@@ -9,7 +9,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-import os
 from base import *
 
 # Quick-start development settings - unsuitable for production
@@ -35,14 +34,14 @@ MIDDLEWARE_CLASSES += (
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-db_pass = os.environ['LOL_STATS_DB_PASSWORD']
+DB_PASSWORD = get_env_variable('LOL_STATS_DB_PASSWORD')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.path.join('lol_stats_db'),
         'USER': 'lol_stats',
-        'PASSWORD': db_pass,
+        'PASSWORD': DB_PASSWORD,
         'HOST': 'localhost',
         'PORT': '',
     }
