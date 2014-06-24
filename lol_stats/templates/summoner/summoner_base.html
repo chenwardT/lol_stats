@@ -29,7 +29,7 @@
 
             $.ajax({
                 // TODO: Get Django url tag to work with this, instead of constructing by hand.
-                url: "/api/summoners/" + $("#query-region").val() + "/" + $("#query-name").val(),
+                url: "/api/summoners/" + $("#query-region").val() + "/" + $("#query-name").val() + "/",
                 type: "GET",
                 success: function(data) {
                     sumData = data;

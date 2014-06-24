@@ -71,7 +71,6 @@ class SummonerSerializer(serializers.ModelSerializer):
                   'last_update', 'game_set')
 
 
-
 class ItemSerializer(serializers.ModelSerializer):
     """
     A serializer that returns item data.
