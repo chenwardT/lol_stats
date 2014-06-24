@@ -1,8 +1,12 @@
 lol_stats
 Django==1.6.5
 GnuPGInterface==0.3.2
+Jinja2==2.7.2
+MarkupSafe==0.23
 PyYAML==3.11
 Pygments==1.6
+SQLAlchemy==0.9.4
+Sphinx==1.2.2
 amqp==1.4.5
 anyjson==0.3.3
 apt-xapian-index==0.44
@@ -15,15 +19,19 @@ chardet==2.0.1
 command-not-found==0.2.44
 configobj==4.7.2
 decorator==3.3.2
+## FIXME: could not find svn URL in dependency_links for this package:
+distribute==0.6.24dev-r0
 django-debug-toolbar==1.2.1
 django-extensions==1.3.7
 django-pushserver==0.3.4
 djangorestframework==2.3.13
+docutils==0.11
 inflection==0.2.0
 ipython==0.12.1
 kombu==3.0.16
 language-selector==0.1
 pexpect==2.3
+psycopg2==2.5.3
 py-hbpush==0.1.4
 python-apt==0.8.3ubuntu7
 python-debian==0.1.21ubuntu1

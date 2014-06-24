@@ -21,6 +21,7 @@ setup(name='lol_stats',
           'django-debug-toolbar',
           'django-extensions',
           'Celery',
+          'psycopg2',
       ],
       classifiers=[
           'Environment :: Web Environment',
