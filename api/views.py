@@ -5,6 +5,7 @@ from rest_framework import generics
 from celery.result import AsyncResult
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 
 from api.serializers import *
 
@@ -29,13 +30,10 @@ class SummonerList(generics.ListAPIView):
         as determined by the `region` portion of the URL.
         """
         queryset = Summoner.objects.all()
-        region = self.kwargs['region']
-        # name = self.request.QUERY_PARAMS.get('name', None)
 
-        if region:
+        if 'region' in self.kwargs:
+            region = self.kwargs['region']
             queryset = queryset.filter(region__iexact=region)
-        # if name is not None:
-        #     queryset = queryset.filter(name__iexact=name)
 
         return queryset
 

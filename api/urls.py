@@ -26,6 +26,9 @@ urlpatterns = patterns('api',
     url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^task_state/', 'views.get_task_state', name='task_state'),
-    url(r'^summoners/(?P<region>\w+$)', SummonerList.as_view(), name='summoners-list'),
-    url(r'^summoners/(?P<region>\w+)/(?P<name>\w+( \w+)*$)', SummonerDetail.as_view(), name='summoners-detail')
+
+    # IMPORTANT: Trailing slash is required here! Omitting the trailing slash will result in incorrect filtering.
+    url(r'^summoners/(?P<region>\w+)/$', SummonerList.as_view(), name='summoners-list'),
+    url(r'^summoners/(?P<region>\w+)/(?P<name>\w+( \w+)*)/$', SummonerDetail.as_view(), name='summoners-detail'),
+    url(r'^summoners/', SummonerList.as_view(), name='summoners-list'),
 )
