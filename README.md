@@ -44,6 +44,7 @@ Vagrantfile + Cheffile forthcoming...
 ###Postgresql
 
 Django is using `psycopg2` implementation of postgresql DB engine.
+
 Port forwarding to VM's pgsql server is setup via this line in vagrantfile:
 
 `config.vm.network :forwarded_port, guest: 5432, host: 5433`

@@ -25,13 +25,21 @@ class SummonerSpellAdmin(admin.ModelAdmin):
 
 
 class PlayerAdmin(admin.ModelAdmin):
-    list_display = ('summoner', 'participant_of')
+    list_display = ('summoner', 'participant_of', 'region')
 
+
+class RawStatAdmin(admin.ModelAdmin):
+    list_display = ('game_id', 'timestamp', 'belongs_to', 'champion_played', 'win')
+
+
+class GameAdmin(admin.ModelAdmin):
+    list_display = ('game_id', 'create_date_str', 'summoner_id', 'champion_id', 'win', 'region')
+    list_filter = ('region',)
 
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Champion, ChampionAdmin)
 admin.site.register(Item, ItemAdmin)
 admin.site.register(SummonerSpell, SummonerSpellAdmin)
 admin.site.register(Player, PlayerAdmin)
-admin.site.register(RawStat)
-admin.site.register(Game)
+admin.site.register(RawStat, RawStatAdmin)
+admin.site.register(Game, GameAdmin)

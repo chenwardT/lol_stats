@@ -90,6 +90,9 @@ class Player(models.Model):
     def __unicode__(self):
         return u'%s on %s (Team %d)' % (self.summoner, self.champion, self.team_id)
 
+    def region(self):
+        return self.participant_of.region
+
 
 class RawStat(models.Model):
     """
@@ -183,6 +186,21 @@ class RawStat(models.Model):
             if getattr(self, i) is not None:
                 yield u'{}: {}'.format(inflection.humanize(i), getattr(self, i))
 
+    def belongs_to(self):
+        return Game.objects.get(stats=self).summoner_id
+
+    def champion_played(self):
+        return Game.objects.get(stats=self).champion_id
+
+    def game_id(self):
+        return Game.objects.get(stats=self).game_id
+
+    def region(self):
+        return Game.objects.get(stats=self).region
+
+    def timestamp(self):
+        return Game.objects.get(stats=self).create_date_str()
+
 
 class Game(models.Model):
     """
@@ -215,6 +233,9 @@ class Game(models.Model):
     def create_date_str(self):
         """Convert create_date epoch milliseconds timestamp to human-readable date string."""
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.create_date/1000))
+
+    def win(self):
+        return self.stats.win
 
     class Meta:
         """These fields, taken together, ensure no duplicates are created."""
