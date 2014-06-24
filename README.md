@@ -36,5 +36,25 @@ This project and its author are not affiliated with Riot Games.
 ## Documentation
 Sphinx-generated docs written to [lol-stats.readthedocs.org](http://lol-stats.readthedocs.org) on pushes. Sometimes changes to code cause the autogen to fail; don't expect much yet.
 
+## Setup (Incomplete)
+ 
+Vagrantfile + Cheffile forthcoming...
+
+
+###Postgresql
+
+Port forwarding to VM's pgsql server is setup via this line in vagrantfile:
+
+`config.vm.network :forwarded_port, guest: 5432, host: 5433`
+
+When configuring VM's postgresql server, must edit postgresql.conf:
+
+`listen_addresses = '*'      # Ensure we listen on all interfaces`
+
+In pg_hba.conf, add a line:
+
+`host    all     all     all     md5     # Accept connections from anywhere, using password auth`
+
+
 ## Notes
 Python setup files (e.g., requirements.txt, MANIFEST.in, etc) should not be relied upon and are only included for readthedoc's virtualenv.
