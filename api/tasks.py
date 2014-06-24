@@ -56,7 +56,7 @@ def async_get_summoner_by_name(summoner_name, region):
     # we don't have this summoner in the cache, so grab it from API and create new entry
     else:
         print u'querying API for new summoner: {str}'.format(str=summoner_name)
-        summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ',''), region=region)
+        summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
         print u'API result:', summoner_dto
 
         # TODO: Need to do API error checking here

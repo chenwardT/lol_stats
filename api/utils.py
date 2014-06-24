@@ -353,7 +353,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                     player = Player(champion=Champion.objects.get(champion_id=p['championId']),
                                     summoner=Summoner.objects.filter(region=region).get(summoner_id=p['summonerId']),
                                     team_id=p['teamId'],
-                                    participant=game)
+                                    participant_of=game)
                     player.save()
         else:  # if it didn't save, we can get rid of the stats object too.
             stats.delete()

@@ -17,8 +17,8 @@ class Summoner(models.Model):
     region = models.CharField(max_length=4)
     last_update = models.DateTimeField()
 
-    def __str__(self):
-        return u'{str.name}'.format(str=self)
+    def __unicode__(self):
+        return self.name
 
     class Meta:
         """These fields, taken together, ensure no duplicates are created."""
@@ -32,20 +32,20 @@ class Champion(models.Model):
     name = models.CharField(max_length=32)
     key = models.CharField(max_length=32)
 
-    def __str__(self):
-        return u'{str.name}'.format(str=self)
+    def __unicode__(self):
+        return self.name
 
 
 class Item(models.Model):
     """Maps to Riot API item DTO."""
     item_id = models.IntegerField()
     description = models.CharField(max_length=1024)
-    name = models.CharField(max_length=32)
+    name = models.CharField(max_length=64)
     plain_text = models.CharField(max_length=256, blank=True, null=True)
-    group = models.CharField(max_length=32, blank=True, null=True)
+    group = models.CharField(max_length=64, blank=True, null=True)
 
-    def __str__(self):
-        return u'{str.name}'.format(str=self)
+    def __unicode__(self):
+        return self.name
 
 
 class SummonerSpell(models.Model):
@@ -56,8 +56,8 @@ class SummonerSpell(models.Model):
     key = models.CharField(max_length=32)
     description = models.CharField(max_length=256)
 
-    def __str__(self):
-        return u'{str.name}'.format(str=self)
+    def __unicode__(self):
+        return u'%s' % self.name
 
 ## placeholder
 #class Mastery(models.Model):
@@ -77,21 +77,23 @@ class SummonerSpell(models.Model):
 
 
 class Player(models.Model):
-    """Maps to Riot API fellowPlayer DTO.
+    """
+    Maps to Riot API fellowPlayer DTO.
 
     fellowPlayer is related to match history query.
     """
     champion = models.ForeignKey(Champion)
     summoner = models.ForeignKey(Summoner)
     team_id = models.IntegerField()  # 100, 200
-    participant = models.ForeignKey('Game')
+    participant_of = models.ForeignKey('Game')
 
-    def __str__(self):
-        return u'{str.summoner} on {str.champion} (Team {str.team_id})'.format(str=self)
+    def __unicode__(self):
+        return u'%s on %s (Team %d)' % (self.summoner, self.champion, self.team_id)
 
 
 class RawStat(models.Model):
-    """Maps to Riot API RawStats DTO.
+    """
+    Maps to Riot API RawStats DTO.
 
     RawStats is related to match history query.
     """
@@ -172,8 +174,8 @@ class RawStat(models.Model):
     ward_placed = models.IntegerField(blank=True, null=True)
     win = models.NullBooleanField(blank=True, null=True)  # Flag specifying whether or not this game was won.
 
-    def __str__(self):
-        return u'Stats for {}'.format(Game.objects.get(stats=self))
+    def __unicode__(self):
+        return u'Stats for %s' % Game.objects.get(stats=self)
 
     def __iter__(self):
         """Generator that returns field names and values for each value that is not None."""
@@ -183,7 +185,8 @@ class RawStat(models.Model):
 
 
 class Game(models.Model):
-    """Maps to Riot API game DTO.
+    """
+    Maps to Riot API game DTO.
 
     Instead of summonerId and championId, foreign keys to those objects are used.
     RawStat object is related to by these objects via 1-to-1.
@@ -206,8 +209,8 @@ class Game(models.Model):
     team_id = models.IntegerField()
     region = models.CharField(max_length=4)
 
-    def __str__(self):
-        return u'{str.summoner_id.name} on {str.champion_id} (Team {str.team_id}) [GID: {str.game_id}]'.format(str=self)
+    def __unicode__(self):
+        return u'%s on %s (Team %d) [GID: %d]' % (self.summoner_id.name, self.champion_id, self.team_id, self.game_id)
 
     def create_date_str(self):
         """Convert create_date epoch milliseconds timestamp to human-readable date string."""
