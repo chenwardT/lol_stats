@@ -20,15 +20,19 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 # Application definition
 
 INSTALLED_APPS += (
     'debug_toolbar',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES += (
     # If debug_toolbar is installed app, but not included here, auto adds to front of list (good)
     #'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 # Database

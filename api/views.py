@@ -121,6 +121,6 @@ def get_task_state(request):
         else:
             data = 'No task_id in the request.'
     else:
-        data = 'Invalid request type.'
+        data = 'get_task_state(): Invalid request type.'
 
     return HttpResponse(json.dumps(data), content_type='application/json')

@@ -25,8 +25,8 @@
     <script src="{% static "js/jquery-2.1.1.js" %}"></script>
     <script type="text/javascript">
         var sumData = 0;
-        function showInfo() {
 
+        function showInfo() {
             $.ajax({
                 // TODO: Get Django url tag to work with this, instead of constructing by hand.
                 url: "/api/summoners/" + $("#query-region").val() + "/" + $("#query-name").val() + "/",

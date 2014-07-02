@@ -77,4 +77,5 @@ def ajax_query_start(request):
 
         return HttpResponse(json.dumps(task.id), content_type='application/json')
     else:
-        return HttpResponse('Invalid request type.')
+        print request.META
+        return HttpResponse('ajax_query_start(): Invalid request type.')
