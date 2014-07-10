@@ -5,10 +5,10 @@ import os
 from celery import Celery
 
 from django.conf import settings
-from lol_stats.settings import BASE_DIR
+from lol_stats.base import BASE_DIR
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lol_stats.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lol_stats.development')
 
 app = Celery('lol_stats',
              broker='amqp://',

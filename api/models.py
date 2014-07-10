@@ -17,7 +17,7 @@ class Summoner(models.Model):
     revision_date = models.BigIntegerField()
     summoner_level = models.IntegerField()  # 'long' in DTO, but we know it's <= 30
     region = models.CharField(max_length=4)
-    last_update = models.DateTimeField()
+    last_update = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.name
@@ -228,6 +228,7 @@ class Game(models.Model):
     sub_type = models.CharField(max_length=24)
     team_id = models.IntegerField()
     region = models.CharField(max_length=4)
+    last_update = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return u'%s on %s (Team %d) [GID: %d]' % (self.summoner_id.name, self.champion_id, self.team_id, self.game_id)

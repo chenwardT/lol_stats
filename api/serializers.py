@@ -55,7 +55,7 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ('id', 'summoner_id', 'champion_id', 'create_date', 'game_id', 'game_mode', 'game_type',
                   'invalid', 'ip_earned', 'level', 'map_id', 'spell_1', 'spell_2', 'stats', 'sub_type',
-                  'team_id', 'region', 'player_set')
+                  'team_id', 'region', 'player_set', 'last_update')
 
 
 class SummonerSerializer(serializers.ModelSerializer):

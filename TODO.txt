@@ -1,3 +1,12 @@
+- Our API was designed so that historical data ("Game" entries) are bundled through Summoner-detail endpoint.
+    - This is a problem if we save more than last 10 games to DB.
+        - We currently DO append "new" games to Summoner game_sets.
+        - Riot API currently returns last 10 games only.
+            - This will probably change with Riot's new matchhistory API.
+    - Consider separating Game entries from Summoner data, so if/when we get large # of games stored
+     for any single summoner, we can paginate or load them dynamically (e.g. as user scrolls down page).
+
+
 - Determine when to update data from Riot API
     - When our API is called, check `last_update` and do so automatically before returning data?
     - As above, but when page is visited, via AJAX call to a view that updates such?

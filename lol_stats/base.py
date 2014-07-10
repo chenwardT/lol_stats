@@ -99,5 +99,5 @@ TEMPLATE_DIRS = (
 )
 
 REST_FRAMEWORK = {
-    'PAGINATE_BY': 10,
+    # 'PAGINATE_BY': 10,
 }

@@ -13,7 +13,7 @@ from api.views import (ChampionViewSet,
                        #SummonerViewSet,
 )
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 #router.register(r'summoners', SummonerViewSet)
 router.register(r'champions', ChampionViewSet)
 router.register(r'items', ItemViewSet)
@@ -28,7 +28,7 @@ urlpatterns = patterns('api',
     url(r'^task_state/', 'views.get_task_state', name='task_state'),
 
     # IMPORTANT: Trailing slash is required here! Omitting the trailing slash will result in incorrect filtering.
-    url(r'^summoners/(?P<region>\w+)/$', SummonerList.as_view(), name='summoners-list'),
-    url(r'^summoners/(?P<region>\w+)/(?P<name>\w+( \w+)*)/$', SummonerDetail.as_view(), name='summoners-detail'),
-    url(r'^summoners/', SummonerList.as_view(), name='summoners-list'),
+    url(r'^summoners/(?P<region>\w+)$', SummonerList.as_view(), name='summoners-list'),
+    url(r'^summoners/(?P<region>\w+)/(?P<name>\w+( \w+)*)$', SummonerDetail.as_view(), name='summoners-detail'),
+    url(r'^summoners', SummonerList.as_view(), name='summoners-list'),
 )

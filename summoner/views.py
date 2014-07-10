@@ -69,6 +69,7 @@ def ajax_query_start(request):
 
     Returns the ID of the initiated task as JSON.
     """
+    # when testing w/Adv Rest Client in chrome, must set header: X_REQUESTED_WITH = XMLHttpRequest
     if request.is_ajax():
         region = request.POST.get('region')
         summoner_name = request.POST.get('name')
@@ -77,5 +78,4 @@ def ajax_query_start(request):
 
         return HttpResponse(json.dumps(task.id), content_type='application/json')
     else:
-        print request.META
         return HttpResponse('ajax_query_start(): Invalid request type.')

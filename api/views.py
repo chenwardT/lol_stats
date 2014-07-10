@@ -20,11 +20,13 @@ from api.serializers import *
 
 class SummonerList(generics.ListAPIView):
     """
-    API endpoint that allows summoners to be listed.
+    API endpoint that allows summoners to be listed with optional
+    filtering via `region` portion of the URL.
     """
     serializer_class = SummonerSerializer
+    paginate_by = 10
 
-    def get_queryset(self):
+    def get_queryset(self, format=None):
         """
         This view returns a list of all summoners for a region
         as determined by the `region` portion of the URL.
@@ -42,12 +44,13 @@ class SummonerList(generics.ListAPIView):
 #  a la Riot API behavior
 class SummonerDetail(generics.RetrieveAPIView):
     """
-    API endpoint that allows a single summoner to be retrieved.
+    API endpoint that allows a single summoner to be retrieved,
+    as determined by the `region` and `name` portions of the URL.
     """
     serializer_class = SummonerSerializer
     lookup_url_kwarg = 'name'
 
-    def get_object(self, queryset=None):
+    def get_object(self, queryset=None, format=None):
         queryset = Summoner.objects.all()
         region = self.kwargs['region']
         name = self.kwargs['name']

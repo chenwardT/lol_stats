@@ -16,7 +16,7 @@ def async_get_summoner_by_name(summoner_name, region):
 
     Specifically, it gets basic summoner data as well as match history (10 games).
     """
-    # first we query cache for extant summoner object
+    # First we query cache for extant summoner object.
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
         summoner_known = True
@@ -29,13 +29,13 @@ def async_get_summoner_by_name(summoner_name, region):
     if summoner_known:
         #print u'cache entry age: {age}'.format(age=str(datetime.now() - summoner.last_update))
 
-        # if its cache time hasn't expired
+        # If its cache time hasn't expired...
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
             # give the cached info
             print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
             #return HttpResponse("%s" % summoner.name)
 
-        # else the cached summoner object exists, but needs updating
+        # Else the cached summoner object exists, but needs updating.
         else:
             # TODO: Need to do API error checking here
             print u'cache STALE for summoner: {str}'.format(str=summoner.name)
@@ -48,12 +48,12 @@ def async_get_summoner_by_name(summoner_name, region):
             summoner.revision_date = summoner_dto['revisionDate']
             summoner.summoner_level = summoner_dto['summonerLevel']
             summoner.region = region
-            summoner.last_update = datetime.now()
+            #summoner.last_update = datetime.now()
 
             print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
             summoner.save()
 
-    # we don't have this summoner in the cache, so grab it from API and create new entry
+    # We don't have this summoner in the cache, so grab it from API and create new entry.
     else:
         print u'querying API for new summoner: {str}'.format(str=summoner_name)
         summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
@@ -66,9 +66,8 @@ def async_get_summoner_by_name(summoner_name, region):
                             revision_date=summoner_dto['revisionDate'],
                             summoner_level=summoner_dto['summonerLevel'],
                             region=region,
-                            last_update=datetime.now())
+                            #last_update=datetime.now()
+                            )
         summoner.save()
 
     get_recent_matches(summoner_id=summoner.summoner_id, region=region)
-
-    #sleep(5)

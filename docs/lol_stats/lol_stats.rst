@@ -20,10 +20,18 @@ lol_stats.celery module
     :undoc-members:
     :show-inheritance:
 
-lol_stats.settings module
--------------------------
+lol_stats.development module
+----------------------------
 
-.. automodule:: lol_stats.settings
+.. automodule:: lol_stats.development
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+lol_stats.production module
+---------------------------
+
+.. automodule:: lol_stats.production
     :members:
     :undoc-members:
     :show-inheritance:

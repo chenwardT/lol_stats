@@ -4,7 +4,7 @@ import inflection
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
-from lol_stats.settings import riot_api
+from lol_stats.base import riot_api
 from api.models import Summoner, Player, RawStat, Game, Champion, Item, SummonerSpell
 
 
@@ -64,7 +64,7 @@ def get_summoner_by_name(summoner_name, region):
             summoner.revision_date = summoner_dto['revisionDate']
             summoner.summoner_level = summoner_dto['summonerLevel']
             summoner.region = region
-            summoner.last_update = datetime.now()
+            #summoner.last_update = datetime.now()
 
             print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
             summoner.save()
@@ -82,7 +82,8 @@ def get_summoner_by_name(summoner_name, region):
                             revision_date=summoner_dto['revisionDate'],
                             summoner_level=summoner_dto['summonerLevel'],
                             region=region,
-                            last_update=datetime.now())
+                            #last_update=datetime.now()
+                            )
         summoner.save()
 
 
@@ -106,7 +107,7 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
         summoner.revision_date = summoners[e]['revisionDate']
         summoner.summoner_level = summoners[e]['summonerLevel']
         summoner.region = region
-        summoner.last_update = datetime.now()
+        #summoner.last_update = datetime.now()
         summoner.save()
 
         num_sums = i
@@ -240,13 +241,13 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
     """
     recent = riot_api.get_recent_games(summoner_id, region)
 
-    # first make a set of the associated summoner IDs (a set cannot have duplicate entries)
+    # First make a set of the associated summoner IDs (a set cannot have duplicate entries).
     unique_players = set()
     for g in recent['games']:
         for p in g['fellowPlayers']:
             unique_players.add(p['summonerId'])
 
-    # now we take note of any summoner IDs we already have cached (so we can remove them)
+    # Now we take note of any summoner IDs we already have cached (so we can remove them).
     to_remove = set()
     for p in unique_players:
         try:
@@ -255,13 +256,13 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
         except ObjectDoesNotExist:
             pass
 
-    # remove the already cached summoner IDs from the working set
+    # Remove the already cached summoner IDs from the working set.
     for p in to_remove:
         unique_players.remove(p)
 
     player_list = list(unique_players)  # make a list of the set, so we can call chunks() on it
 
-    # don't forget, we have to check for the summoner ID whose history we're examining as well!
+    # Don't forget, we have to check for the summoner ID whose history we're examining as well!
     try:
         Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
     except ObjectDoesNotExist:  # if it isn't cached, and it isn't in the list yet, add it
@@ -270,13 +271,13 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
 
     query_list = list(chunks(player_list, MAX_IDS))  # query_list now holds a list of lists of at most MAX_ID elements
 
-    # now ask the API for info on summoners, at most MAX_ID at a time
+    # Now ask the API for info on summoners, at most MAX_ID at a time.
     summoner_dto = []
     for i in query_list:
         summoner_dto.append(riot_api.get_summoners(ids=i))
 
-    # TODO: This part is sometimes getting duplicate summoners!
-    # now put those summoner DTOs in the cache
+    # TODO: This part is sometimes getting duplicate summoners! (fixed?)
+    # Now put those summoner DTOs in the cache.
     for chunk in summoner_dto:
         for player in chunk:
             #print u'ADDING summoner {}'.format(chunk[player]['name'])
@@ -286,7 +287,8 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
                                 revision_date=chunk[player]['revisionDate'],
                                 summoner_level=chunk[player]['summonerLevel'],
                                 region=region,
-                                last_update=datetime.now())
+                                #last_update=datetime.now()
+                                )
 
             # Sometimes requests will go out synchronously for the same summoner.
             # This means the cache is not hit and a double query for a single summoner occurs.
@@ -297,7 +299,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
             except IntegrityError:
                 pass
 
-    # requires summoners (as well as all related field values) to be cached before-hand (summoner caching done above)
+    # Requires summoners (as well as all related field values) to be cached before-hand (summoner caching done above).
     for match in recent['games']:
         # first fill in the simple stuff
         game = Game(summoner_id=Summoner.objects.filter(region=region).get(summoner_id=summoner_id),
