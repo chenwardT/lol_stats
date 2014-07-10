@@ -67,6 +67,10 @@ def ajax_query_start(request):
     """
     AJAX call to initiate async task of querying Riot API for summoner info.
 
+    This populates the DB with basic summoner info as well as adding the last 10
+    match histories to their game_set. It will not add matches that we already knew about
+    (see `unique_together` constraint on Game model).
+
     Returns the ID of the initiated task as JSON.
     """
     # when testing w/Adv Rest Client in chrome, must set header: X_REQUESTED_WITH = XMLHttpRequest

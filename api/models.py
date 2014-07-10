@@ -206,11 +206,19 @@ class RawStat(models.Model):
 
 class Game(models.Model):
     """
-    Maps to Riot API game DTO.
+    Maps to Riot API Game DTO.
 
     Instead of summonerId and championId, foreign keys to those objects are used.
     RawStat object is related to by these objects via 1-to-1.
     Player objects point to this to allow reverse-querying of match participants.
+
+    To get a match history (QuerySet), given a region (R) and Summoner name (N):
+
+    Game.objects.filter(summoner_id=Summoner.objects.filter(region=R).get(name=N)
+
+    Alternatively, given a Summoner object (S):
+
+    S.game_set.all()
     """
     summoner_id = models.ForeignKey(Summoner)
     champion_id = models.ForeignKey(Champion)

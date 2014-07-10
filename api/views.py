@@ -107,6 +107,28 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
 
+    def get_queryset(self):
+        """
+        Optionally restricts the returned Games by region and summoner name of owner,
+        by filtering against a `region` and `name` query parameter in the URL.
+
+        Can filter by `region`, or `region` & `name`.
+
+        `name` is not case sensitive.
+        """
+
+        region = self.request.QUERY_PARAMS.get('region', None)
+        name = self.request.QUERY_PARAMS.get('name', None)
+
+        if region is not None:
+            if name is not None:
+                # If we have both a region and name to filter against.
+                self.queryset = self.queryset.filter(summoner_id=Summoner.objects.filter(region=region).filter(name__iexact=name))
+            else:
+                # If we only have a region to filter against.
+                self.queryset = self.queryset.filter(summoner_id=Summoner.objects.filter(region=region))
+
+        return self.queryset
 
 @csrf_exempt
 def get_task_state(request):
