@@ -22,7 +22,7 @@ setup(name='lol_stats',
           'django-extensions',
           'Celery',
           'psycopg2',
-          'corsheaders',
+          'django-cors-headers',
       ],
       classifiers=[
           'Environment :: Web Environment',
