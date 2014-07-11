@@ -14,7 +14,7 @@ def async_get_summoner_by_name(summoner_name, region):
     """
     Get summoner info, by name, from Riot API, into cache.
 
-    Specifically, it gets basic summoner data as well as match history (10 games).
+    Specifically, it gets basic summoner data as well as match history (last 10 games).
     """
     # First we query cache for extant summoner object.
     try:

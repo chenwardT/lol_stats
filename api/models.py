@@ -215,7 +215,7 @@ class Game(models.Model):
 
     To get a match history (QuerySet), given a region (R) and Summoner name (N):
 
-    Game.objects.filter(summoner_id=Summoner.objects.filter(region=R).get(name=N)
+    Game.objects.filter(summoner_id=Summoner.objects.filter(region=R).filter(name=N)
 
     Alternatively, given a Summoner object (S):
 

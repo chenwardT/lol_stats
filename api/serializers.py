@@ -41,6 +41,7 @@ class RawStatSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = RawStat
+        exclude = ('id',)
 
 
 class GameSerializer(serializers.ModelSerializer):
@@ -53,7 +54,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'summoner_id', 'champion_id', 'create_date', 'game_id', 'game_mode', 'game_type',
+        fields = ('summoner_id', 'champion_id', 'create_date', 'game_id', 'game_mode', 'game_type',
                   'invalid', 'ip_earned', 'level', 'map_id', 'spell_1', 'spell_2', 'stats', 'sub_type',
                   'team_id', 'region', 'player_set', 'last_update')
 
