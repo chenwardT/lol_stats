@@ -1,13 +1,32 @@
 import json
 
-from rest_framework import viewsets
-from rest_framework import generics
-from celery.result import AsyncResult
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+# from django.core.exceptions import ObjectDoesNotExist
+from celery.result import AsyncResult
+from rest_framework import viewsets
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
 
 from api.serializers import *
+
+# TODO: Unify case sensitivity across filter params.
+
+
+@api_view(('GET',))
+def api_root(request, format=None):
+    return Response({
+        'summoners': reverse('summoner-list', request=request, format=format),
+        # 'champions': reverse('champion-list', request=request, format=format),
+        # 'items': reverse('item-list', request=request, format=format),
+        # 'spells': reverse('spell-list', request=request, format=format),
+        # 'games': reverse('game-list', request=request, format=format),
+        # 'stats': reverse('stat-list', request=request, format=format),
+        # 'players': reverse('player-list', request=request, format=format)
+    })
 
 
 # class SummonerViewSet(viewsets.ReadOnlyModelViewSet):
@@ -16,6 +35,43 @@ from api.serializers import *
 #     """
 #     queryset = Summoner.objects.all()
 #     serializer_class = SummonerSerializer
+#
+#     def list(self, request, *args, **kwargs):
+#         self.queryset = Summoner.objects.all()
+#
+#         region = self.request.QUERY_PARAMS.get('region', None)
+#         name = self.request.QUERY_PARAMS.get('name', None)
+#
+#         if region is not None:
+#             self.queryset = self.queryset.filter(region__iexact=region)
+#
+#         serializer = SummonerSerializer(self.queryset, many=True)
+#         return Response(serializer.data)
+#
+#     # def retrieve(self, request, *args, **kwargs):
+#     #     self.queryset = Summoner.objects.all()
+#     #
+#     #     summoner = get_object_or_404(self.queryset)
+#     #     serializer = SummonerSerializer(summoner)
+#     #     return Response(serializer.data)
+#
+#     def get_object(self):
+#         self.queryset = self.get_queryset()
+#
+#         region = self.request.QUERY_PARAMS.get('region', None)
+#         name = self.request.QUERY_PARAMS.get('name', None)
+#
+#         if region is not None:
+#             if name is not None:
+#                 # If we have both a region and name to filter against.
+#                 self.queryset = self.queryset.filter(region__iexact=region).filter(name__icontains=name)
+#             else:
+#                 # If we only have a region to filter against.
+#                 self.queryset = self.queryset.filter(region__iexact=region)
+#
+#         obj = get_object_or_404(self.queryset.filter(region=region).get(name=name))
+#
+#         return obj
 
 
 class SummonerList(generics.ListAPIView):
@@ -48,16 +104,16 @@ class SummonerDetail(generics.RetrieveAPIView):
     as determined by the `region` and `name` portions of the URL.
     """
     serializer_class = SummonerSerializer
-    lookup_url_kwarg = 'name'
+    # lookup_url_kwarg = 'name'
 
     def get_object(self, queryset=None, format=None):
         queryset = Summoner.objects.all()
         region = self.kwargs['region']
         name = self.kwargs['name']
 
-        queryset = queryset.filter(region__iexact=region).get(name__iexact=name)
+        obj = get_object_or_404(queryset.filter(region__iexact=region).get(name__iexact=name))
 
-        return queryset
+        return obj
 
 
 class ChampionViewSet(viewsets.ReadOnlyModelViewSet):

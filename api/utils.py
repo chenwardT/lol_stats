@@ -280,6 +280,8 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
     # Now put those summoner DTOs in the cache.
     for chunk in summoner_dto:
         for player in chunk:
+            for v in chunk[player]:
+                print v, len(v)
             #print u'ADDING summoner {}'.format(chunk[player]['name'])
             summoner = Summoner(summoner_id=chunk[player]['id'],
                                 name=chunk[player]['name'],
@@ -295,6 +297,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
             # Duplicate summoners are prevented via the unique_together constraint on summoner_id and region,
             # which will throw IntegrityError and prevent the dupe from being made.
             try:
+                print summoner.name, len(summoner.name)
                 summoner.save()
             except IntegrityError:
                 pass

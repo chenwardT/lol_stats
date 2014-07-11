@@ -10,25 +10,27 @@ from api.views import (ChampionViewSet,
                        GameViewSet,
                        SummonerList,
                        SummonerDetail,
-                       #SummonerViewSet,
+                       # SummonerViewSet,
+                       api_root,
 )
 
-router = routers.DefaultRouter(trailing_slash=False)
-#router.register(r'summoners', SummonerViewSet)
-router.register(r'champions', ChampionViewSet)
-router.register(r'items', ItemViewSet)
-router.register(r'spells', SummonerSpellViewSet)
-router.register(r'players', PlayerViewSet)
-router.register(r'stats', RawStatViewSet)
-router.register(r'games', GameViewSet)
+# router = routers.DefaultRouter(trailing_slash=False)
+# router.register(r'summoners', SummonerViewSet)
+# router.register(r'champions', ChampionViewSet)
+# router.register(r'items', ItemViewSet)
+# router.register(r'spells', SummonerSpellViewSet)
+# router.register(r'players', PlayerViewSet)
+# router.register(r'stats', RawStatViewSet)
+# router.register(r'games', GameViewSet)
 
 urlpatterns = patterns('api',
-    url(r'^', include(router.urls)),
+    # url(r'^', include(router.urls)),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^task_state/', 'views.get_task_state', name='task_state'),
 
-    # IMPORTANT: Trailing slash is required here! Omitting the trailing slash will result in incorrect filtering.
+    # Note: trailing slashes
+    url(r'^$', 'views.api_root'),
+    url(r'^summoners$', SummonerList.as_view(), name='summoner-list'),
     url(r'^summoners/(?P<region>\w+)$', SummonerList.as_view(), name='summoners-list'),
     url(r'^summoners/(?P<region>\w+)/(?P<name>\w+( \w+)*)$', SummonerDetail.as_view(), name='summoners-detail'),
-    url(r'^summoners', SummonerList.as_view(), name='summoners-list'),
 )

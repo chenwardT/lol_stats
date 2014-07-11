@@ -15,32 +15,37 @@
     - First seen on our API page load.
     - Related to hyper-aggressive Chrome pre-fetching?
 
-Traceback (most recent call last):
-  File "/usr/lib/python2.7/wsgiref/handlers.py", line 86, in run
-    self.finish_response()
-  File "/usr/lib/python2.7/wsgiref/handlers.py", line 127, in finish_response
-    self.write(data)
-  File "/usr/lib/python2.7/wsgiref/handlers.py", line 215, in write
-    self._write(data)
-  File "/usr/lib/python2.7/socket.py", line 324, in write
-    self.flush()
-  File "/usr/lib/python2.7/socket.py", line 303, in flush
-    self._sock.sendall(view[write_offset:write_offset+buffer_size])
-error: [Errno 32] Broken pipe
-----------------------------------------
-Exception happened during processing of request from ('10.0.2.2', 61379)
-Traceback (most recent call last):
-  File "/usr/lib/python2.7/SocketServer.py", line 582, in process_request_thread
-    self.finish_request(request, client_address)
-  File "/usr/lib/python2.7/SocketServer.py", line 323, in finish_request
-    self.RequestHandlerClass(request, client_address, self)
-  File "/usr/local/lib/python2.7/dist-packages/django/core/servers/basehttp.py", line 126, in __init__
-    super(WSGIRequestHandler, self).__init__(*args, **kwargs)
-  File "/usr/lib/python2.7/SocketServer.py", line 640, in __init__
-    self.finish()
-  File "/usr/lib/python2.7/SocketServer.py", line 693, in finish
-    self.wfile.flush()
-  File "/usr/lib/python2.7/socket.py", line 303, in flush
-    self._sock.sendall(view[write_offset:write_offset+buffer_size])
-error: [Errno 32] Broken pipe
-----------------------------------------
+    Traceback (most recent call last):
+      File "/usr/lib/python2.7/wsgiref/handlers.py", line 86, in run
+        self.finish_response()
+      File "/usr/lib/python2.7/wsgiref/handlers.py", line 127, in finish_response
+        self.write(data)
+      File "/usr/lib/python2.7/wsgiref/handlers.py", line 215, in write
+        self._write(data)
+      File "/usr/lib/python2.7/socket.py", line 324, in write
+        self.flush()
+      File "/usr/lib/python2.7/socket.py", line 303, in flush
+        self._sock.sendall(view[write_offset:write_offset+buffer_size])
+    error: [Errno 32] Broken pipe
+    ----------------------------------------
+    Exception happened during processing of request from ('10.0.2.2', 61379)
+    Traceback (most recent call last):
+      File "/usr/lib/python2.7/SocketServer.py", line 582, in process_request_thread
+        self.finish_request(request, client_address)
+      File "/usr/lib/python2.7/SocketServer.py", line 323, in finish_request
+        self.RequestHandlerClass(request, client_address, self)
+      File "/usr/local/lib/python2.7/dist-packages/django/core/servers/basehttp.py", line 126, in __init__
+        super(WSGIRequestHandler, self).__init__(*args, **kwargs)
+      File "/usr/lib/python2.7/SocketServer.py", line 640, in __init__
+        self.finish()
+      File "/usr/lib/python2.7/SocketServer.py", line 693, in finish
+        self.wfile.flush()
+      File "/usr/lib/python2.7/socket.py", line 303, in flush
+        self._sock.sendall(view[write_offset:write_offset+buffer_size])
+    error: [Errno 32] Broken pipe
+    ----------------------------------------
+
+- Problem w/weird summoner names (ex. "IS141dca1d0484dcf8adc09")
+    - These were originally seen from EUW queries to nightdark's match history
+    - Other sites get accurate data though :(
+    - When trying to look up summoner info on these names, no summoner found

@@ -12,7 +12,8 @@ class Summoner(models.Model):
     Also contains timestamp for when object was last updated.
     """
     summoner_id = models.BigIntegerField()
-    name = models.CharField(max_length=16)
+    # Names "should" be 16 chars, but sometimes we get weird names (ex. "IS141dca1d0484dcf8adc09")
+    name = models.CharField(max_length=24)
     profile_icon_id = models.IntegerField()
     revision_date = models.BigIntegerField()
     summoner_level = models.IntegerField()  # 'long' in DTO, but we know it's <= 30
