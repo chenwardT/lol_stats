@@ -20,7 +20,7 @@ LATIN_AMERICA_SOUTH = 'las'
 KOREA = 'kr'
 
 # Cache Durations
-CACHE_SUMMONER = timedelta(seconds=10)  # will be longer in production
+CACHE_SUMMONER = timedelta(minutes=15)  # Sensible value in production would be avg game length?
 
 # Riot API
 MAX_IDS = 40  # number of summoner IDs that can be queried at once

@@ -64,12 +64,12 @@ class SummonerSerializer(serializers.ModelSerializer):
     A serializer that returns basic summoner data as well as all related
     historical match data from their point of view.
     """
-    game_set = GameSerializer(many=True)
+    #game_set = GameSerializer(many=True)
 
     class Meta:
         model = Summoner
         fields = ('id', 'summoner_id', 'name', 'profile_icon_id', 'revision_date', 'summoner_level', 'region',
-                  'last_update', 'game_set')
+                  'last_update')
 
 
 class ItemSerializer(serializers.ModelSerializer):

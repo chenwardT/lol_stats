@@ -31,6 +31,7 @@ def async_get_summoner_by_name(summoner_name, region):
 
         # If its cache time hasn't expired...
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
+            # We don't actually do anything here, since cache is fresh.
             # give the cached info
             print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
             #return HttpResponse("%s" % summoner.name)
