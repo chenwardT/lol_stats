@@ -239,6 +239,9 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
     """
     Retrieves game data for last 10 games played by a summoner, given a summoner ID and region.
     """
+
+    #print 'get_recent_matches()', summoner_id, region
+
     recent = riot_api.get_recent_games(summoner_id, region)
 
     # First make a set of the associated summoner IDs (a set cannot have duplicate entries).
@@ -272,16 +275,19 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
     query_list = list(chunks(player_list, MAX_IDS))  # query_list now holds a list of lists of at most MAX_ID elements
 
     # Now ask the API for info on summoners, at most MAX_ID at a time.
+    #print 'Now asking for participants...'
     summoner_dto = []
     for i in query_list:
-        summoner_dto.append(riot_api.get_summoners(ids=i))
+        summoner_dto.append(riot_api.get_summoners(ids=i, region=region))
+
+    #print 'Done getting participants!'
 
     # TODO: This part is sometimes getting duplicate summoners! (fixed?)
     # Now put those summoner DTOs in the cache.
     for chunk in summoner_dto:
         for player in chunk:
-            for v in chunk[player]:
-                print v, len(v)
+            # for v in chunk[player]:
+            #     print v, len(v)
             #print u'ADDING summoner {}'.format(chunk[player]['name'])
             summoner = Summoner(summoner_id=chunk[player]['id'],
                                 name=chunk[player]['name'],
@@ -297,7 +303,7 @@ def get_recent_matches(summoner_id, region=NORTH_AMERICA):
             # Duplicate summoners are prevented via the unique_together constraint on summoner_id and region,
             # which will throw IntegrityError and prevent the dupe from being made.
             try:
-                print summoner.name, len(summoner.name)
+                #print summoner.name, len(summoner.name)
                 summoner.save()
             except IntegrityError:
                 pass

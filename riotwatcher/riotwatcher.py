@@ -165,7 +165,7 @@ class RiotWatcher:
             for lim in self.limits:
                 lim.add_request()
         raise_status(r)
-        #print r.json() # Uncomment to print JSON that is returned by Riot.
+        #print r.json()  # Uncomment to print JSON that is returned by Riot.
         return r.json()
 
     # champion-v1.2

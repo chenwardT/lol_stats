@@ -71,4 +71,5 @@ def async_get_summoner_by_name(summoner_name, region):
                             )
         summoner.save()
 
+    print 'Getting recent matches for', summoner.name, '(' + region + ')'
     get_recent_matches(summoner_id=summoner.summoner_id, region=region)

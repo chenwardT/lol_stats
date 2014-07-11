@@ -49,3 +49,5 @@
     - These were originally seen from EUW queries to nightdark's match history
     - Other sites get accurate data though :(
     - When trying to look up summoner info on these names, no summoner found
+
+- Remove default region args and ensure all calls specify region!
