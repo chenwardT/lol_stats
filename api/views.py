@@ -251,11 +251,16 @@ def get_task_state(request):
     Returns the state or an error message as JSON.
     When "SUCCESS" is returned, page scripts know they can query and display the related results.
     """
+
     if request.is_ajax():
         if 'task_id' in request.POST.keys() and request.POST['task_id']:
             task_id = request.POST['task_id']
+            # Strip double quotes that AngularJS adds.
+            task_id = task_id.replace('"', '').strip()
             task = AsyncResult(task_id)
             data = task.state
+            print task_id
+            print data
         else:
             data = 'No task_id in the request.'
     else:

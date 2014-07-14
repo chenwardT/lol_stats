@@ -53,4 +53,5 @@ DATABASES = {
 
 # Set to IPs you will be viewing the site from that you want debug_toolbar to appear for.
 INTERNAL_IPS = ('127.0.0.1',
-                '10.0.2.2',)    # Address for host as seen from guest VM
+                '10.0.2.2',
+                '65.191.141.151')    # Address for host as seen from guest VM

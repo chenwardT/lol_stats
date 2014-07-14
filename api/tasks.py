@@ -15,7 +15,12 @@ def async_get_summoner_by_name(summoner_name, region):
     Get summoner info, by name, from Riot API, into cache.
 
     Specifically, it gets basic summoner data as well as match history (last 10 games).
+    Riot API is only queried if Summoner object is older than `CACHE_SUMMONER`.
     """
+
+    print 'summoner_name =', summoner_name
+    print 'region =', region
+
     # First we query cache for extant summoner object.
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
@@ -54,6 +59,9 @@ def async_get_summoner_by_name(summoner_name, region):
             print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
             summoner.save()
 
+            print 'Getting recent matches for', summoner.name, '(' + region + ')'
+            get_recent_matches(summoner_id=summoner.summoner_id, region=region)
+
     # We don't have this summoner in the cache, so grab it from API and create new entry.
     else:
         print u'querying API for new summoner: {str}'.format(str=summoner_name)
@@ -71,5 +79,5 @@ def async_get_summoner_by_name(summoner_name, region):
                             )
         summoner.save()
 
-    print 'Getting recent matches for', summoner.name, '(' + region + ')'
-    get_recent_matches(summoner_id=summoner.summoner_id, region=region)
+        print 'Getting recent matches for', summoner.name, '(' + region + ')'
+        get_recent_matches(summoner_id=summoner.summoner_id, region=region)

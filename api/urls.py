@@ -23,7 +23,7 @@ from api.views import (
 # TODO: Consider separating out summoner-list and summoner-region-list classes (same name in browseable API)
 urlpatterns = patterns('api',
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^task_state/', 'views.get_task_state', name='task_state'),
+    url(r'^task_state$', 'views.get_task_state', name='task_state'),
 
     # Note: trailing slashes
     url(r'^$', api_root),

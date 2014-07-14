@@ -6,10 +6,12 @@
     - Consider separating Game entries from Summoner data, so if/when we get large # of games stored
      for any single summoner, we can paginate or load them dynamically (e.g. as user scrolls down page).
 
-- Determine when to update data from Riot API
-    - When our API is called, check `last_update` and do so automatically before returning data?
-    - As above, but when page is visited, via AJAX call to a view that updates such?
-    - Only manually, via "Refresh Data" button on page?
+- Determine when to update data from Riot API:
+    - 1) When our API is called, check `last_update` and do so automatically before returning data?
+    - 2) As above, but when page is visited, via AJAX call to a view that updates such?
+    - 3) Manually, via "Refresh Data" button on page?
+    - Probably go with (2) & (3)
+        - If doing (3), need to communicate time until able to refresh to the view.
 
 - Investigate following problem:
     - First seen on our API page load.
@@ -44,10 +46,5 @@
         self._sock.sendall(view[write_offset:write_offset+buffer_size])
     error: [Errno 32] Broken pipe
     ----------------------------------------
-
-- Problem w/weird summoner names (ex. "IS141dca1d0484dcf8adc09")
-    - These were originally seen from EUW queries to nightdark's match history
-    - Other sites get accurate data though :(
-    - When trying to look up summoner info on these names, no summoner found
 
 - Remove default region args and ensure all calls specify region!
