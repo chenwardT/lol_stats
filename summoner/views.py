@@ -23,7 +23,7 @@ def summoner_info(request):
     return render(request, 'summoner/summoner_base.html')
 
 
-def recent_games(request, summoner_name, region=NORTH_AMERICA):
+def recent_games(request, summoner_name, region):
     """
     View to display match history for last 10 games played, given a summoner name and region.
     """

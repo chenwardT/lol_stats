@@ -89,7 +89,7 @@ def get_summoner_by_name(summoner_name, region):
 
 # TODO: should we ensure this is only called on cached summoners?
 # Unused
-def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
+def get_summoner_by_id(summoner_ids, region):
     """
     Get one or more summoner info objects by ID from Riot API and insert them into DB.
 
@@ -117,7 +117,7 @@ def get_summoner_by_id(summoner_ids, region=NORTH_AMERICA):
     return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
 
 
-def summoner_name_to_id(summoner_name, region=NORTH_AMERICA):
+def summoner_name_to_id(summoner_name, region):
     """
     Convert summoner name to summoner ID via DB lookup, otherwise query from Riot API.
     """
@@ -235,7 +235,7 @@ def update_static_data():
     update_summoner_spells()
 
 
-def get_recent_matches(summoner_id, region=NORTH_AMERICA):
+def get_recent_matches(summoner_id, region):
     """
     Retrieves game data for last 10 games played by a summoner, given a summoner ID and region.
     """
