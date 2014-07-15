@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 
 from api.serializers import *
+from api.utils import standardize_name
 
 @api_view(('GET',))
 def api_root(request, format=None):
@@ -62,8 +63,9 @@ class SummonerDetail(generics.RetrieveAPIView):
         queryset = Summoner.objects.all()
         region = self.kwargs['region']
         name = self.kwargs['name']
+        name = standardize_name(name)
 
-        obj = get_object_or_404(queryset.filter(region__iexact=region), name__iexact=name)
+        obj = get_object_or_404(queryset.filter(region__iexact=region), std_name=name)
 
         return obj
 
@@ -213,11 +215,12 @@ class GameList(generics.ListAPIView):
     def get_queryset(self):
         region = self.kwargs.get('region', None)
         name = self.kwargs.get('name', None)
+        name = standardize_name(name)
 
         if region is not None:
             if name is not None:
                 self.queryset = self.queryset.filter(
-                    summoner_id=Summoner.objects.filter(region__iexact=region).filter(name__iexact=name))
+                    summoner_id=Summoner.objects.filter(region__iexact=region).filter(std_name=name))
 
         return self.queryset
 
@@ -226,7 +229,7 @@ class GameDetail(generics.RetrieveAPIView):
     """
     API endpoint that allows a match history to be retrieved.
 
-    Match is specified by game_id portion of the URL.
+    Match is specified by `region` and `game_id` portion of the URL.
     """
     queryset = RawStat.objects.all()
     serializer_class = RawStatSerializer
@@ -256,7 +259,7 @@ def get_task_state(request):
         if 'task_id' in request.POST.keys() and request.POST['task_id']:
             task_id = request.POST['task_id']
             # Strip double quotes that AngularJS adds.
-            task_id = task_id.replace('"', '').strip()
+            task_id = task_id.replace('"', '')
             task = AsyncResult(task_id)
             data = task.state
             print task_id

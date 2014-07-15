@@ -49,10 +49,13 @@
 
 - Remove default region args and ensure all calls specify region!
 
-- For most (all?) intents and purposes, Riot ignores whitespace in summoner names
-    - We have to do the same and make sure this doesn't cause problems.
-        - Consider resolving all queries to the actual name's string as stored by Riot
-          and then only using that string.
+- Riot stores summoner names in "formatted" and "standardized" forms.
+    - The standardized name is the name in all lowercase with spaces removed.
+    - The formatted name is as you would see it in-game.
+    - We have to recognize this and make sure it doesn't cause problems.
+        - Consider resolving all queries to the formatted name's string (via Riot API call)
+          and then only using that string for summoner names.
         - Otherwise we run into problems with (trying to) duplicate summoners.
     - Possible solutions: immediately resolve user inputted name to ID, then use that resolved name.
         - When name doesn't come from user -- instead from Riot API -- then ok to use that name string.
+            - This would be the formatted name.

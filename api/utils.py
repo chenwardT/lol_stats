@@ -60,11 +60,11 @@ def get_summoner_by_name(summoner_name, region):
 
             summoner.summoner_id = summoner_dto['id']
             summoner.name = summoner_dto['name']
+            summoner.std_name = summoner_dto['name'].replace(' ', '').lower()
             summoner.profile_icon_id = summoner_dto['profileIconId']
             summoner.revision_date = summoner_dto['revisionDate']
             summoner.summoner_level = summoner_dto['summonerLevel']
             summoner.region = region
-            #summoner.last_update = datetime.now()
 
             print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
             summoner.save()
@@ -78,6 +78,7 @@ def get_summoner_by_name(summoner_name, region):
         # TODO: Need to do API error checking here
         summoner = Summoner(summoner_id=summoner_dto['id'],
                             name=summoner_dto['name'],
+                            std_name=summoner_dto['name'].replace(' ', '').lower(),
                             profile_icon_id=summoner_dto['profileIconId'],
                             revision_date=summoner_dto['revisionDate'],
                             summoner_level=summoner_dto['summonerLevel'],
@@ -89,32 +90,32 @@ def get_summoner_by_name(summoner_name, region):
 
 # TODO: should we ensure this is only called on cached summoners?
 # Unused
-def get_summoner_by_id(summoner_ids, region):
-    """
-    Get one or more summoner info objects by ID from Riot API and insert them into DB.
-
-    Max summoners per request is 40 (MAX_ID).
-    """
-    summoners = riot_api.get_summoners(names=None, ids=summoner_ids, region=region)
-
-    num_sums = 0
-
-    for i, e in enumerate(summoners):
-        summoner = Summoner()
-        summoner.summoner_id = summoners[e]['id']
-        summoner.name = summoners[e]['name']
-        summoner.profile_icon_id = summoners[e]['profileIconId']
-        summoner.revision_date = summoners[e]['revisionDate']
-        summoner.summoner_level = summoners[e]['summonerLevel']
-        summoner.region = region
-        #summoner.last_update = datetime.now()
-        summoner.save()
-
-        num_sums = i
-
-    print 'Cached {} summoner DTOs'.format(num_sums + 1)  # add 1 b/c 0 indexing
-
-    return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
+# def get_summoner_by_id(summoner_ids, region):
+#     """
+#     Get one or more summoner info objects by ID from Riot API and insert them into DB.
+#
+#     Max summoners per request is 40 (MAX_ID).
+#     """
+#     summoners = riot_api.get_summoners(names=None, ids=summoner_ids, region=region)
+#
+#     num_sums = 0
+#
+#     for i, e in enumerate(summoners):
+#         summoner = Summoner()
+#         summoner.summoner_id = summoners[e]['id']
+#         summoner.name = summoners[e]['name']
+#         summoner.profile_icon_id = summoners[e]['profileIconId']
+#         summoner.revision_date = summoners[e]['revisionDate']
+#         summoner.summoner_level = summoners[e]['summonerLevel']
+#         summoner.region = region
+#         #summoner.last_update = datetime.now()
+#         summoner.save()
+#
+#         num_sums = i
+#
+#     print 'Cached {} summoner DTOs'.format(num_sums + 1)  # add 1 b/c 0 indexing
+#
+#     return num_sums  # return code may be unused, will be > 0 if it got any summoner info though
 
 
 def summoner_name_to_id(summoner_name, region):
@@ -291,12 +292,11 @@ def get_recent_matches(summoner_id, region):
             #print u'ADDING summoner {}'.format(chunk[player]['name'])
             summoner = Summoner(summoner_id=chunk[player]['id'],
                                 name=chunk[player]['name'],
+                                std_name=chunk[player]['name'].replace(' ', '').lower(),
                                 profile_icon_id=chunk[player]['profileIconId'],
                                 revision_date=chunk[player]['revisionDate'],
                                 summoner_level=chunk[player]['summonerLevel'],
-                                region=region,
-                                #last_update=datetime.now()
-                                )
+                                region=region)
 
             # Sometimes requests will go out synchronously for the same summoner.
             # This means the cache is not hit and a double query for a single summoner occurs.
@@ -378,3 +378,10 @@ def get_recent_matches(summoner_id, region):
 #                            region=search_region,
 #                            last_update=datetime.now())
 #        sum.save()
+
+def standardize_name(str):
+    """
+    Returns `str` as lowercase with spaces stripped.
+    """
+
+    return str.replace(' ', '').lower()
