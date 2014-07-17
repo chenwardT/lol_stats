@@ -2,9 +2,9 @@
     - This is a problem if we save more than last 10 games to DB.
         - We currently DO append "new" games to Summoner game_sets.
         - Riot API currently returns last 10 games only.
-            - This will probably change with Riot's new matchhistory API.
+            - This will probably change with Riot's new MatchHistory API.
     - Consider separating Game entries from Summoner data, so if/when we get large # of games stored
-     for any single summoner, we can paginate or load them dynamically (e.g. as user scrolls down page).
+      for any single summoner, we can paginate or load them dynamically (e.g. as user scrolls down page).
 
 - Determine when to update data from Riot API:
     - 1) When our API is called, check `last_update` and do so automatically before returning data?
@@ -13,7 +13,7 @@
     - Probably go with (2) & (3)
         - If doing (3), need to communicate time until able to refresh to the view.
 
-- Investigate following problem:
+- Investigate following problem: [LOPRI]
     - First seen on our API page load.
     - Related to hyper-aggressive Chrome pre-fetching?
 
@@ -47,9 +47,9 @@
     error: [Errno 32] Broken pipe
     ----------------------------------------
 
-- Remove default region args and ensure all calls specify region!
+- Remove default region args and ensure all calls specify region! [SOLVED]
 
-- Riot stores summoner names in "formatted" and "standardized" forms.
+- Riot stores summoner names in "formatted" and "standardized" forms. [SOLVED]
     - The standardized name is the name in all lowercase with spaces removed.
     - The formatted name is as you would see it in-game.
     - We have to recognize this and make sure it doesn't cause problems.
@@ -59,3 +59,11 @@
     - Possible solutions: immediately resolve user inputted name to ID, then use that resolved name.
         - When name doesn't come from user -- instead from Riot API -- then ok to use that name string.
             - This would be the formatted name.
+
+- Look into alternative caching.
+    - requests-cache?
+    - Redis, etc?
+
+- Profile Riot API request usage.
+
+- Testing!

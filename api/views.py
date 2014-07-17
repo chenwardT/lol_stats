@@ -207,6 +207,8 @@ class GameList(generics.ListAPIView):
 
     Optionally allows filtering by `region` and `name` (via URL portions) of
     the summoner who the game(s) belong to.
+
+    Games are ordered chronologically, by most recent first.
     """
     queryset = Game.objects.all()
     serializer_class = GameSerializer
@@ -220,7 +222,8 @@ class GameList(generics.ListAPIView):
         if region is not None:
             if name is not None:
                 self.queryset = self.queryset.filter(
-                    summoner_id=Summoner.objects.filter(region__iexact=region).filter(std_name=name))
+                    summoner_id=Summoner.objects.filter(region__iexact=region).filter(
+                        std_name=name)).order_by('-create_date')
 
         return self.queryset
 
