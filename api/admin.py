@@ -10,7 +10,7 @@ class SummonerAdmin(admin.ModelAdmin):
 
 
 class ChampionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'champion_id', 'name')
+    list_display = ('champion_id', 'name')
     search_fields = ('name',)
 
 

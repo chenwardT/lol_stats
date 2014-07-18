@@ -155,6 +155,10 @@ class PlayerList(generics.ListAPIView):
     queryset = Player.objects.all()
     serializer_class = PlayerSerializer
 
+    # def get_queryset(self):
+    #     self.queryset = self.queryset.order_by('team_id')
+    #     return self.queryset
+
 
 class PlayerDetail(generics.RetrieveAPIView):
     """
@@ -234,8 +238,8 @@ class GameDetail(generics.RetrieveAPIView):
 
     Match is specified by `region` and `game_id` portion of the URL.
     """
-    queryset = RawStat.objects.all()
-    serializer_class = RawStatSerializer
+    queryset = Game.objects.all()
+    serializer_class = GameSerializer
 
     def get_object(self):
         region = self.kwargs.get('region', None)
@@ -245,8 +249,7 @@ class GameDetail(generics.RetrieveAPIView):
             if game_id is not None:
                 obj = get_object_or_404(Game, region=region, game_id=game_id)
 
-                # Here we are assuming that every Game object has a related RawStat (.stats) object.
-                return obj.stats
+                return obj
 
 
 @csrf_exempt

@@ -31,7 +31,7 @@ class Summoner(models.Model):
 
 class Champion(models.Model):
     """Maps to Riot API champion DTO."""
-    champion_id = models.IntegerField()
+    champion_id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=32)
     name = models.CharField(max_length=32)
     key = models.CharField(max_length=32)
@@ -42,7 +42,7 @@ class Champion(models.Model):
 
 class Item(models.Model):
     """Maps to Riot API item DTO."""
-    item_id = models.IntegerField()
+    item_id = models.IntegerField(primary_key=True)
     description = models.CharField(max_length=1024)
     name = models.CharField(max_length=64)
     plain_text = models.CharField(max_length=256, blank=True, null=True)
@@ -54,7 +54,7 @@ class Item(models.Model):
 
 class SummonerSpell(models.Model):
     """Maps to Riot API summonerSpell DTO."""
-    spell_id = models.IntegerField()
+    spell_id = models.IntegerField(primary_key=True)
     summoner_level = models.IntegerField()
     name = models.CharField(max_length=16)
     key = models.CharField(max_length=32)
@@ -90,6 +90,9 @@ class Player(models.Model):
     summoner = models.ForeignKey(Summoner)
     team_id = models.IntegerField()  # 100, 200
     participant_of = models.ForeignKey('Game')
+
+    class Meta:
+        ordering = ('team_id',)
 
     def __unicode__(self):
         return u'%s on %s (Team %d)' % (self.summoner, self.champion, self.team_id)

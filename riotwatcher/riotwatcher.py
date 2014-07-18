@@ -1,6 +1,7 @@
 from collections import deque
 import time
 import requests
+from pprint import pprint
 
 # Constants
 BRAZIL = 'br'

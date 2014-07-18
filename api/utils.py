@@ -20,7 +20,7 @@ LATIN_AMERICA_SOUTH = 'las'
 KOREA = 'kr'
 
 # Cache Durations
-CACHE_SUMMONER = timedelta(minutes=15)  # Sensible value in production would be avg game length?
+CACHE_SUMMONER = timedelta(seconds=10)  # Sensible value in production would be avg game length?
 
 # Riot API
 MAX_IDS = 40  # number of summoner IDs that can be queried at once
@@ -248,8 +248,9 @@ def get_recent_matches(summoner_id, region):
     # First make a set of the associated summoner IDs (a set cannot have duplicate entries).
     unique_players = set()
     for g in recent['games']:
-        for p in g['fellowPlayers']:
-            unique_players.add(p['summonerId'])
+        if 'fellowPlayers' in g:
+            for p in g['fellowPlayers']:
+                unique_players.add(p['summonerId'])
 
     # Now we take note of any summoner IDs we already have cached (so we can remove them).
     to_remove = set()
