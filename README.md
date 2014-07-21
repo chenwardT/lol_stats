@@ -44,6 +44,9 @@ Vagrantfile + Cheffile forthcoming...
 ###Postgresql
 
 Django is using `psycopg2` implementation of postgresql DB engine.
+This package depends on `libpq-dev` and `python-dev`:
+ 
+`apt-get install libpq-dev python-dev`
 
 Port forwarding to VM's pgsql server is setup via this line in vagrantfile:
 
@@ -57,6 +60,11 @@ In pg_hba.conf, add a line:
 
 `host    all     all     all     md5     # Accept connections from anywhere, using password auth`
 
+###Celery
+
+Celery is configured to use RabbitMQ's AMQP server:
+
+`apt-get install rabbitmq-server`
 
 ## Notes
 Python setup files (e.g., requirements.txt, MANIFEST.in, etc) should not be relied upon and are only included for readthedoc's virtualenv.
