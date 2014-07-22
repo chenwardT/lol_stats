@@ -221,10 +221,10 @@ class GameList(generics.ListAPIView):
     def get_queryset(self):
         region = self.kwargs.get('region', None)
         name = self.kwargs.get('name', None)
-        name = standardize_name(name)
 
         if region is not None:
             if name is not None:
+                name = standardize_name(name)
                 self.queryset = self.queryset.filter(
                     summoner_id=Summoner.objects.filter(region__iexact=region).filter(
                         std_name=name)).order_by('-create_date')
