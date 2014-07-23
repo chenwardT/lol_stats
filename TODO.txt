@@ -67,3 +67,6 @@
 - Profile Riot API request usage.
 
 - Testing!
+
+- Consider adding summoner whose history was queried to player_set for their games, so as
+  to unify querying of match participant data (for displaying in frontend).

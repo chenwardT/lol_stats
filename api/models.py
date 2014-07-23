@@ -243,6 +243,8 @@ class Game(models.Model):
     region = models.CharField(max_length=4)
     last_update = models.DateTimeField(auto_now=True)
 
+    champion_key = models.CharField(max_length=32)
+
     def __unicode__(self):
         return u'%s on %s (Team %d) [GID: %d]' % (self.summoner_id.name, self.champion_id, self.team_id, self.game_id)
 

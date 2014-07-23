@@ -326,7 +326,8 @@ def get_recent_matches(summoner_id, region):
                     spell_2=SummonerSpell.objects.get(spell_id=match['spell2']),
                     sub_type=match['subType'],
                     team_id=match['teamId'],
-                    region=region)
+                    region=region,
+                    champion_key=Champion.objects.get(champion_id=match['championId']).key)
 
         stats = RawStat()
 

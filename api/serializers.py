@@ -20,7 +20,7 @@ class ChampionSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Champion
-        fields = ('champion_id', 'name',)
+        fields = ('champion_id', 'name', 'key')
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -56,7 +56,7 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ('summoner_id', 'champion_id', 'create_date', 'game_id', 'game_mode', 'game_type',
                   'invalid', 'ip_earned', 'level', 'map_id', 'spell_1', 'spell_2', 'stats', 'sub_type',
-                  'team_id', 'region', 'player_set', 'last_update')
+                  'team_id', 'region', 'player_set', 'last_update', 'champion_key')
 
 
 class SummonerSerializer(serializers.ModelSerializer):
