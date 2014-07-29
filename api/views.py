@@ -24,6 +24,7 @@ def api_root(request, format=None):
         'stats': reverse('stat-list', request=request, format=format),
         'players': reverse('player-list', request=request, format=format),
         'leagues': reverse('league-list', request=request, format=format),
+        'league-entries': reverse('league-entry-list', request=request, format=format),
     })
 
 
@@ -50,8 +51,6 @@ class SummonerList(generics.ListAPIView):
         return queryset
 
 
-# TODO: Fix this so DB queries aren't tripped up by "erroneous" whitespace in names,
-#  a la Riot API behavior
 class SummonerDetail(generics.RetrieveAPIView):
     """
     API endpoint that allows a summoner to be retrieved.
@@ -270,6 +269,40 @@ class LeagueList(generics.ListAPIView):
             self.queryset = self.queryset.filter(region__iexact=region)
 
         return self.queryset
+
+
+class LeagueDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a league to be retrieved.
+    """
+    pass
+
+
+class LeagueEntryList(generics.ListAPIView):
+    """
+    API endpoint that allows league entries to be viewed.
+
+    Optionally allows filtering by `region`.
+    """
+    queryset = LeagueEntry.objects.all()
+    serializer_class = LeagueEntrySerializer
+    paginate_by = 10
+
+    def get_queryset(self):
+        region = self.kwargs.get('region', None)
+
+        if region is not None:
+            self.queryset = self.queryset.filter(league_region__iexact=region)
+
+        return self.queryset
+
+
+class LeagueEntryDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a league entry to be retrieved.
+    """
+
+
 
 @csrf_exempt
 def get_task_state(request):

@@ -16,6 +16,9 @@ from api.views import (
     GameList,
     GameDetail,
     LeagueList,
+    LeagueDetail,
+    LeagueEntryList,
+    LeagueEntryDetail,
     api_root)
 
 # TODO: Consider allowing lookup by ID (check for number instead of \w+)
@@ -44,4 +47,7 @@ urlpatterns = patterns('api',
     # \w matches digits, so it is important that this comes after the detail view, which uses game_id for lookup!
     url(r'^games/(?P<region>\w+)/(?P<name>\w+( *\w+)*)$', GameList.as_view(), name='game-region-name-list'),
     url(r'^leagues$', LeagueList.as_view(), name='league-list'),
+    url(r'^leagues/(?P<region>\w+)$', LeagueList.as_view(), name='league-region-list'),
+    url(r'^league-entries$', LeagueEntryList.as_view(), name='league-entry-list'),
+    url(r'^leagues-entries/(?P<region>\w+)$', LeagueEntryList.as_view(), name='league-entry-region-list'),
 )

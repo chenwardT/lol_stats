@@ -281,17 +281,19 @@ class LeagueEntry(models.Model):
     """
     Maps to Riot API LeagueEntry DTO.
 
-    This is a child of League DTO.
+    Child of League model (many-to-one).
+
+    A summoner ID can be filtered by with this model's manager to get their solo queue entry.
     """
 
-    division = models.CharField(max_length=3)   # ex. IV
+    division = models.CharField(max_length=3)                 # ex. IV
     is_fresh_blood = models.BooleanField()
     is_hot_streak = models.BooleanField()
     is_inactive = models.BooleanField()
     is_veteran = models.BooleanField()
     league_points = models.IntegerField()
     player_or_team_id = models.CharField(max_length=64)     # ex. TEAM-68594bb0-cce0-11e3-a7cc-782bcb4d1861
-    player_or_team_name = models.CharField(max_length=32)   # ex. Smiteless Baron
+    player_or_team_name = models.CharField(max_length=24)   # ex. Smiteless Baron
     wins = models.IntegerField()
 
     # MiniSeries DTO
@@ -307,3 +309,83 @@ class LeagueEntry(models.Model):
 
     class Meta:
         unique_together = ('player_or_team_id', 'league')
+
+
+class Team(models.Model):
+    """
+    Maps to Riot API Team DTO.
+    """
+    create_date = models.BigIntegerField()
+    full_id = models.CharField(max_length=64)           # ex. TEAM-68594bb0-cce0-11e3-a7cc-782bcb4d1861
+    last_game_date = models.BigIntegerField()
+    last_joined_ranked_team_queue_date = models.BigIntegerField()
+    modify_date = models.BigIntegerField()
+    name = models.CharField(max_length=24)
+    last_join_date = models.BigIntegerField()           # date that the last member joined
+    second_last_join_date = models.BigIntegerField()
+    third_last_join_date = models.BigIntegerField()
+    status = models.CharField(max_length=16)            # ex. RANKED
+    tag = models.CharField(max_length=6)                # ex. TSM
+    roster = models.OneToOneField('Roster')
+
+
+class MatchHistorySummary(models.Model):
+    """
+    Maps to Riot API MatchHistorySummary DTO.
+
+    Child of Team model (many-to-one).
+    """
+    assist = models.IntegerField()
+    date = models.BigIntegerField()
+    deaths = models.IntegerField()
+    game_id = models.BigIntegerField()
+    game_mode = models.CharField(max_length=16)
+    invalid = models.BooleanField()
+    kills = models.IntegerField()
+    map_id = models.IntegerField()
+    opposing_team_kills = models.IntegerField()
+    opposing_team_name = models.CharField(max_length=24)
+    win = models.BooleanField()
+    team = models.ForeignKey(Team)
+
+
+class Roster(models.Model):
+    """
+    Maps to Riot API Roster DTO.
+
+    Child of Team model (one-to-one).
+
+    This is it's own model (instead of being part of the Team model) to mirror Riot's backend
+    to ease any future revisions.
+    """
+    owner_id = models.BigIntegerField()
+
+
+class TeamMemberInfo(models.Model):
+    """
+    Maps to Riot API TeamMemberInfo DTO.
+
+    Child of Roster model (many-to-one).
+
+    Holds data for a single member of a team's roster.
+    """
+    invite_date = models.BigIntegerField()
+    join_date = models.BigIntegerField()
+    player_id = models.BigIntegerField()
+    status = models.CharField(max_length=16)            # ex. MEMBER
+    roster = models.ForeignKey(Roster)
+
+
+class TeamStatDetail(models.Model):
+    """
+    Maps to Riot API TeamStatDetail DTO.
+
+    Child of Team model (many-to-one).
+
+    Contains the stats for the game types (5x5 and 3x3).
+    """
+    team_stat_type = models.CharField(max_length=16)    # ex. RANKED_TEAM_5x5
+    average_games_played = models.IntegerField()        # ??
+    wins = models.IntegerField()
+    losses = models.IntegerField()
+    team = models.ForeignKey(Team)

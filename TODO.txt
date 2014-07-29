@@ -70,3 +70,5 @@
 
 - Consider adding summoner whose history was queried to player_set for their games, so as
   to unify querying of match participant data (for displaying in frontend).
+
+- Consider using FK to relate League + Team fields that are associated w/IDs (ex. summoner ID for team owner, etc)
