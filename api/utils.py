@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 from lol_stats.base import riot_api
-from api.models import Summoner, Player, RawStat, Game, Champion, Item, SummonerSpell
+from api.models import Summoner, Player, RawStat, Game, Champion, Item, SummonerSpell, League, LeagueEntry
 
 
 ## Constants ##
@@ -387,3 +387,66 @@ def standardize_name(str):
     """
 
     return str.replace(' ', '').lower()
+
+
+def get_league_by_summoner_id(summoner_id, region):
+    """
+    Gets league data given a summoner ID into the DB.
+    """
+    # get_league() returns a dict with the keys being equal to the summoner_ids
+    # We only ask for a single summoner's info here, so we only care about the one value.
+    league_dto = riot_api.get_league(summoner_ids=[summoner_id], region=region)[str(summoner_id)]
+    
+    # league_dto is a list with elements for each ladder-team combination
+    # ex. Solo Queue, Team A (5x5), Team B (5x5), Team C (3x3), etc
+    for i in league_dto:
+        league_ele = i
+
+        # Keys of league_dto: tier, queue, participantId, name, entries
+    
+        # Can we match this data to an League in the DB?
+        try:
+            matching_league = League.objects.filter(
+                region=region).filter(
+                queue=league_ele['queue']).filter(
+                name=league_ele['name']).get(
+                tier=league_ele['tier'])
+            matched = True
+            print 'Found matching League: {} {} {} {}'.format(matching_league.region, matching_league.queue, matching_league.name, matching_league.tier)
+
+        # We couldn't find a matching League, so we need to create one.
+        except ObjectDoesNotExist:
+            matched = False
+            matching_league = League(region=region, queue=league_ele['queue'], name=league_ele['name'], tier=league_ele['tier'])
+            print 'Creating new League: {} {} {} {}'.format(matching_league.region, matching_league.queue, matching_league.name, matching_league.tier)
+            matching_league.save()
+    
+        # Now we handle the entries, which are players (solo queue) or teams (team queue)
+
+        # Since this is an exhaustive list of participants in this league,
+        # we replace all entries of this league with the fresh data.
+        for j in matching_league.leagueentry_set.all():
+            j.delete()
+
+        for k in league_ele['entries']:
+            # First we fill in the info we know will exist.
+            new_entry = LeagueEntry(division=k['division'],
+                                    is_fresh_blood=k['isFreshBlood'],
+                                    is_hot_streak=k['isHotStreak'],
+                                    is_inactive=k['isInactive'],
+                                    is_veteran=k['isVeteran'],
+                                    league_points=k['leaguePoints'],
+                                    player_or_team_id=k['playerOrTeamId'],
+                                    player_or_team_name=k['playerOrTeamName'],
+                                    wins=k['wins'])
+
+            # If the entry is in a series:
+            if 'miniSeries' in k:
+                new_entry.series_losses = k['miniSeries']['losses']
+                new_entry.series_progress = k['miniSeries']['progress']
+                new_entry.series_target = k['miniSeries']['target']
+                new_entry.series_wins = k['miniSeries']['wins']
+
+            new_entry.league = matching_league
+
+            new_entry.save()

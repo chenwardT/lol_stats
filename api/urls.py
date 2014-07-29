@@ -1,7 +1,5 @@
 from django.conf.urls import url, patterns, include
 
-from rest_framework import routers
-
 from api.views import (
     SummonerList,
     SummonerDetail,
@@ -17,6 +15,7 @@ from api.views import (
     RawStatDetail,
     GameList,
     GameDetail,
+    LeagueList,
     api_root)
 
 # TODO: Consider allowing lookup by ID (check for number instead of \w+)
@@ -44,4 +43,5 @@ urlpatterns = patterns('api',
     url(r'^games/(?P<region>\w+)/(?P<game_id>\d+$)', GameDetail.as_view(), name='game-detail'),
     # \w matches digits, so it is important that this comes after the detail view, which uses game_id for lookup!
     url(r'^games/(?P<region>\w+)/(?P<name>\w+( *\w+)*)$', GameList.as_view(), name='game-region-name-list'),
+    url(r'^leagues$', LeagueList.as_view(), name='league-list'),
 )

@@ -22,7 +22,8 @@ def api_root(request, format=None):
         'spells': reverse('spell-list', request=request, format=format),
         'games': reverse('game-list', request=request, format=format),
         'stats': reverse('stat-list', request=request, format=format),
-        'players': reverse('player-list', request=request, format=format)
+        'players': reverse('player-list', request=request, format=format),
+        'leagues': reverse('league-list', request=request, format=format),
     })
 
 
@@ -251,6 +252,24 @@ class GameDetail(generics.RetrieveAPIView):
 
                 return obj
 
+
+class LeagueList(generics.ListAPIView):
+    """
+    API endpoint that allows leagues to be viewed.
+
+    Optionally allows filtering by `region`.
+    """
+    queryset = League.objects.all()
+    serializer_class = LeagueSerializer
+    paginate_by = 10
+
+    def get_queryset(self):
+        region = self.kwargs.get('region', None)
+
+        if region is not None:
+            self.queryset = self.queryset.filter(region__iexact=region)
+
+        return self.queryset
 
 @csrf_exempt
 def get_task_state(request):

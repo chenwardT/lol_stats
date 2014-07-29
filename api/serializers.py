@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game
+from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game, League, LeagueEntry
 
 
 class SparseSummonerSerializer(serializers.ModelSerializer):
@@ -86,3 +86,21 @@ class SummonerSpellSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = SummonerSpell
+
+
+class LeagueSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns league data.
+    """
+    class Meta:
+        model = League
+        exclude = ('id',)
+
+
+class LeagueEntrySerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns league entry data.
+    """
+    class Meta:
+        model = LeagueEntry
+        exclude = ('id',)
