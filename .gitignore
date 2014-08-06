@@ -4,3 +4,4 @@ docs/_templates/
 docs/_build/
 docs/_static/
 *.psd
+*.pyc

@@ -40,6 +40,19 @@ Sphinx-generated docs written to [lol-stats.readthedocs.org](http://lol-stats.re
  
 Vagrantfile + Cheffile forthcoming...
 
+Root project name being the same as project settings dir ("lol_stats") has been known to cause problems.
+
+###Environment Variables
+
+The following env vars must be present:
+
+`DJANGO_SECRET_KEY` - Django's secret key, used for various cyptographic functions
+
+`RIOT_API_KEY` - your API key to access Riot's REST service
+
+`LOL_STATS_DB_PASSWORD` - the password to the SQL DB
+
+
 
 ###Postgresql
 

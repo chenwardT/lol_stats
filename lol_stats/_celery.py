@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import os
 
 from celery import Celery
+#print celery.__file__
 
 from django.conf import settings
 from lol_stats.base import BASE_DIR, get_env_variable
