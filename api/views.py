@@ -1,3 +1,10 @@
+"""
+Views for the API module.
+
+Contains a API root view function as well as Django REST Framework generic class-based views.
+Also contains an AJAX view for getting the state of a Celery task.
+"""
+
 import json
 
 from django.http import HttpResponse
@@ -307,7 +314,7 @@ class LeagueEntryDetail(generics.RetrieveAPIView):
 @csrf_exempt
 def get_task_state(request):
     """
-    A view to report task state, given a task ID (UUID), to an AJAX call.
+    AJAX view to report task state, given a task ID (UUID) in the POST body.
 
     Returns the state or an error message as JSON.
     When "SUCCESS" is returned, page scripts know they can query and display the related results.

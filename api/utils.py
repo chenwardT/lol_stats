@@ -1,3 +1,7 @@
+"""
+Utility functions and constants for API module.
+"""
+
 from datetime import datetime, timedelta
 
 import inflection
@@ -391,7 +395,7 @@ def standardize_name(str):
 
 def get_league_by_summoner_id(summoner_id, region):
     """
-    Gets league data given a summoner ID into the DB.
+    Gets league data, given a summoner ID and region, and stores it in the DB.
     """
     # get_league() returns a dict with the keys being equal to the summoner_ids
     # We only ask for a single summoner's info here, so we only care about the one value.

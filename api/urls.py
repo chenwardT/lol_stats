@@ -1,3 +1,7 @@
+"""
+URL map for API module.
+"""
+
 from django.conf.urls import url, patterns, include
 
 from api.views import (

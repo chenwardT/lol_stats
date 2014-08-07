@@ -1,5 +1,5 @@
 """
-Django settings for lol_stats project that apply to all configurations.
+Django baseline settings for lol_stats project that apply to all configurations.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/

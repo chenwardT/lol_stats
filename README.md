@@ -3,7 +3,6 @@ lol_stats is a website that aims to provide unique insight into the competitive 
 Through querying the official [League of Legends API](http://developer.riotgames.com/) it accesses historical match data which can be used to find patterns and make distinctions that may not be apparent to players/spectators of the game.
 
 ## Background
-Currently, this is a educational project whose immediate benefit is familiarizing myself with or furthering knowledge in several topics:
 
 - the website is built on `Django`, a Python web framework
 
@@ -53,7 +52,6 @@ The following env vars must be present:
 `LOL_STATS_DB_PASSWORD` - the password to the SQL DB
 
 
-
 ###Postgresql
 
 Django is using `psycopg2` implementation of postgresql DB engine.
@@ -81,3 +79,5 @@ Celery is configured to use RabbitMQ's AMQP server:
 
 ## Notes
 Python setup files (e.g., requirements.txt, MANIFEST.in, etc) should not be relied upon and are only included for readthedoc's virtualenv.
+
+This product is not endorsed, certified or otherwise approved in any way by Riot Games, Inc. or any of its affiliates.

@@ -1,3 +1,7 @@
+"""
+Django REST Framework serializers.
+"""
+
 from rest_framework import serializers
 
 from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game, League, LeagueEntry

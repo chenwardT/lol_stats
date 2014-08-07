@@ -1,3 +1,7 @@
+"""
+Celery tasks.
+"""
+
 from __future__ import absolute_import
 
 from time import sleep

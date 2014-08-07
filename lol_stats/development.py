@@ -1,6 +1,6 @@
 """
 Django settings for lol_stats project.
-This is dev/local settings.
+These are dev-/local-specific settings.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.6/topics/settings/

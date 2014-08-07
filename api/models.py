@@ -1,3 +1,7 @@
+"""
+Django models for lol_stats project.
+"""
+
 import time
 
 import inflection
