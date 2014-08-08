@@ -23,6 +23,8 @@ from api.views import (
     LeagueDetail,
     LeagueEntryList,
     LeagueEntryDetail,
+    TeamList,
+    TeamDetail,
     api_root)
 
 # TODO: Consider allowing lookup by ID (check for number instead of \w+)
@@ -52,6 +54,11 @@ urlpatterns = patterns('api',
     url(r'^games/(?P<region>\w+)/(?P<name>\w+( *\w+)*)$', GameList.as_view(), name='game-region-name-list'),
     url(r'^leagues$', LeagueList.as_view(), name='league-list'),
     url(r'^leagues/(?P<region>\w+)$', LeagueList.as_view(), name='league-region-list'),
+    url(r"^leagues/(?P<region>\w+)/(?P<queue>\w+)/(?P<tier>\w+)/(?P<name>\w+('* *\w+)*)$", LeagueDetail.as_view(), name='league-detail'),
     url(r'^league-entries$', LeagueEntryList.as_view(), name='league-entry-list'),
-    url(r'^leagues-entries/(?P<region>\w+)$', LeagueEntryList.as_view(), name='league-entry-region-list'),
+    url(r'^league-entries/(?P<region>\w+)$', LeagueEntryList.as_view(), name='league-entry-region-list'),
+    url(r'^league-entries/(?P<region>\w+)/(?P<id>(-*\w+)*)$', LeagueEntryDetail.as_view(), name='league-entry-detail'),
+    url(r'^teams$', TeamList.as_view(), name='team-list'),
+    url(r'^teams/(?P<region>\w+)$', TeamList.as_view(), name='team-region-list'),
+    url(r'^teams/(?P<region>\w+)/(?P<full_id>TEAM(-*\w+)*)$', TeamDetail.as_view(), name='team-detail'),
 )

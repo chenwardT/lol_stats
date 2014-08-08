@@ -329,6 +329,12 @@ class LeagueEntry(models.Model):
 class Team(models.Model):
     """
     Maps to Riot API Team DTO.
+
+    To get a Team, given a summoner ID and region:
+    Team.objects.filter(region=<region>).get(roster__teammemberinfo__player_id=<summoner_id>)
+
+    To get a LeagueEntry, given a team's full ID and region:
+    LeagueEntry.objects.filter(league__region=<region>).get(player_or_team_id=<full_id>)
     """
     create_date = models.BigIntegerField()
     full_id = models.CharField(max_length=64)           # ex. TEAM-68594bb0-cce0-11e3-a7cc-782bcb4d1861

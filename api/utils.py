@@ -260,6 +260,21 @@ def update_static_data():
 def get_recent_matches(summoner_id, region):
     """
     Retrieves game data for last 10 games played by a summoner, given a summoner ID and region.
+
+    This potentially executes several queries:
+    -first, we get match history.
+        -game stats
+        -IDs of participants
+    -then we make a list of summoner IDs that we don't have in the DB
+        -this gets broken up into MAX_IDS chunks and each chunk is a queried as a single call for basic summoner data
+
+    Since match history returns the last 10 games, and each game can have 9 other players
+    (assuming non-hexakill mode) - that's 90 potentially unknown summoner IDs + 1 for the summoner in question,
+    giving us 91 summoner IDs that we need to query.
+
+    91 / 40 = 2.275 rounded up is 3 queries at most for summoner ID data.
+
+    3 + 1 (for the initial match history call) = 4 calls at most.
     """
 
     #print 'get_recent_matches()', summoner_id, region

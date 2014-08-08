@@ -11,7 +11,7 @@ from celery import shared_task
 from django.core.exceptions import ObjectDoesNotExist
 
 from api.models import Summoner
-from api.utils import riot_api, CACHE_SUMMONER, get_recent_matches
+from api.utils import riot_api, CACHE_SUMMONER, get_recent_matches, get_league_by_summoner_id, get_teams_by_summoner_id
 
 @shared_task
 def async_get_summoner_by_name(summoner_name, region):
@@ -73,6 +73,10 @@ def async_get_summoner_by_name(summoner_name, region):
 
             print 'Getting recent matches for', summoner.name, '(' + region + ')'
             get_recent_matches(summoner_id=summoner.summoner_id, region=region)
+            print 'Getting leagues...'
+            get_league_by_summoner_id(summoner_id=summoner.summoner_id, region=region)
+            print 'Getting teams...'
+            get_teams_by_summoner_id(summoner_id=summoner.summoner_id, region=region)
 
     # We don't have this summoner in the cache, so grab it from API and create new entry.
     else:
@@ -92,3 +96,7 @@ def async_get_summoner_by_name(summoner_name, region):
 
         print 'Getting recent matches for', summoner.name, '(' + region + ')'
         get_recent_matches(summoner_id=summoner.summoner_id, region=region)
+        print 'Getting leagues...'
+        get_league_by_summoner_id(summoner_id=summoner.summoner_id, region=region)
+        print 'Getting teams...'
+        get_teams_by_summoner_id(summoner_id=summoner.summoner_id, region=region)

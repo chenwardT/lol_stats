@@ -32,6 +32,7 @@ def api_root(request, format=None):
         'players': reverse('player-list', request=request, format=format),
         'leagues': reverse('league-list', request=request, format=format),
         'league-entries': reverse('league-entry-list', request=request, format=format),
+        'teams': reverse('team-list', request=request, format=format),
     })
 
 
@@ -254,7 +255,7 @@ class GameDetail(generics.RetrieveAPIView):
 
         if region is not None:
             if game_id is not None:
-                obj = get_object_or_404(Game, region=region, game_id=game_id)
+                obj = get_object_or_404(Game, region_iexact=region, game_id=game_id)
 
                 return obj
 
@@ -281,8 +282,31 @@ class LeagueList(generics.ListAPIView):
 class LeagueDetail(generics.RetrieveAPIView):
     """
     API endpoint that allows a league to be retrieved.
+
+    Selected via `region`, `queue`, `tier` and `name` URL params.
     """
-    pass
+    queryset = League.objects.all()
+    serializer_class = LeagueSerializer
+
+    def get_object(self, queryset=None):
+        region = self.kwargs.get('region', None)
+        queue = self.kwargs.get('queue', None)
+        tier = self.kwargs.get('tier', None)
+        name = self.kwargs.get('name', None)
+
+        print region + queue + tier + name
+
+        if region is not None:
+            if queue is not None:
+                if tier is not None:
+                    if name is not None:
+                        obj = self.queryset.filter(
+                            region__iexact=region).filter(
+                            queue=queue).filter(
+                            tier=tier).get(
+                            name=name)
+
+                        return obj
 
 
 class LeagueEntryList(generics.ListAPIView):
@@ -299,16 +323,68 @@ class LeagueEntryList(generics.ListAPIView):
         region = self.kwargs.get('region', None)
 
         if region is not None:
-            self.queryset = self.queryset.filter(league_region__iexact=region)
+            self.queryset = self.queryset.filter(league__region__iexact=region)
 
-        return self.queryset
+            return self.queryset
 
 
 class LeagueEntryDetail(generics.RetrieveAPIView):
     """
     API endpoint that allows a league entry to be retrieved.
-    """
 
+    Selected via `region` and `id` URL params. `id` corresponds to
+    `player_or_team_id` field of LeagueEntry model.
+    """
+    queryset = LeagueEntry.objects.all()
+    serializer_class = LeagueEntrySerializer
+
+    def get_object(self, queryset=None):
+        region = self.kwargs.get('region')
+        id = self.kwargs.get('id')
+
+        if id is not None:
+            obj = self.queryset.filter(league__region__iexact=region).get(player_or_team_id=id)
+
+        return obj
+
+
+class TeamList(generics.ListAPIView):
+    """
+    API endpoint that allows team entries to be viewed.
+
+    Optionally filtered by `region` URL param.
+    """
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+    paginate_by = 10
+
+    def get_queryset(self):
+        region = self.kwargs.get('region', None)
+
+        if region is not None:
+            self.queryset = self.queryset.filter(region__iexact=region)
+
+        return self.queryset
+
+
+class TeamDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a team entry to be retrieved.
+
+    Selected via `region` and `full_id` URL params.
+    """
+    queryset = Team.objects.all()
+    serializer_class = TeamSerializer
+
+    def get_object(self, queryset=None):
+        region = self.kwargs.get('region', None)
+        full_id = self.kwargs.get('full_id', None)
+
+        if region is not None:
+            if full_id is not None:
+                obj = get_object_or_404(Team, region__iexact=region, full_id=full_id)
+
+        return obj
 
 
 @csrf_exempt

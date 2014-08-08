@@ -1,4 +1,4 @@
-- Our API was designed so that historical data ("Game" entries) are bundled through Summoner-detail endpoint.
+- Our API was designed so that historical data ("Game" entries) are bundled through Summoner-detail endpoint. [OBSOLETE?]
     - This is a problem if we save more than last 10 games to DB.
         - We currently DO append "new" games to Summoner game_sets.
         - Riot API currently returns last 10 games only.
@@ -72,3 +72,5 @@
   to unify querying of match participant data (for displaying in frontend).
 
 - Consider using FK to relate League + Team fields that are associated w/IDs (ex. summoner ID for team owner, etc)
+
+- Implement time-elapsed-since-last-update checks for everything. (e.g. wider usage of CACHE_SUMMONER)

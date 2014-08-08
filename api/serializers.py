@@ -4,7 +4,20 @@ Django REST Framework serializers.
 
 from rest_framework import serializers
 
-from api.models import Summoner, Champion, Item, SummonerSpell, Player, RawStat, Game, League, LeagueEntry
+from api.models import (Summoner,
+                        Champion,
+                        Item,
+                        SummonerSpell,
+                        Player,
+                        RawStat,
+                        Game,
+                        League,
+                        LeagueEntry,
+                        Team,
+                        MatchHistorySummary,
+                        Roster,
+                        TeamMemberInfo,
+                        TeamStatDetail)
 
 
 class SparseSummonerSerializer(serializers.ModelSerializer):
@@ -108,3 +121,49 @@ class LeagueEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = LeagueEntry
         exclude = ('id',)
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team data.
+    """
+    class Meta:
+        model = Team
+        exclude = ('id',)
+
+
+class MatchHistorySummarySerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team match history summary data.
+    """
+    class Meta:
+        model = MatchHistorySummary
+        exclude = ('id',)
+
+
+class RosterSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team roster data.
+    """
+    class Meta:
+        model = Roster
+        exclude = ('id',)
+
+
+class TeamMemberInfoSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team member info data.
+    """
+    class Meta:
+        model = TeamMemberInfo
+        exclude = ('id',)
+
+
+class TeamStatDetailSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team stat detail data.
+    """
+    class Meta:
+        model = TeamStatDetail
+        exclude = ('id',)
+
