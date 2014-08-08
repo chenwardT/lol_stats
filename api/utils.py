@@ -9,7 +9,21 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 
 from lol_stats.base import riot_api
-from api.models import Summoner, Player, RawStat, Game, Champion, Item, SummonerSpell, League, LeagueEntry
+from api.models import (
+    Summoner,
+    Player,
+    RawStat,
+    Game,
+    Champion,
+    Item,
+    SummonerSpell,
+    League,
+    LeagueEntry,
+    Team,
+    MatchHistorySummary,
+    Roster,
+    TeamMemberInfo,
+    TeamStatDetail)
 
 
 ## Constants ##
@@ -454,3 +468,105 @@ def get_league_by_summoner_id(summoner_id, region):
             new_entry.league = matching_league
 
             new_entry.save()
+
+def get_teams_by_summoner_id(summoner_id, region):
+    teams_dto = riot_api.get_teams_for_summoner(summoner_id, region)
+
+    # teams_dto is a list that will contain an entry for each team the summoner is on.
+
+    for team in teams_dto:
+
+        # print '\nWorking with region: ' + region
+        # print '\nKnown teams...'
+        # for i in Team.objects.all():
+        #     print i.name, i.region, i.full_id
+        #
+        # print '\nThis team: ' + team['name'] + '(' + team['fullId'] + ')'
+
+        # Can we match this data to a Team in the DB?
+        try:
+            matching_team = Team.objects.filter(region=region).get(full_id=team['fullId'])
+            print 'Found matching Team {} {}'.format(matching_team.region, matching_team.name)
+            matched = True
+            # We found a match, so set the working Team to that.
+            new_team = matching_team
+        except ObjectDoesNotExist:
+            matched = False
+            print 'No matching team found. Creating a new Team...'
+            # No match found, so create a new Team.
+            new_team = Team()
+
+        # We get all the related model data, so we can delete them and just create new models below.
+        if matched:
+            new_team.roster.delete()
+            new_team.delete()
+
+        # Set everything in the Team model that isn't a related field.
+        new_team.create_date = team['createDate']
+        new_team.full_id = team['fullId']
+        new_team.last_game_date = team['lastGameDate']
+        new_team.last_joined_ranked_team_queue_date = team['lastJoinedRankedTeamQueueDate']
+        new_team.modify_date = team['modifyDate']
+        new_team.name = team['name']
+        new_team.last_join_date = team['lastJoinDate']
+        new_team.second_last_join_date = team['secondLastJoinDate']
+        new_team.third_last_join_date = team['thirdLastJoinDate']
+        new_team.status = team['status']
+        new_team.tag = team['tag']
+        new_team.region = region
+
+        # This leaves: roster, teamStatDetails, matchHistory.
+        roster_dto = team['roster']
+        team_stat_details_dto = team['teamStatDetails']
+        match_history_dto = team['matchHistory']
+
+        # Setup and save the Roster model.
+        new_roster = Roster(owner_id=roster_dto['ownerId'])
+        new_roster.save()
+
+        # We can set the roster relation on the Team model now, and save it.
+        new_team.roster = new_roster
+        new_team.save()
+
+        # Setup and save the TeamMemberInfo models for this Roster.
+        for member in roster_dto['memberList']:
+            new_member = TeamMemberInfo(invite_date=member['inviteDate'],
+                                        join_date=member['joinDate'],
+                                        player_id=member['playerId'],
+                                        status=member['status'],
+                                        roster=new_roster)
+            new_member.save()
+
+        # Setup and save the TeamStatDetail models for the Team.
+        for stats in team_stat_details_dto:
+            new_stats = TeamStatDetail(team_stat_type=stats['teamStatType'],
+                                       average_games_played=stats['averageGamesPlayed'],
+                                       wins=stats['wins'],
+                                       losses=stats['losses'],
+                                       team=new_team)
+            new_stats.save()
+
+        # Setup and save the MatchHistorySummary models for the Team.
+        for match in match_history_dto:
+            new_match = MatchHistorySummary(assists=match['assists'],
+                                            date=match['date'],
+                                            deaths=match['deaths'],
+                                            game_id=match['gameId'],
+                                            game_mode=match['gameMode'],
+                                            invalid=match['invalid'],
+                                            kills=match['kills'],
+                                            map_id=match['mapId'],
+                                            opposing_team_kills=match['opposingTeamKills'],
+                                            opposing_team_name=match['opposingTeamName'],
+                                            win=match['win'],
+                                            team=new_team)
+            new_match.save()
+
+def reset_teams():
+    # We (have to?) delete Roster separately because it is a one-to-one field related to by Team.
+    Roster.objects.all().delete()
+    # All of the Team child models are related to by the children to Team.
+    Team.objects.all().delete()
+
+def reset_leagues():
+    League.objects.all().delete()

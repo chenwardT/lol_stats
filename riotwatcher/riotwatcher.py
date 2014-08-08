@@ -165,6 +165,7 @@ class RiotWatcher:
         if not static:
             for lim in self.limits:
                 lim.add_request()
+
         raise_status(r)
         #print r.json()  # Uncomment to print JSON that is returned by Riot.
         return r.json()
@@ -362,13 +363,13 @@ class RiotWatcher:
             region
         )
 
-    # team-v2.2, update 1
+    # team-v2.3, update 1
     def get_teams_for_summoner(self, summoner_id, region=None):
         return self.get_teams_for_summoners([summoner_id, ], region=region)[str(summoner_id)]
 
     def get_teams_for_summoners(self, summoner_ids, region=None):
         return self.base_request(
-            'v2.2/team/by-summoner/{summoner_id}'.format(summoner_id=','.join([str(s) for s in summoner_ids])),
+            'v2.3/team/by-summoner/{summoner_id}'.format(summoner_id=','.join([str(s) for s in summoner_ids])),
             region
         )
 

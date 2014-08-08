@@ -79,9 +79,10 @@ class SummonerSpell(models.Model):
 #class Realm(models.Model):
 #    pass
 
-#
-# Following 3 hold recent matches data (see RecentGamesDto on API ref)
-#
+
+#########
+# GAMES #
+#########
 
 
 class Player(models.Model):
@@ -264,6 +265,11 @@ class Game(models.Model):
         unique_together = ('region', 'game_id', 'summoner_id')
 
 
+###########
+# LEAGUES #
+###########
+
+
 class League(models.Model):
     """
     Maps to Riot API League DTO.
@@ -315,6 +321,11 @@ class LeagueEntry(models.Model):
         unique_together = ('player_or_team_id', 'league')
 
 
+#########
+# TEAMS #
+#########
+
+
 class Team(models.Model):
     """
     Maps to Riot API Team DTO.
@@ -331,6 +342,42 @@ class Team(models.Model):
     status = models.CharField(max_length=16)            # ex. RANKED
     tag = models.CharField(max_length=6)                # ex. TSM
     roster = models.OneToOneField('Roster')
+    region = models.CharField(max_length=4)
+
+    def create_date_str(self):
+        """Convert create_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.create_date/1000))
+
+    def last_game_date_str(self):
+        """Convert last_game_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_game_date/1000))
+
+    def last_joined_ranked_team_queue_date_str(self):
+        """Convert last_joined_ranked_team_queue_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_joined_ranked_team_queue_date/1000))
+
+    def modify_date_str(self):
+        """Convert modify_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.modify_date/1000))
+
+    def last_join_date_str(self):
+        """Convert last_join_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_game_date/1000))
+
+    def second_last_join_date_str(self):
+        """Convert second_last_join_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.second_last_join_date/1000))
+
+    def third_last_join_date_str(self):
+        """Convert third_last_join_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.third_last_join_date/1000))
+
+    def __unicode__(self):
+        return u'' + self.name
+
+    class Meta:
+        # Prevent duplicate teams.
+        unique_together = ('region', 'full_id')
 
 
 class MatchHistorySummary(models.Model):
@@ -339,7 +386,7 @@ class MatchHistorySummary(models.Model):
 
     Child of Team model (many-to-one).
     """
-    assist = models.IntegerField()
+    assists = models.IntegerField()
     date = models.BigIntegerField()
     deaths = models.IntegerField()
     game_id = models.BigIntegerField()
@@ -352,6 +399,13 @@ class MatchHistorySummary(models.Model):
     win = models.BooleanField()
     team = models.ForeignKey(Team)
 
+    def date_str(self):
+        """Convert date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.date/1000))
+
+    def __unicode__(self):
+        return u'History of ' + self.team
+
 
 class Roster(models.Model):
     """
@@ -363,6 +417,9 @@ class Roster(models.Model):
     to ease any future revisions.
     """
     owner_id = models.BigIntegerField()
+
+    def __unicode__(self):
+        return u'Roster of ' + Team.objects.get(roster=self).__unicode__()
 
 
 class TeamMemberInfo(models.Model):
@@ -379,6 +436,23 @@ class TeamMemberInfo(models.Model):
     status = models.CharField(max_length=16)            # ex. MEMBER
     roster = models.ForeignKey(Roster)
 
+    def invite_date_str(self):
+        """Convert invite_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.invite_date/1000))
+
+    def join_date_str(self):
+        """Convert join_date epoch milliseconds timestamp to human-readable date string."""
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.join_date/1000))
+
+    # Commented out until we can be sure we have matching Summoner object to resolve player_id to.
+    # def __unicode__(self):
+    #     this_team = Team.objects.get(roster=self.roster)
+    #     return u'Member: ' + Summoner.objects.filter(region=this_team.region).get(summoner_id=self.player_id)
+
+    class Meta:
+        # Prevent duplicate players on the roster.
+        unique_together = ('player_id', 'roster')
+
 
 class TeamStatDetail(models.Model):
     """
@@ -386,7 +460,8 @@ class TeamStatDetail(models.Model):
 
     Child of Team model (many-to-one).
 
-    Contains the stats for the game types (5x5 and 3x3).
+    Contains the stats for the game types (5x5 or 3x3).
+    As such, each Team will have 2 of these, even if they only play one game type.
     """
     team_stat_type = models.CharField(max_length=16)    # ex. RANKED_TEAM_5x5
     average_games_played = models.IntegerField()        # ??

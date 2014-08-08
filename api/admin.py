@@ -52,6 +52,31 @@ class LeagueEntryAdmin(admin.ModelAdmin):
                     'series_wins', 'series_losses', 'series_progress', 'series_target', 'league')
     list_filter = ('division', 'league')
 
+
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ('create_date_str', 'full_id', 'last_game_date_str', 'last_joined_ranked_team_queue_date_str',
+                    'modify_date_str', 'name', 'last_join_date_str', 'second_last_join_date_str',
+                    'third_last_join_date_str', 'status', 'tag', 'roster')
+
+
+class MatchHistorySummaryAdmin(admin.ModelAdmin):
+    list_display = ('game_id', 'kills', 'assists', 'deaths', 'date_str', 'game_mode', 'invalid', 'map_id',
+                    'opposing_team_kills', 'opposing_team_name', 'win', 'team')
+    list_filter = ('team',)
+
+
+class RosterAdmin(admin.ModelAdmin):
+    list_display = ('owner_id', '__unicode__')
+
+
+class TeamMemberInfoAdmin(admin.ModelAdmin):
+    list_display = ('invite_date_str', 'join_date_str', 'player_id', 'status', 'roster')
+
+
+class TeamStatDetailAdmin(admin.ModelAdmin):
+    list_display = ('team_stat_type', 'average_games_played', 'wins', 'losses', 'team')
+
+
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Champion, ChampionAdmin)
 admin.site.register(Item, ItemAdmin)
@@ -61,3 +86,8 @@ admin.site.register(RawStat, RawStatAdmin)
 admin.site.register(Game, GameAdmin)
 admin.site.register(League, LeagueAdmin)
 admin.site.register(LeagueEntry, LeagueEntryAdmin)
+admin.site.register(Team, TeamAdmin)
+admin.site.register(MatchHistorySummary, MatchHistorySummaryAdmin)
+admin.site.register(Roster, RosterAdmin)
+admin.site.register(TeamMemberInfo, TeamMemberInfoAdmin)
+admin.site.register(TeamStatDetail, TeamStatDetailAdmin)

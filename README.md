@@ -80,4 +80,6 @@ Celery is configured to use RabbitMQ's AMQP server:
 ## Notes
 Python setup files (e.g., requirements.txt, MANIFEST.in, etc) should not be relied upon and are only included for readthedoc's virtualenv.
 
+If you get Unauthorized (401) response codes from riotwatcher calls, ensure it's been updated (per call!) to match current Riot API version.
+
 This product is not endorsed, certified or otherwise approved in any way by Riot Games, Inc. or any of its affiliates.
