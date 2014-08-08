@@ -29,13 +29,16 @@ from api.models import (
 ## Constants ##
 
 # Regions
-NORTH_AMERICA = 'na'
-EUROPE_WEST = 'euw'
-EUROPE_NORDIC_EAST = 'eune'
 BRAZIL = 'br'
+EUROPE_NORDIC_EAST = 'eune'
+EUROPE_WEST = 'euw'
+KOREA = 'kr'
 LATIN_AMERICA_NORTH = 'lan'
 LATIN_AMERICA_SOUTH = 'las'
-KOREA = 'kr'
+NORTH_AMERICA = 'na'
+OCEANIa = 'oce'
+RUSSIA = 'ru'
+TURKEY = 'tr'
 
 # Cache Durations
 CACHE_SUMMONER = timedelta(seconds=10)  # Sensible value in production would be avg game length?
@@ -403,13 +406,31 @@ def standardize_name(str):
     """
     Returns `str` as lowercase with spaces stripped.
     """
-
     return str.replace(' ', '').lower()
 
 
 def get_league_by_summoner_id(summoner_id, region):
     """
     Gets league data, given a summoner ID and region, and stores it in the DB.
+
+    Checks for a matching league in the DB and updates that if it exists,
+    otherwise creates a new League.
+    Matches are made by comparing: region, queue, name, and tier.
+
+    League queries to the Riot API return the following data, with entries for each league that
+    the summoner is involved in (ex. solo queue league, ranked team A league, ranked team B league, etc:
+    -league name, ex. Orianna's Warlocks
+    -league tier, ex. Bronze
+    -league queue type, ex. Ranked Team 5v5
+    -entries for every member of that league, be them summoners (for solo queue) or teams (for ranked team queue)
+    -the participant ID, which is a summoner or team ID, used to locate the belonging entry in its respective league
+    -each entry in that league then contains the following:
+        -league points
+        -flags for fresh blood, veteran, hot streak, inactive
+        -player or team name
+        -summoner or team ID
+        -wins
+        -division
     """
     # get_league() returns a dict with the keys being equal to the summoner_ids
     # We only ask for a single summoner's info here, so we only care about the one value.
@@ -470,33 +491,43 @@ def get_league_by_summoner_id(summoner_id, region):
             new_entry.save()
 
 def get_teams_by_summoner_id(summoner_id, region):
+    """
+    Get team data, given a summoner ID and region, and stores it in the DB.
+
+    Each summoner can have 0 or more teams. This checks for matching teams in the DB
+    and updates them if they are present, otherwise it creates a new team.
+    Matches are made by comparing region and full_id.
+
+    Team queries to the Riot API return the following data, per team:
+    -timestamps for roster invites
+    -timestamps for roster joins
+    -summoner IDs for team roster
+    -summoner ID for team owner
+    -match summary for each game played
+    -summary for overall performance in 5v5 and 3v3
+    -team basic data (e.g. tag, name, etc)
+    -timestamps for most recent game, team modified, team created
+    """
     teams_dto = riot_api.get_teams_for_summoner(summoner_id, region)
 
     # teams_dto is a list that will contain an entry for each team the summoner is on.
 
     for team in teams_dto:
-
-        # print '\nWorking with region: ' + region
-        # print '\nKnown teams...'
-        # for i in Team.objects.all():
-        #     print i.name, i.region, i.full_id
-        #
-        # print '\nThis team: ' + team['name'] + '(' + team['fullId'] + ')'
-
         # Can we match this data to a Team in the DB?
         try:
             matching_team = Team.objects.filter(region=region).get(full_id=team['fullId'])
+            # We found a match, so set the working Team to that.
             print 'Found matching Team {} {}'.format(matching_team.region, matching_team.name)
             matched = True
-            # We found a match, so set the working Team to that.
             new_team = matching_team
         except ObjectDoesNotExist:
+            # No match found, so create a new Team.
             matched = False
             print 'No matching team found. Creating a new Team...'
-            # No match found, so create a new Team.
             new_team = Team()
 
-        # We get all the related model data, so we can delete them and just create new models below.
+        # We get all the Team data from Riot API call,
+        # so we can delete everything and just create new models below.
         if matched:
             new_team.roster.delete()
             new_team.delete()
@@ -563,10 +594,16 @@ def get_teams_by_summoner_id(summoner_id, region):
             new_match.save()
 
 def reset_teams():
+    """
+    Clear all Team objects and children from DB.
+    """
     # We (have to?) delete Roster separately because it is a one-to-one field related to by Team.
     Roster.objects.all().delete()
     # All of the Team child models are related to by the children to Team.
     Team.objects.all().delete()
 
 def reset_leagues():
+    """
+    Clear all League objects and children from DB.
+    """
     League.objects.all().delete()
