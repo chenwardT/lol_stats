@@ -33,6 +33,8 @@ def api_root(request, format=None):
         'leagues': reverse('league-list', request=request, format=format),
         'league-entries': reverse('league-entry-list', request=request, format=format),
         'teams': reverse('team-list', request=request, format=format),
+        'rosters': reverse('roster-list', request=request, format=format),
+        'teammemberinfo': reverse('teammemberinfo-list', request=request, format=format),
     })
 
 
@@ -385,6 +387,82 @@ class TeamDetail(generics.RetrieveAPIView):
                 obj = get_object_or_404(Team, region__iexact=region, full_id=full_id)
 
         return obj
+
+
+class RosterList(generics.ListAPIView):
+    """
+    API endpoint that allows roster entries to be viewed.
+
+    #Optionally filtered by `region` URL param.
+    """
+    queryset = Roster.objects.all()
+    serializer_class = RosterSerializer
+    paginate_by = 10
+
+    def get_queryset(self):
+        region = self.kwargs.get('region', None)
+
+        if region is not None:
+            self.queryset = self.queryset.filter(region__iexact=region)
+
+        return self.queryset
+
+
+class RosterDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a roster entry to be retrieved.
+
+    #Selected via `region` and `full_id` URL params.
+    """
+    queryset = Roster.objects.all()
+    serializer_class = RosterSerializer
+
+    def get_object(self, queryset=None):
+        region = self.kwargs.get('region', None)
+        full_id = self.kwargs.get('full_id', None)
+
+        if region is not None:
+            if full_id is not None:
+                obj = get_object_or_404(Roster, region__iexact=region, full_id=full_id)
+
+        return obj
+    
+
+class TeamMemberInfoList(generics.ListAPIView):
+    """
+    API endpoint that allows TeamMemberInfo entries to be viewed.
+
+    #Optionally filtered by `region` URL param.
+    """
+    queryset = TeamMemberInfo.objects.all()
+    serializer_class = TeamMemberInfoSerializer
+    paginate_by = 10
+
+    def get_queryset(self):
+        # region = self.kwargs.get('region', None)
+        #
+        # if region is not None:
+        #     self.queryset = self.queryset.filter(region__iexact=region)
+
+        return self.queryset
+
+
+class TeamMemberInfoDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a TeamMemberInfo entry to be retrieved.
+
+    #Selected via `region` and `full_id` URL params.
+    """
+    queryset = TeamMemberInfo.objects.all()
+    serializer_class = TeamMemberInfoSerializer
+
+    # def get_object(self, queryset=None):
+    #
+    #     # if region is not None:
+    #     #     if full_id is not None:
+    #     #         obj = get_object_or_404(TeamMemberInfo, region__iexact=region, full_id=full_id)
+    #
+    #     return obj
 
 
 @csrf_exempt

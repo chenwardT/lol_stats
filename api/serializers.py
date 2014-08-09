@@ -123,15 +123,6 @@ class LeagueEntrySerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 
-class TeamSerializer(serializers.ModelSerializer):
-    """
-    A serializer that returns team data.
-    """
-    class Meta:
-        model = Team
-        exclude = ('id',)
-
-
 class MatchHistorySummarySerializer(serializers.ModelSerializer):
     """
     A serializer that returns team match history summary data.
@@ -141,22 +132,58 @@ class MatchHistorySummarySerializer(serializers.ModelSerializer):
         exclude = ('id',)
 
 
-class RosterSerializer(serializers.ModelSerializer):
-    """
-    A serializer that returns team roster data.
-    """
-    class Meta:
-        model = Roster
-        exclude = ('id',)
-
-
 class TeamMemberInfoSerializer(serializers.ModelSerializer):
     """
     A serializer that returns team member info data.
+
+    Instead of containing a `player_id` field, it resolve the ID a Summoner object,
+    which yields the summoner's name, otherwise returns `player_id`.
+    Timestamps are converted into human-readable format.
     """
+    summoner = serializers.Field(source='get_summoner')
+    invite_date_str = serializers.Field(source='invite_date_str')
+    join_date_str = serializers.Field(source='join_date_str')
+
     class Meta:
         model = TeamMemberInfo
-        exclude = ('id',)
+        fields = ('invite_date_str', 'join_date_str', 'summoner', 'status')
+
+
+class RosterSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team roster data.
+
+    Instead of containing an `owner_id` field, it resolves the ID to a Summoner object,
+    which yields the summoner's name, otherwise returns `owner_id`.
+    Team members of the roster are nested within.
+    """
+    teammemberinfo_set = TeamMemberInfoSerializer(many=True)
+    owner = serializers.Field(source='get_summoner')
+    class Meta:
+        model = Roster
+        fields = ('owner', 'teammemberinfo_set')
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team data.
+
+    Timestamps are converted into human-readable format.
+    """
+    roster = RosterSerializer(many=False)
+
+    create_date = serializers.Field(source='create_date_str')
+    last_game_date = serializers.Field(source='last_game_date_str')
+    last_joined_ranked_team_queue_date = serializers.Field(source='last_joined_ranked_team_queue_str')
+    modify_date = serializers.Field(source='modify_date_str')
+    last_join_date = serializers.Field(source='last_join_date_str')
+    second_last_join_date = serializers.Field(source='second_last_join_date_str')
+    third_last_join_date = serializers.Field(source='third_last_join_date_str')
+
+    class Meta:
+        model = Team
+        fields = ('create_date', 'full_id', 'last_game_date', 'modify_date', 'name', 'last_join_date',
+        'second_last_join_date', 'third_last_join_date', 'status', 'tag', 'roster', 'region')
 
 
 class TeamStatDetailSerializer(serializers.ModelSerializer):

@@ -25,6 +25,10 @@ from api.views import (
     LeagueEntryDetail,
     TeamList,
     TeamDetail,
+    RosterList,
+    RosterDetail,
+    TeamMemberInfoList,
+    TeamMemberInfoDetail,
     api_root)
 
 # TODO: Consider allowing lookup by ID (check for number instead of \w+)
@@ -61,4 +65,6 @@ urlpatterns = patterns('api',
     url(r'^teams$', TeamList.as_view(), name='team-list'),
     url(r'^teams/(?P<region>\w+)$', TeamList.as_view(), name='team-region-list'),
     url(r'^teams/(?P<region>\w+)/(?P<full_id>TEAM(-*\w+)*)$', TeamDetail.as_view(), name='team-detail'),
+    url(r'^rosters$', RosterList.as_view(), name='roster-list'),
+    url(r'^teammemberinfo$', TeamMemberInfoList.as_view(), name='teammemberinfo-list'),
 )

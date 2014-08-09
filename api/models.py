@@ -6,6 +6,7 @@ import time
 
 import inflection
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 
 # TODO: Set PKs to extant fields, if possible.
 
@@ -427,6 +428,16 @@ class Roster(models.Model):
     def __unicode__(self):
         return u'Roster of ' + Team.objects.get(roster=self).__unicode__()
 
+    def get_summoner(self):
+        """Converts owner_id to Summoner object, if possible. Otherwise returns owner_id."""
+        try:
+            # Can we resolve our player_id to a summoner in the DB?
+            obj = Summoner.objects.filter(region=self.team.region).get(summoner_id=self.owner_id)
+            return obj
+        except ObjectDoesNotExist:
+            # We don't know about this summoner, so just return their summoner ID.
+            return self.owner_id
+
 
 class TeamMemberInfo(models.Model):
     """
@@ -449,6 +460,17 @@ class TeamMemberInfo(models.Model):
     def join_date_str(self):
         """Convert join_date epoch milliseconds timestamp to human-readable date string."""
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.join_date/1000))
+
+    def get_summoner(self):
+        """Converts player_id to Summoner object, if possible. Otherwise returns player_id."""
+        try:
+            # Can we resolve our player_id to a summoner in the DB?
+            obj = Summoner.objects.filter(region=self.roster.team.region).get(summoner_id=self.player_id)
+            return obj
+        except ObjectDoesNotExist:
+            # We don't know about this summoner, so just return their summoner ID.
+            return self.player_id
+
 
     # Commented out until we can be sure we have matching Summoner object to resolve player_id to.
     # def __unicode__(self):
