@@ -274,9 +274,15 @@ class LeagueList(generics.ListAPIView):
 
     def get_queryset(self):
         region = self.kwargs.get('region', None)
+        queue = self.kwargs.get('queue', None)
+        tier = self.kwargs.get('tier', None)
 
         if region is not None:
             self.queryset = self.queryset.filter(region__iexact=region)
+            if queue is not None:
+                self.queryset = self.queryset.filter(queue__iexact=queue)
+                if tier is not None:
+                    self.queryset = self.queryset.filter(tier__iexact=tier)
 
         return self.queryset
 
@@ -319,7 +325,6 @@ class LeagueEntryList(generics.ListAPIView):
     """
     queryset = LeagueEntry.objects.all()
     serializer_class = LeagueEntrySerializer
-    paginate_by = 10
 
     def get_queryset(self):
         region = self.kwargs.get('region', None)
@@ -327,7 +332,7 @@ class LeagueEntryList(generics.ListAPIView):
         if region is not None:
             self.queryset = self.queryset.filter(league__region__iexact=region)
 
-            return self.queryset
+        return self.queryset
 
 
 class LeagueEntryDetail(generics.RetrieveAPIView):
@@ -341,11 +346,10 @@ class LeagueEntryDetail(generics.RetrieveAPIView):
     serializer_class = LeagueEntrySerializer
 
     def get_object(self, queryset=None):
-        region = self.kwargs.get('region')
-        id = self.kwargs.get('id')
+        region = self.kwargs.get('region', None)
+        id = self.kwargs.get('id', None)
 
-        if id is not None:
-            obj = self.queryset.filter(league__region__iexact=region).get(player_or_team_id=id)
+        obj = get_object_or_404(self.queryset, league__region__iexact=region, player_or_team_id=id)
 
         return obj
 

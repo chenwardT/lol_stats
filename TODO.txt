@@ -74,3 +74,5 @@
 - Consider using FK to relate League + Team fields that are associated w/IDs (ex. summoner ID for team owner, etc)
 
 - Implement time-elapsed-since-last-update checks for everything. (e.g. wider usage of CACHE_SUMMONER)
+
+- Return HTTP 404 instead of raising HTTP 500 when objects not found by API endpoints.

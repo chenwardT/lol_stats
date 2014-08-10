@@ -105,15 +105,6 @@ class SummonerSpellSerializer(serializers.ModelSerializer):
         model = SummonerSpell
 
 
-class LeagueSerializer(serializers.ModelSerializer):
-    """
-    A serializer that returns league data.
-    """
-    class Meta:
-        model = League
-        exclude = ('id',)
-
-
 class LeagueEntrySerializer(serializers.ModelSerializer):
     """
     A serializer that returns league entry data.
@@ -121,6 +112,16 @@ class LeagueEntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = LeagueEntry
         exclude = ('id',)
+
+
+class LeagueSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns league data.
+    """
+    leagueentry_set = LeagueEntrySerializer(many=True)
+    class Meta:
+        model = League
+        fields = ('region', 'queue', 'name', 'tier', 'leagueentry_set')
 
 
 class MatchHistorySummarySerializer(serializers.ModelSerializer):
