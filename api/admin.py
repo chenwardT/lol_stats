@@ -70,7 +70,7 @@ class RosterAdmin(admin.ModelAdmin):
 
 
 class TeamMemberInfoAdmin(admin.ModelAdmin):
-    list_display = ('invite_date_str', 'join_date_str', 'player_id', 'status', 'roster')
+    list_display = ('get_summoner', 'invite_date_str', 'join_date_str', 'player_id', 'status', 'roster')
 
 
 class TeamStatDetailAdmin(admin.ModelAdmin):

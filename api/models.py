@@ -331,8 +331,8 @@ class Team(models.Model):
     """
     Maps to Riot API Team DTO.
 
-    To get a Team, given a summoner ID and region:
-    Team.objects.filter(region=<region>).get(roster__teammemberinfo__player_id=<summoner_id>)
+    To get Teams, given a summoner ID and region:
+    Team.objects.filter(region=<region>).filter(roster__teammemberinfo__player_id=<summoner_id>)
 
     To get a LeagueEntry, given a team's full ID and region:
     LeagueEntry.objects.filter(league__region=<region>).get(player_or_team_id=<full_id>)
@@ -378,6 +378,15 @@ class Team(models.Model):
     def third_last_join_date_str(self):
         """Convert third_last_join_date epoch milliseconds timestamp to human-readable date string."""
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.third_last_join_date/1000))
+
+    def get_league_entries(self):
+        """Returns the LeagueEntries for this Team, or None if the LeagueEntry does not exist."""
+        try:
+            obj = LeagueEntry.objects.filter(league__region=self.region).filter(player_or_team_id=self.full_id)
+        except ObjectDoesNotExist:
+            obj = None
+
+        return obj
 
     def __unicode__(self):
         return u'' + self.name

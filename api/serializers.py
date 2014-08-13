@@ -105,13 +105,28 @@ class SummonerSpellSerializer(serializers.ModelSerializer):
         model = SummonerSpell
 
 
+class LeagueForLeagueEntrySerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns league data.
+
+    Returned data is intended to be nested within a serialized LeagueEntry.
+    """
+    class Meta:
+        model = League
+        fields = ('region', 'queue', 'name', 'tier')
+
+
 class LeagueEntrySerializer(serializers.ModelSerializer):
     """
     A serializer that returns league entry data.
     """
+    league = LeagueForLeagueEntrySerializer(many=False)
+
     class Meta:
         model = LeagueEntry
-        exclude = ('id',)
+        fields = ('division', 'is_fresh_blood', 'is_hot_streak', 'is_inactive', 'is_veteran', 'league_points',
+        'player_or_team_id', 'player_or_team_name', 'wins', 'series_losses', 'series_progress', 'series_target',
+        'series_wins', 'league')
 
 
 class LeagueSerializer(serializers.ModelSerializer):
@@ -180,11 +195,12 @@ class TeamSerializer(serializers.ModelSerializer):
     last_join_date = serializers.Field(source='last_join_date_str')
     second_last_join_date = serializers.Field(source='second_last_join_date_str')
     third_last_join_date = serializers.Field(source='third_last_join_date_str')
+    league_entries = LeagueEntrySerializer(source='get_league_entries')
 
     class Meta:
         model = Team
         fields = ('create_date', 'full_id', 'last_game_date', 'modify_date', 'name', 'last_join_date',
-        'second_last_join_date', 'third_last_join_date', 'status', 'tag', 'roster', 'region')
+        'second_last_join_date', 'third_last_join_date', 'status', 'tag', 'roster', 'region', 'league_entries')
 
 
 class TeamStatDetailSerializer(serializers.ModelSerializer):

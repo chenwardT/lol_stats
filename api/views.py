@@ -367,8 +367,14 @@ class TeamList(generics.ListAPIView):
     def get_queryset(self):
         region = self.kwargs.get('region', None)
 
+        # Represents std_name of a summoner whose team(s) we want to get.
+        member_name = self.kwargs.get('member_name', None)
+
         if region is not None:
             self.queryset = self.queryset.filter(region__iexact=region)
+            if member_name is not None:
+                summoner = Summoner.objects.filter(region=region).get(std_name=member_name)
+                self.queryset = self.queryset.filter(roster__teammemberinfo__player_id=summoner.summoner_id)
 
         return self.queryset
 
