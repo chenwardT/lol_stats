@@ -101,3 +101,9 @@ TEMPLATE_DIRS = (
 REST_FRAMEWORK = {
     # 'PAGINATE_BY': 10,
 }
+
+
+# Ensure Ipython notebook runs on TCP
+IPYTHON_ARGUMENTS = [
+    '--ip=0.0.0.0',
+]

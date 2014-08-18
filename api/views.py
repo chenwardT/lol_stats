@@ -325,6 +325,7 @@ class LeagueEntryList(generics.ListAPIView):
     """
     queryset = LeagueEntry.objects.all()
     serializer_class = LeagueEntrySerializer
+    paginate_by = 10
 
     def get_queryset(self):
         region = self.kwargs.get('region', None)
