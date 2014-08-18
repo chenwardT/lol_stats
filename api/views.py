@@ -359,7 +359,8 @@ class TeamList(generics.ListAPIView):
     """
     API endpoint that allows team entries to be viewed.
 
-    Optionally filtered by `region` URL param.
+    Optionally filtered by `region` and `member_name` URL params.
+    `member_name` is filtered against `std_name` of Summoner to get their teams.
     """
     queryset = Team.objects.all()
     serializer_class = TeamSerializer

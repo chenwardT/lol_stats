@@ -81,3 +81,5 @@
     - Check where we assign a Team to a League; this may need to be redone if a Team can be in multiple leagues.
     - Check serialization of Team, especially regarding `(many=False)` args.
     - Nomenclature ("entry" vs "entries").
+
+- Whenever interacting w/Riot API, check for existence of field in response before assigning our (model) field to it.

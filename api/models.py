@@ -388,6 +388,11 @@ class Team(models.Model):
 
         return obj
 
+    def get_team_stat_detail(self):
+        """Returns the TeamStatDetail for this Team."""
+        queryset = TeamStatDetail.objects.filter(team=self)
+        return queryset
+
     def __unicode__(self):
         return u'' + self.name
 

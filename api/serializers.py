@@ -180,6 +180,15 @@ class RosterSerializer(serializers.ModelSerializer):
         fields = ('owner', 'teammemberinfo_set')
 
 
+class TeamStatDetailSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns team stat detail data.
+    """
+    class Meta:
+        model = TeamStatDetail
+        exclude = ('id', 'team')
+
+
 class TeamSerializer(serializers.ModelSerializer):
     """
     A serializer that returns team data.
@@ -196,18 +205,11 @@ class TeamSerializer(serializers.ModelSerializer):
     second_last_join_date = serializers.Field(source='second_last_join_date_str')
     third_last_join_date = serializers.Field(source='third_last_join_date_str')
     league_entries = LeagueEntrySerializer(source='get_league_entries')
+    team_stat_detail = TeamStatDetailSerializer(source='get_team_stat_detail')
 
     class Meta:
         model = Team
         fields = ('create_date', 'full_id', 'last_game_date', 'modify_date', 'name', 'last_join_date',
-        'second_last_join_date', 'third_last_join_date', 'status', 'tag', 'roster', 'region', 'league_entries')
-
-
-class TeamStatDetailSerializer(serializers.ModelSerializer):
-    """
-    A serializer that returns team stat detail data.
-    """
-    class Meta:
-        model = TeamStatDetail
-        exclude = ('id',)
+        'second_last_join_date', 'third_last_join_date', 'status', 'tag', 'roster', 'region', 'league_entries',
+        'team_stat_detail')
 
