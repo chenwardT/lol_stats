@@ -47,17 +47,29 @@ class LeagueAdmin(admin.ModelAdmin):
 
 
 class LeagueEntryAdmin(admin.ModelAdmin):
-    list_display = ('division', 'is_fresh_blood', 'is_hot_streak', 'is_inactive', 'is_veteran',
-                    'league_points', 'player_or_team_id', 'player_or_team_name', 'wins',
-                    'series_wins', 'series_losses', 'series_progress', 'series_target', 'league')
+    list_display = ('player_or_team_name', 'division', 'is_fresh_blood', 'is_hot_streak', 'is_inactive', 'is_veteran',
+                    'league_points', 'player_or_team_id', 'wins', 'series_wins', 'series_losses', 'series_progress',
+                    'series_target', 'league')
     list_filter = ('division', 'league')
 
 
-class TeamAdmin(admin.ModelAdmin):
-    list_display = ('create_date_str', 'full_id', 'last_game_date_str', 'last_joined_ranked_team_queue_date_str',
-                    'modify_date_str', 'name', 'last_join_date_str', 'second_last_join_date_str',
-                    'third_last_join_date_str', 'status', 'tag', 'roster')
+class TeamStatDetailInline(admin.TabularInline):
+    model = TeamStatDetail
 
+
+class MatchHistorySummaryInline(admin.TabularInline):
+    model = MatchHistorySummary
+
+
+class TeamAdmin(admin.ModelAdmin):
+    list_display = ('name', 'create_date_str', 'full_id', 'last_game_date_str', 'last_joined_ranked_team_queue_date_str',
+                    'modify_date_str', 'last_join_date_str', 'second_last_join_date_str',
+                    'third_last_join_date_str', 'status', 'tag', 'roster')
+    search_fields = ('name',)
+    inlines = [
+        TeamStatDetailInline,
+        MatchHistorySummaryInline,
+    ]
 
 class MatchHistorySummaryAdmin(admin.ModelAdmin):
     list_display = ('game_id', 'kills', 'assists', 'deaths', 'date_str', 'game_mode', 'invalid', 'map_id',
@@ -65,8 +77,15 @@ class MatchHistorySummaryAdmin(admin.ModelAdmin):
     list_filter = ('team',)
 
 
+class TeamMemberInfoInline(admin.TabularInline):
+    model = TeamMemberInfo
+
+
 class RosterAdmin(admin.ModelAdmin):
     list_display = ('owner_id', '__unicode__')
+    inlines = [
+        TeamMemberInfoInline,
+    ]
 
 
 class TeamMemberInfoAdmin(admin.ModelAdmin):

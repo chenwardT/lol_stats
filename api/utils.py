@@ -558,7 +558,10 @@ def get_teams_by_summoner_id(summoner_id, region):
             # Set everything in the Team model that isn't a related field.
             new_team.create_date = team['createDate']
             new_team.full_id = team['fullId']
-            new_team.last_game_date = team['lastGameDate']
+
+            # If team hasn't played a game (this season?)
+            if 'lastGameDate' in team:
+                new_team.last_game_date = team['lastGameDate']
             new_team.last_joined_ranked_team_queue_date = team['lastJoinedRankedTeamQueueDate']
             new_team.modify_date = team['modifyDate']
             new_team.name = team['name']
@@ -572,7 +575,10 @@ def get_teams_by_summoner_id(summoner_id, region):
             # This leaves: roster, teamStatDetails, matchHistory.
             roster_dto = team['roster']
             team_stat_details_dto = team['teamStatDetails']
-            match_history_dto = team['matchHistory']
+
+            # If team hasn't played a game (extends past this season, so no games played ever!)
+            if 'matchHistory' in team:
+                match_history_dto = team['matchHistory']
 
             # Setup and save the Roster model.
             new_roster = Roster(owner_id=roster_dto['ownerId'])
@@ -600,21 +606,23 @@ def get_teams_by_summoner_id(summoner_id, region):
                                            team=new_team)
                 new_stats.save()
 
-            # Setup and save the MatchHistorySummary models for the Team.
-            for match in match_history_dto:
-                new_match = MatchHistorySummary(assists=match['assists'],
-                                                date=match['date'],
-                                                deaths=match['deaths'],
-                                                game_id=match['gameId'],
-                                                game_mode=match['gameMode'],
-                                                invalid=match['invalid'],
-                                                kills=match['kills'],
-                                                map_id=match['mapId'],
-                                                opposing_team_kills=match['opposingTeamKills'],
-                                                opposing_team_name=match['opposingTeamName'],
-                                                win=match['win'],
-                                                team=new_team)
-                new_match.save()
+            # Setup and save the MatchHistorySummary models for the Team, if it has a history.
+
+            if match_history_dto:
+                for match in match_history_dto:
+                    new_match = MatchHistorySummary(assists=match['assists'],
+                                                    date=match['date'],
+                                                    deaths=match['deaths'],
+                                                    game_id=match['gameId'],
+                                                    game_mode=match['gameMode'],
+                                                    invalid=match['invalid'],
+                                                    kills=match['kills'],
+                                                    map_id=match['mapId'],
+                                                    opposing_team_kills=match['opposingTeamKills'],
+                                                    opposing_team_name=match['opposingTeamName'],
+                                                    win=match['win'],
+                                                    team=new_team)
+                    new_match.save()
 
 def reset_teams():
     """

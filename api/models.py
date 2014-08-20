@@ -339,7 +339,7 @@ class Team(models.Model):
     """
     create_date = models.BigIntegerField()
     full_id = models.CharField(max_length=64)           # ex. TEAM-68594bb0-cce0-11e3-a7cc-782bcb4d1861
-    last_game_date = models.BigIntegerField()
+    last_game_date = models.BigIntegerField(null=True, blank=True)
     last_joined_ranked_team_queue_date = models.BigIntegerField()
     modify_date = models.BigIntegerField()
     name = models.CharField(max_length=24)
@@ -357,7 +357,10 @@ class Team(models.Model):
 
     def last_game_date_str(self):
         """Convert last_game_date epoch milliseconds timestamp to human-readable date string."""
-        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_game_date/1000))
+        if self.last_game_date is not None:
+            return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_game_date/1000))
+        else:
+            return -1
 
     def last_joined_ranked_team_queue_date_str(self):
         """Convert last_joined_ranked_team_queue_date epoch milliseconds timestamp to human-readable date string."""
@@ -369,7 +372,10 @@ class Team(models.Model):
 
     def last_join_date_str(self):
         """Convert last_join_date epoch milliseconds timestamp to human-readable date string."""
-        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_game_date/1000))
+        if self.last_game_date is not None:
+            return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.last_game_date/1000))
+        else:
+            return -1
 
     def second_last_join_date_str(self):
         """Convert second_last_join_date epoch milliseconds timestamp to human-readable date string."""
@@ -406,6 +412,7 @@ class MatchHistorySummary(models.Model):
     Maps to Riot API MatchHistorySummary DTO.
 
     Child of Team model (many-to-one).
+    This will not be created for a Team if the team had never played a game when it was queried.
     """
     assists = models.IntegerField()
     date = models.BigIntegerField()
@@ -425,7 +432,7 @@ class MatchHistorySummary(models.Model):
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.date/1000))
 
     def __unicode__(self):
-        return u'History of ' + self.team
+        return u'History of ' + self.team.__unicode__()
 
 
 class Roster(models.Model):
