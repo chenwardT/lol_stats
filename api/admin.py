@@ -96,6 +96,18 @@ class TeamStatDetailAdmin(admin.ModelAdmin):
     list_display = ('team_stat_type', 'average_games_played', 'wins', 'losses', 'team')
 
 
+class PlayerStatSummaryInline(admin.TabularInline):
+    model = PlayerStatsSummary
+
+
+class PlayerStatAdmin(admin.ModelAdmin):
+    inlines = [
+        PlayerStatSummaryInline,
+    ]
+
+class AggregatedStatAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Summoner, SummonerAdmin)
 admin.site.register(Champion, ChampionAdmin)
 admin.site.register(Item, ItemAdmin)
@@ -110,3 +122,5 @@ admin.site.register(MatchHistorySummary, MatchHistorySummaryAdmin)
 admin.site.register(Roster, RosterAdmin)
 admin.site.register(TeamMemberInfo, TeamMemberInfoAdmin)
 admin.site.register(TeamStatDetail, TeamStatDetailAdmin)
+admin.site.register(PlayerStat, PlayerStatAdmin)
+admin.site.register(AggregatedStat, AggregatedStatAdmin)

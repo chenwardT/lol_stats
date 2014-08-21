@@ -532,6 +532,9 @@ class PlayerStat(models.Model):
     """
     summoner = models.OneToOneField(Summoner)
 
+    def __unicode__(self):
+        return u'PlayerStat for ' + self.summoner.name
+
 class PlayerStatsSummary(models.Model):
     """
     Maps to Riot API PlayerStatsSummary DTO.
@@ -539,12 +542,15 @@ class PlayerStatsSummary(models.Model):
     Child of PlayerStat model (many-to-one).
     """
     player = models.ForeignKey(PlayerStat)
-    losses = models.IntegerField()
+    losses = models.IntegerField(blank=True, null=True)      # Ranked queue types only.
     wins = models.IntegerField()
-    modify_date = models.BigIntegerField()
+    modify_date = models.BigIntegerField()                   # Date stats were last modified as epcoh ms.
     player_stat_summary_type = models.CharField(max_length=16)
 
-class AggregatedStats(models.Model):
+    def __unicode__(self):
+        return u'StatsSummary for ' + self.player.__unicode__()
+
+class AggregatedStat(models.Model):
     """
     Maps to Riot API AggregatedStats DTO.
 
@@ -607,3 +613,7 @@ class AggregatedStats(models.Model):
     total_triple_kills = models.IntegerField(null=True, blank=True)
     total_turrets_killed = models.IntegerField(null=True, blank=True)
     total_unreal_kills = models.IntegerField(null=True, blank=True)
+
+    def __unicode__(self):
+        return u'AggStats for ' + self.player_stats.player.summoner.name + \
+               '[' + self.player_stats.player_stat_summary_type + ']'

@@ -24,7 +24,10 @@ from api.models import (
     MatchHistorySummary,
     Roster,
     TeamMemberInfo,
-    TeamStatDetail)
+    TeamStatDetail,
+    PlayerStat,
+    PlayerStatsSummary,
+    AggregatedStat)
 
 
 ## Constants ##
@@ -644,5 +647,35 @@ def reset_leagues():
     League.objects.all().delete()
 
 
-def get_stats_summary_by_summoner_id():
-    pass
+def get_stats_summary_by_summoner_id(summoner_id, region):
+    """
+    Gets summoner stat summary from Riot API given a summoner ID and region and saves it to DB.
+    """
+    stats_dto = riot_api.get_stat_summary(summoner_id, region)
+
+    this_summoner = Summoner.objects.filter(region=region).get(summoner_id=summoner_id)
+    new_player_stat = PlayerStat(summoner=this_summoner)
+    new_player_stat.save()
+
+    # There are 11 entries in stats_dto's playerStatSummaries.
+    for i in stats_dto['playerStatSummaries']:
+        new_player_stats_summary = PlayerStatsSummary(player=new_player_stat,
+                                                      wins=i['wins'],
+                                                      modify_date=i['modifyDate'],
+                                                      player_stat_summary_type=i['playerStatSummaryType'])
+        # Losses only listed for ranked queue types.
+        if 'losses' in i:
+            new_player_stats_summary.losses = i['losses']
+
+        new_player_stats_summary.save()
+
+        agg_stats_dto = i['aggregatedStats']
+
+        new_agg_stats = AggregatedStat()
+
+        # Assign each attr of agg_stats_dto to the model.
+        for j in agg_stats_dto:
+            setattr(new_agg_stats, inflection.underscore(j), agg_stats_dto[j])
+
+        new_agg_stats.player_stats = new_player_stats_summary
+        new_agg_stats.save()
