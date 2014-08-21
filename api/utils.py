@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 import inflection
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from riotwatcher.riotwatcher import error_404
+from riotwatcher.riotwatcher import LoLException, error_404
 
 from lol_stats.base import riot_api
 from api.models import (
@@ -528,9 +528,13 @@ def get_teams_by_summoner_id(summoner_id, region):
     try:
         teams_dto = riot_api.get_teams_for_summoner(summoner_id, region)
         got_teams = True
-    except error_404:
-        # TODO: This doesn't work. `except LoLException` does work, but that is too broad an exception.
+    except LoLException as e:
         got_teams = False
+        if e == error_404:
+            print 'Summoner ID', summoner_id, 'is not on any teams (error_404).'
+        else:
+            got_teams = False
+            print 'ERROR getting teams:', e
 
     if got_teams:
         # teams_dto is a list that will contain an entry for each team the summoner is on.
@@ -638,3 +642,7 @@ def reset_leagues():
     Clear all League objects and children from DB.
     """
     League.objects.all().delete()
+
+
+def get_stats_summary_by_summoner_id():
+    pass

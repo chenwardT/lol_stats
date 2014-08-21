@@ -517,3 +517,93 @@ class TeamStatDetail(models.Model):
     wins = models.IntegerField()
     losses = models.IntegerField()
     team = models.ForeignKey(Team)
+
+
+#########
+# STATS #
+#########
+
+
+class PlayerStat(models.Model):
+    """
+    Maps to Riot API PlayerStatsSummaryList DTO.
+
+    Child of Summoner model (one-to-one).
+    """
+    summoner = models.OneToOneField(Summoner)
+
+class PlayerStatsSummary(models.Model):
+    """
+    Maps to Riot API PlayerStatsSummary DTO.
+
+    Child of PlayerStat model (many-to-one).
+    """
+    player = models.ForeignKey(PlayerStat)
+    losses = models.IntegerField()
+    wins = models.IntegerField()
+    modify_date = models.BigIntegerField()
+    player_stat_summary_type = models.CharField(max_length=16)
+
+class AggregatedStats(models.Model):
+    """
+    Maps to Riot API AggregatedStats DTO.
+
+    Child of PlayerStatsSummary model (one-to-one).
+    """
+    player_stats = models.OneToOneField(PlayerStatsSummary)
+    average_assists = models.IntegerField(null=True, blank=True)
+    average_champions_killed = models.IntegerField(null=True, blank=True)
+    average_combat_player_score = models.IntegerField(null=True, blank=True)
+    average_node_capture = models.IntegerField(null=True, blank=True)
+    average_node_capture_assist = models.IntegerField(null=True, blank=True)
+    average_node_neutralize = models.IntegerField(null=True, blank=True)
+    average_node_neutralize_assist = models.IntegerField(null=True, blank=True)
+    average_num_deaths = models.IntegerField(null=True, blank=True)
+    average_objective_player_score = models.IntegerField(null=True, blank=True)
+    average_team_objective = models.IntegerField(null=True, blank=True)
+    average_total_player_score = models.IntegerField(null=True, blank=True)
+    bot_games_played = models.IntegerField(null=True, blank=True)
+    killing_spree = models.IntegerField(null=True, blank=True)
+    max_assists = models.IntegerField(null=True, blank=True)
+    max_champions_killed = models.IntegerField(null=True, blank=True)
+    max_combat_player_score = models.IntegerField(null=True, blank=True)
+    max_largest_critical_strike = models.IntegerField(null=True, blank=True)
+    max_largest_killing_spree = models.IntegerField(null=True, blank=True)
+    max_node_capture = models.IntegerField(null=True, blank=True)
+    max_node_capture_assist = models.IntegerField(null=True, blank=True)
+    max_node_neutralize = models.IntegerField(null=True, blank=True)
+    max_node_neutralize_assist = models.IntegerField(null=True, blank=True)
+    max_num_deaths = models.IntegerField(null=True, blank=True)
+    max_objective_player_score = models.IntegerField(null=True, blank=True)
+    max_team_objective = models.IntegerField(null=True, blank=True)
+    max_time_played = models.IntegerField(null=True, blank=True)
+    max_time_spent_living = models.IntegerField(null=True, blank=True)
+    max_total_player_score = models.IntegerField(null=True, blank=True)
+    most_champion_kills_per_session = models.IntegerField(null=True, blank=True)
+    most_spells_cast = models.IntegerField(null=True, blank=True)
+    normal_games_played = models.IntegerField(null=True, blank=True)
+    ranked_premade_games_played = models.IntegerField(null=True, blank=True)
+    ranked_solo_games_played = models.IntegerField(null=True, blank=True)
+    total_assists = models.IntegerField(null=True, blank=True)
+    total_champion_kills = models.IntegerField(null=True, blank=True)
+    total_damage_dealt = models.IntegerField(null=True, blank=True)
+    total_damage_taken = models.IntegerField(null=True, blank=True)
+    total_deaths_per_session = models.IntegerField(null=True, blank=True)
+    total_double_kills = models.IntegerField(null=True, blank=True)
+    total_first_blood = models.IntegerField(null=True, blank=True)
+    total_gold_earned = models.IntegerField(null=True, blank=True)
+    total_heal = models.IntegerField(null=True, blank=True)
+    total_magic_damage_dealt = models.IntegerField(null=True, blank=True)
+    total_minion_kills = models.IntegerField(null=True, blank=True)
+    total_neutral_minions_killed = models.IntegerField(null=True, blank=True)
+    total_node_capture = models.IntegerField(null=True, blank=True)
+    total_node_neutralize = models.IntegerField(null=True, blank=True)
+    total_penta_kills = models.IntegerField(null=True, blank=True)
+    total_physical_damage_dealt = models.IntegerField(null=True, blank=True)
+    total_quadra_kills = models.IntegerField(null=True, blank=True)
+    total_sessions_lost = models.IntegerField(null=True, blank=True)
+    total_sessions_played = models.IntegerField(null=True, blank=True)
+    total_sessions_won = models.IntegerField(null=True, blank=True)
+    total_triple_kills = models.IntegerField(null=True, blank=True)
+    total_turrets_killed = models.IntegerField(null=True, blank=True)
+    total_unreal_kills = models.IntegerField(null=True, blank=True)
