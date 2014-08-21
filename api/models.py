@@ -547,6 +547,12 @@ class PlayerStatsSummary(models.Model):
     modify_date = models.BigIntegerField()                   # Date stats were last modified as epcoh ms.
     player_stat_summary_type = models.CharField(max_length=16)
 
+    def get_aggregated_stat(self):
+        return AggregatedStat.objects.get(player_stats=self)
+
+    def modify_date_str(self):
+        return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.modify_date/1000))
+
     def __unicode__(self):
         return u'StatsSummary for ' + self.player.__unicode__()
 

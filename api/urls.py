@@ -29,6 +29,8 @@ from api.views import (
     RosterDetail,
     TeamMemberInfoList,
     TeamMemberInfoDetail,
+    PlayerStatList,
+    PlayerStatDetail,
     api_root)
 
 # TODO: Consider allowing lookup by ID (check for number instead of \w+)
@@ -86,4 +88,8 @@ urlpatterns = patterns('api',
     url(r'^rosters$', RosterList.as_view(), name='roster-list'),
 
     url(r'^teammemberinfo$', TeamMemberInfoList.as_view(), name='teammemberinfo-list'),
+
+    url(r'^playerstats$', PlayerStatList.as_view(), name='playerstat-list'),
+    url(r'^playerstats/(?P<region>\w+)/(?P<name>\w+( *\w+)*)$', PlayerStatDetail.as_view(), name='playerstat-detail'),
+
 )

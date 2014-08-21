@@ -4,20 +4,7 @@ Django REST Framework serializers.
 
 from rest_framework import serializers
 
-from api.models import (Summoner,
-                        Champion,
-                        Item,
-                        SummonerSpell,
-                        Player,
-                        RawStat,
-                        Game,
-                        League,
-                        LeagueEntry,
-                        Team,
-                        MatchHistorySummary,
-                        Roster,
-                        TeamMemberInfo,
-                        TeamStatDetail)
+from api.models import *
 
 
 class SparseSummonerSerializer(serializers.ModelSerializer):
@@ -213,3 +200,39 @@ class TeamSerializer(serializers.ModelSerializer):
         'second_last_join_date', 'third_last_join_date', 'status', 'tag', 'roster', 'region', 'league_entries',
         'team_stat_detail')
 
+
+class AggregatedStatSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns AggregatedStat data.
+
+    This is nested within PlayerStatsSummarySerializer.
+    """
+    class Meta:
+        model = AggregatedStat
+        exclude = ('id', 'player_stats')
+
+class PlayerStatsSummarySerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns PlayerStatsSummary data.
+
+    This is nested within PlayerStatSerializer.
+    """
+    aggregated_stats = AggregatedStatSerializer(many=False, source='get_aggregated_stat')
+    modify_date_str = serializers.Field(source='modify_date_str')
+
+    class Meta:
+        model = PlayerStatsSummary
+        fields = ('wins', 'losses', 'modify_date_str', 'player_stat_summary_type', 'aggregated_stats')
+
+class PlayerStatSerializer(serializers.ModelSerializer):
+    """
+    A serializer that returns PlayerStat data.
+
+    Also contains related PlayerStatsSummary and AggregatedStat data.
+    """
+    summoner = serializers.Field(source='summoner.name')
+    player_stats_summary_set = PlayerStatsSummarySerializer(many=True, source='playerstatssummary_set')
+
+    class Meta:
+        model = PlayerStat
+        fields = ('summoner', 'player_stats_summary_set')

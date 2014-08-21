@@ -35,6 +35,7 @@ def api_root(request, format=None):
         'teams': reverse('team-list', request=request, format=format),
         'rosters': reverse('roster-list', request=request, format=format),
         'teammemberinfo': reverse('teammemberinfo-list', request=request, format=format),
+        'playerstats': reverse('playerstat-list', request=request, format=format),
     })
 
 
@@ -475,6 +476,33 @@ class TeamMemberInfoDetail(generics.RetrieveAPIView):
     #     #         obj = get_object_or_404(TeamMemberInfo, region__iexact=region, full_id=full_id)
     #
     #     return obj
+
+
+class PlayerStatList(generics.ListAPIView):
+    """
+    API endpoint that allows a PlayerStat entries to be viewed.
+    """
+    queryset = PlayerStat.objects.all()
+    serializer_class = PlayerStatSerializer
+
+
+class PlayerStatDetail(generics.RetrieveAPIView):
+    """
+    API endpoint that allows a PlayerStat entry to be viewed.
+    """
+    queryset = PlayerStat.objects.all()
+    serializer_class = PlayerStatSerializer
+
+    def get_object(self, queryset=None):
+        region = self.kwargs.get('region', None)
+        name = self.kwargs.get('name', None)
+
+        name = standardize_name(name)
+
+        sum = Summoner.objects.filter(region__iexact=region).get(std_name=name)
+        obj = sum.playerstat
+
+        return obj
 
 
 @csrf_exempt
