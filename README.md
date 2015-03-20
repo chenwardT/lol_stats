@@ -2,6 +2,8 @@
 lol_stats is a website that aims to provide unique insight into the competitive multiplayer game [League of Legends](http://leagueoflegends.com), developed by Riot Games.
 Through querying the official [League of Legends API](http://developer.riotgames.com/) it accesses historical match data which can be used to find patterns and make distinctions that may not be apparent to players/spectators of the game.
 
+The associated [front-end repo](https://bitbucket.org/chenward/lol_stats-frontend).
+
 ## Background
 
 - the website is built on `Django`, a Python web framework
