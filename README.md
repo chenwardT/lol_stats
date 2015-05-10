@@ -6,38 +6,24 @@ The associated [front-end](https://github.com/chenwardT/lol_stats-frontend), an 
 
 ## Background
 
-- the website is built on `Django`, a Python web framework
+The site is built on `Django`, a Python web framework and pulls data from Riot Game's League of Legends REST API.
 
-- programmatic interaction with a rate-limited REST API (devs start with a 10req/10s key, to be upgraded upon application acceptance)
+`RiotWatcher`, a thin wrapper for the Riot's API, depends on the `requests` library.
 
-    + I employ and have been updating `RiotWatcher`, a thin wrapper for the game's API
+`Celery`, a distributed task queue, is used to wait on remote API responses.
+        
+Our stored data is exposed via `Django-Rest-Framework`.
 
-        * `RiotWatcher` makes use of the `requests` library
+A separate `AngularJS` SPA consumes our exposed data to produce the user-facing pages.
 
-- asynchronous tasks
-
-    + waiting on the API response takes time, so async website design is necessary
-
-        * backend work to be achieved via `Celery`, a distributed task queue
-
-        * frontend async will be implemented as AJAX calls via `jQuery`
-
-        * HTTP PUSH to be performed via [`Nginx` HTTP Push Module](https://pushmodule.slact.net/)
-		
-		* Django model data store is exposed via a RESTful API using `Django REST Framework`
-
-- caching to prevent unnecessary API requests
-
-    + currently employing a SQL DB, with an eye towards moving some things to in-memory caches e.g. `memcached`
-
-Analytical techniques will follow once core site functionality regarding retrieval and storage of data from Riot's official API is solidified.
+Analytical techniques to follow once functionality regarding retrieval, storage, and processing of data is solidified.
 
 This project and its author are not affiliated with Riot Games.
 
 ## Documentation
 Sphinx-generated docs written to [lol-stats.readthedocs.org](http://lol-stats.readthedocs.org) on pushes. Sometimes changes to code cause the autogen to fail; don't expect much yet.
 
-## Setup (Incomplete)
+## Setup
  
 Vagrantfile + Cheffile forthcoming...
 
@@ -86,4 +72,4 @@ If you get Unauthorized (401) response codes from riotwatcher calls, ensure it's
 
 This product is not endorsed, certified or otherwise approved in any way by Riot Games, Inc. or any of its affiliates.
 
-! Currently in the process of being updated to Python 3.
+! Currently in the process of being updated to Python 3 and cleaned up/rewritten.
