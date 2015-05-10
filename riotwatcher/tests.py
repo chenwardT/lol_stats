@@ -2,7 +2,7 @@
 # these tests are pretty bad, mostly to make sure no exceptions are thrown
 
 import time
-from riotwatcher import RiotWatcher
+from .riotwatcher import RiotWatcher
 
 key = '<ENTER-YOUR-KEY-HERE>'
 # if summoner doesnt have ranked teams, teams tests will fail

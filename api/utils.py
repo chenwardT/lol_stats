@@ -61,10 +61,10 @@ def get_summoner_by_name(summoner_name, region):
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
         summoner_known = True
-        print u'cache HIT for summoner search: {str}'.format(str=summoner_name)
+        print('cache HIT for summoner search: {str}'.format(str=summoner_name))
     except ObjectDoesNotExist:  # no matching summoner found in DB
         summoner_known = False
-        print u'cache MISS for summoner search: {str}'.format(str=summoner_name)
+        print('cache MISS for summoner search: {str}'.format(str=summoner_name))
 
     # if we already know about this summoner
     if summoner_known:
@@ -73,15 +73,15 @@ def get_summoner_by_name(summoner_name, region):
         # if its cache time hasn't expired
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
             # give the cached info
-            print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
+            print('cache FRESH for summoner: {str}'.format(str=summoner.name))
             #return HttpResponse("%s" % summoner.name)
 
         # else the cached summoner object exists, but needs updating
         else:
             # TODO: Need to do API error checking here
-            print u'cache STALE for summoner: {str}'.format(str=summoner.name)
+            print('cache STALE for summoner: {str}'.format(str=summoner.name))
             summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
-            print u'received summoner dto:', summoner_dto
+            print('received summoner dto:', summoner_dto)
 
             summoner.summoner_id = summoner_dto['id']
             summoner.name = summoner_dto['name']
@@ -91,14 +91,14 @@ def get_summoner_by_name(summoner_name, region):
             summoner.summoner_level = summoner_dto['summonerLevel']
             summoner.region = region
 
-            print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
+            print('cache UPDATING entry for: {str}'.format(str=summoner.name))
             summoner.save()
 
     # we don't have this summoner in the cache, so grab it from API and create new entry
     else:
-        print u'querying API for new summoner: {str}'.format(str=summoner_name)
+        print('querying API for new summoner: {str}'.format(str=summoner_name))
         summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', ''), region=region)
-        print u'API result:', summoner_dto
+        print('API result:', summoner_dto)
 
         # TODO: Need to do API error checking here
         summoner = Summoner(summoner_id=summoner_dto['id'],
@@ -149,19 +149,19 @@ def summoner_name_to_id(summoner_name, region):
     """
     try:
         summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
-        print 'cache match FOUND for {str}'.format(str=summoner_name)
+        print('cache match FOUND for {str}'.format(str=summoner_name))
     except ObjectDoesNotExist:
-        print 'cache match NOT FOUND for {str}'.format(str=summoner_name)
+        print('cache match NOT FOUND for {str}'.format(str=summoner_name))
 
-        print 'querying API for summoner by name: {}'.format(summoner_name)
+        print('querying API for summoner by name: {}'.format(summoner_name))
         get_summoner_by_name(summoner_name=summoner_name, region=region)
 
-        print 'retrying cache with new data...'
+        print('retrying cache with new data...')
         try:
             summoner = Summoner.objects.filter(region=region).get(name__iexact=summoner_name)
-            print 'retried cache match FOUND for {str}'.format(str=summoner_name)
+            print('retried cache match FOUND for {str}'.format(str=summoner_name))
         except ObjectDoesNotExist:
-            print 'no summoner found, even after querying API!'
+            print('no summoner found, even after querying API!')
             return 0
 
     return summoner.summoner_id
@@ -173,7 +173,7 @@ def chunks(l, n):
 
     l must be a list.
     """
-    for i in xrange(0, len(l), n):
+    for i in range(0, len(l), n):
         yield l[i:i + n]
 
 
@@ -470,13 +470,13 @@ def get_league_by_summoner_id(summoner_id, region):
                 name=league_ele['name']).get(
                 tier=league_ele['tier'])
             matched = True
-            print 'Found matching League: {} {} {} {}'.format(matching_league.region, matching_league.queue, matching_league.name, matching_league.tier)
+            print('Found matching League: {} {} {} {}'.format(matching_league.region, matching_league.queue, matching_league.name, matching_league.tier))
 
         # We couldn't find a matching League, so we need to create one.
         except ObjectDoesNotExist:
             matched = False
             matching_league = League(region=region, queue=league_ele['queue'], name=league_ele['name'], tier=league_ele['tier'])
-            print 'Creating new League: {} {} {} {}'.format(matching_league.region, matching_league.queue, matching_league.name, matching_league.tier)
+            print('Creating new League: {} {} {} {}'.format(matching_league.region, matching_league.queue, matching_league.name, matching_league.tier))
             matching_league.save()
     
         # Now we handle the entries, which are players (solo queue) or teams (team queue)
@@ -534,10 +534,10 @@ def get_teams_by_summoner_id(summoner_id, region):
     except LoLException as e:
         got_teams = False
         if e == error_404:
-            print 'Summoner ID', summoner_id, 'is not on any teams (error_404).'
+            print('Summoner ID', summoner_id, 'is not on any teams (error_404).')
         else:
             got_teams = False
-            print 'ERROR getting teams:', e
+            print('ERROR getting teams:', e)
 
     if got_teams:
         # teams_dto is a list that will contain an entry for each team the summoner is on.
@@ -547,13 +547,13 @@ def get_teams_by_summoner_id(summoner_id, region):
             try:
                 matching_team = Team.objects.filter(region=region).get(full_id=team['fullId'])
                 # We found a match, so set the working Team to that.
-                print 'Found matching Team {} {}'.format(matching_team.region, matching_team.name)
+                print('Found matching Team {} {}'.format(matching_team.region, matching_team.name))
                 matched = True
                 new_team = matching_team
             except ObjectDoesNotExist:
                 # No match found, so create a new Team.
                 matched = False
-                print 'No matching team found. Creating a new Team...'
+                print('No matching team found. Creating a new Team...')
                 new_team = Team()
 
             # We get all the Team data from Riot API call,

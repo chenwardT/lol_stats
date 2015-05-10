@@ -2,7 +2,7 @@
 Celery tasks.
 """
 
-from __future__ import absolute_import
+
 
 from time import sleep
 from datetime import datetime
@@ -22,8 +22,8 @@ def async_get_summoner_by_name(summoner_name, region):
     Riot API is only queried if Summoner object is older than `CACHE_SUMMONER`.
     """
 
-    print 'summoner_name =', summoner_name
-    print 'region =', region
+    print('summoner_name =', summoner_name)
+    print('region =', region)
 
     # First we convert `summoner_name` to formatted name.
     # To query a summoner by name, we must submit its standardized name.
@@ -37,10 +37,10 @@ def async_get_summoner_by_name(summoner_name, region):
     try:
         summoner = Summoner.objects.filter(region=region).get(name=summoner_name)
         summoner_known = True
-        print u'cache HIT for summoner search: {str}'.format(str=summoner_name)
+        print('cache HIT for summoner search: {str}'.format(str=summoner_name))
     except ObjectDoesNotExist:  # no matching summoner found in DB
         summoner_known = False
-        print u'cache MISS for summoner search: {str}'.format(str=summoner_name)
+        print('cache MISS for summoner search: {str}'.format(str=summoner_name))
 
     # if we already know about this summoner
     if summoner_known:
@@ -50,15 +50,15 @@ def async_get_summoner_by_name(summoner_name, region):
         if datetime.now() < (summoner.last_update + CACHE_SUMMONER):
             # We don't actually do anything here, since cache is fresh.
             # give the cached info
-            print u'cache FRESH for summoner: {str}'.format(str=summoner.name)
+            print('cache FRESH for summoner: {str}'.format(str=summoner.name))
             #return HttpResponse("%s" % summoner.name)
 
         # Else the cached summoner object exists, but needs updating.
         else:
             # TODO: Need to do API error checking here
-            print u'cache STALE for summoner: {str}'.format(str=summoner.name)
+            print('cache STALE for summoner: {str}'.format(str=summoner.name))
             summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', '').lower(), region=region)
-            print u'received summoner dto:', summoner_dto
+            print('received summoner dto:', summoner_dto)
 
             summoner.summoner_id = summoner_dto['id']
             summoner.name = summoner_dto['name']
@@ -68,21 +68,21 @@ def async_get_summoner_by_name(summoner_name, region):
             summoner.summoner_level = summoner_dto['summonerLevel']
             summoner.region = region
 
-            print u'cache UPDATING entry for: {str}'.format(str=summoner.name)
+            print('cache UPDATING entry for: {str}'.format(str=summoner.name))
             summoner.save()
 
-            print 'Getting recent matches for', summoner.name, '(' + region + ')'
+            print('Getting recent matches for', summoner.name, '(' + region + ')')
             get_recent_matches(summoner_id=summoner.summoner_id, region=region)
-            print 'Getting leagues...'
+            print('Getting leagues...')
             get_league_by_summoner_id(summoner_id=summoner.summoner_id, region=region)
-            print 'Getting teams...'
+            print('Getting teams...')
             get_teams_by_summoner_id(summoner_id=summoner.summoner_id, region=region)
 
     # We don't have this summoner in the cache, so grab it from API and create new entry.
     else:
-        print u'querying API for new summoner: {str}'.format(str=summoner_name)
+        print('querying API for new summoner: {str}'.format(str=summoner_name))
         summoner_dto = riot_api.get_summoner(name=summoner_name.replace(' ', '').lower(), region=region)
-        print u'API result:', summoner_dto
+        print('API result:', summoner_dto)
 
         # TODO: Need to do API error checking here
         summoner = Summoner(summoner_id=summoner_dto['id'],
@@ -94,9 +94,9 @@ def async_get_summoner_by_name(summoner_name, region):
                             region=region)
         summoner.save()
 
-        print 'Getting recent matches for', summoner.name, '(' + region + ')'
+        print('Getting recent matches for', summoner.name, '(' + region + ')')
         get_recent_matches(summoner_id=summoner.summoner_id, region=region)
-        print 'Getting leagues...'
+        print('Getting leagues...')
         get_league_by_summoner_id(summoner_id=summoner.summoner_id, region=region)
-        print 'Getting teams...'
+        print('Getting teams...')
         get_teams_by_summoner_id(summoner_id=summoner.summoner_id, region=region)

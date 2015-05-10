@@ -2,7 +2,7 @@
 Celery configuration.
 """
 
-from __future__ import absolute_import
+
 
 import os
 
@@ -17,7 +17,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'lol_stats.development')
 
 DB_PASSWORD = get_env_variable('LOL_STATS_DB_PASSWORD')
 
-print DB_PASSWORD
+print(DB_PASSWORD)
 
 app = Celery('lol_stats',
              broker='amqp://',
@@ -30,4 +30,4 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(bind=True)
 def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
+    print(('Request: {0!r}'.format(self.request)))

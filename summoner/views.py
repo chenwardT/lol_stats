@@ -86,10 +86,10 @@ def ajax_query_start(request):
         region = request.POST.get('region')
         summoner_name = request.POST.get('name')
 
-        print 'body:', request.body
-        print 'POST:', request.POST
-        print 'region:', region
-        print 'name:', summoner_name
+        print('body:', request.body)
+        print('POST:', request.POST)
+        print('region:', region)
+        print('name:', summoner_name)
 
         region = region.lower()     # ensure region is lowercase
 

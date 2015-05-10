@@ -303,7 +303,7 @@ class LeagueDetail(generics.RetrieveAPIView):
         tier = self.kwargs.get('tier', None)
         name = self.kwargs.get('name', None)
 
-        print region + queue + tier + name
+        print(region + queue + tier + name)
 
         if region is not None:
             if queue is not None:
@@ -515,14 +515,14 @@ def get_task_state(request):
     """
 
     if request.is_ajax():
-        if 'task_id' in request.POST.keys() and request.POST['task_id']:
+        if 'task_id' in list(request.POST.keys()) and request.POST['task_id']:
             task_id = request.POST['task_id']
             # Strip double quotes that AngularJS adds.
             task_id = task_id.replace('"', '')
             task = AsyncResult(task_id)
             data = task.state
-            print task_id
-            print data
+            print(task_id)
+            print(data)
         else:
             data = 'No task_id in the request.'
     else:

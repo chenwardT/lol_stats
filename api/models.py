@@ -66,7 +66,7 @@ class SummonerSpell(models.Model):
     description = models.CharField(max_length=256)
 
     def __unicode__(self):
-        return u'%s' % self.name
+        return '%s' % self.name
 
 ## placeholder
 #class Mastery(models.Model):
@@ -101,7 +101,7 @@ class Player(models.Model):
         ordering = ('team_id',)
 
     def __unicode__(self):
-        return u'%s on %s (Team %d)' % (self.summoner, self.champion, self.team_id)
+        return '%s on %s (Team %d)' % (self.summoner, self.champion, self.team_id)
 
     def region(self):
         return self.participant_of.region
@@ -191,13 +191,13 @@ class RawStat(models.Model):
     win = models.NullBooleanField(blank=True, null=True)  # Flag specifying whether or not this game was won.
 
     def __unicode__(self):
-        return u'Stats for %s' % Game.objects.get(stats=self)
+        return 'Stats for %s' % Game.objects.get(stats=self)
 
     def __iter__(self):
         """Generator that returns field names and values for each value that is not None."""
         for i in self._meta.get_all_field_names():
             if getattr(self, i) is not None:
-                yield u'{}: {}'.format(inflection.humanize(i), getattr(self, i))
+                yield '{}: {}'.format(inflection.humanize(i), getattr(self, i))
 
     def belongs_to(self):
         return Game.objects.get(stats=self).summoner_id
@@ -252,7 +252,7 @@ class Game(models.Model):
     champion_key = models.CharField(max_length=32)
 
     def __unicode__(self):
-        return u'%s on %s (Team %d) [GID: %d]' % (self.summoner_id.name, self.champion_id, self.team_id, self.game_id)
+        return '%s on %s (Team %d) [GID: %d]' % (self.summoner_id.name, self.champion_id, self.team_id, self.game_id)
 
     def create_date_str(self):
         """Convert create_date epoch milliseconds timestamp to human-readable date string."""
@@ -282,7 +282,7 @@ class League(models.Model):
     tier = models.CharField(max_length=12)      # ex. CHALLENGER
 
     def __unicode__(self):
-        return u'' + self.region + ' ' + self.queue + ' ' + self.name + ' ' + self.tier
+        return '' + self.region + ' ' + self.queue + ' ' + self.name + ' ' + self.tier
 
     class Meta:
         unique_together = ('region', 'queue', 'name', 'tier')
@@ -316,7 +316,7 @@ class LeagueEntry(models.Model):
     league = models.ForeignKey(League)
 
     def __unicode__(self):
-        return u'' + self.league.__unicode__() + ' ' + self.division + ' - ' + self.player_or_team_name + ' (' + str(self.league_points) + ')'
+        return '' + self.league.__unicode__() + ' ' + self.division + ' - ' + self.player_or_team_name + ' (' + str(self.league_points) + ')'
 
     class Meta:
         unique_together = ('player_or_team_id', 'league')
@@ -400,7 +400,7 @@ class Team(models.Model):
         return queryset
 
     def __unicode__(self):
-        return u'' + self.name
+        return '' + self.name
 
     class Meta:
         # Prevent duplicate teams.
@@ -432,7 +432,7 @@ class MatchHistorySummary(models.Model):
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.date/1000))
 
     def __unicode__(self):
-        return u'History of ' + self.team.__unicode__()
+        return 'History of ' + self.team.__unicode__()
 
 
 class Roster(models.Model):
@@ -447,7 +447,7 @@ class Roster(models.Model):
     owner_id = models.BigIntegerField()
 
     def __unicode__(self):
-        return u'Roster of ' + Team.objects.get(roster=self).__unicode__()
+        return 'Roster of ' + Team.objects.get(roster=self).__unicode__()
 
     def get_summoner(self):
         """Converts owner_id to Summoner object, if possible. Otherwise returns owner_id."""
@@ -533,7 +533,7 @@ class PlayerStat(models.Model):
     summoner = models.OneToOneField(Summoner)
 
     def __unicode__(self):
-        return u'PlayerStat for ' + self.summoner.name
+        return 'PlayerStat for ' + self.summoner.name
 
 class PlayerStatsSummary(models.Model):
     """
@@ -554,7 +554,7 @@ class PlayerStatsSummary(models.Model):
         return time.strftime('%m/%d/%Y %H:%M:%S', time.gmtime(self.modify_date/1000))
 
     def __unicode__(self):
-        return u'StatsSummary for ' + self.player.__unicode__()
+        return 'StatsSummary for ' + self.player.__unicode__()
 
 class AggregatedStat(models.Model):
     """
@@ -621,5 +621,5 @@ class AggregatedStat(models.Model):
     total_unreal_kills = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
-        return u'AggStats for ' + self.player_stats.player.summoner.name + \
+        return 'AggStats for ' + self.player_stats.player.summoner.name + \
                '[' + self.player_stats.player_stat_summary_type + ']'
