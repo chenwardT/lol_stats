@@ -85,3 +85,5 @@ Python setup files (e.g., requirements.txt, MANIFEST.in, etc) should not be reli
 If you get Unauthorized (401) response codes from riotwatcher calls, ensure it's been updated (per call!) to match current Riot API version.
 
 This product is not endorsed, certified or otherwise approved in any way by Riot Games, Inc. or any of its affiliates.
+
+! Currently in the process of being updated to Python 3.
