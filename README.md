@@ -1,10 +1,12 @@
+*Note: lol_stats is being completely rewritten as a separate project. This is due to significant changes in how Riot's data is represented and accessed, changes to libraries that were in use since last devoting serious effort to the project, and the desire to improve numerous aspects of the design.*
+
+*See new project: [lol-stats2](https://github.com/chenwardT/lol_stats2).*
+
 # lol_stats
 lol_stats is a website that aims to provide unique insight into the competitive multiplayer game [League of Legends](http://leagueoflegends.com), developed by Riot Games.
 Through querying the official [League of Legends API](http://developer.riotgames.com/) it accesses historical match data which can be used to find patterns and make distinctions that may not be apparent to players/spectators of the game.
 
 The associated [front-end](https://github.com/chenwardT/lol_stats-frontend), an AngularJS app that consumes the REST API this project exposes.
-
-*Note: lol_stats is being completely rewritten as a separate project. This is due to significant changes in how Riot's data is represented and accessed, changes to libraries that were in use since last devoting serious effort to the project, and the desire to improve numerous aspects of my design.*
 
 ## Background
 
